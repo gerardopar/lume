@@ -12,7 +12,10 @@ const TMDB_API_URL = "https://api.themoviedb.org/3";
 
 const tmdb = axios.create({
   baseURL: TMDB_API_URL,
-  params: { api_key: env.TMDB_API_KEY },
+  headers: {
+    Authorization: env.TMDB_API_KEY,
+    Accept: "application/json",
+  },
 });
 
 export const getPopularMoviesByGenre = async (genreId: number, page = 1) => {
