@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../trpc";
 
 import {
@@ -24,48 +25,112 @@ export const moviesRouter = router({
     .input(z.object({ genreId: z.number() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
-      return getPopularMoviesByGenre(input.genreId);
+      try {
+        return getPopularMoviesByGenre(input.genreId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching popular movies by genre",
+          cause: error,
+        });
+      }
     }),
   getMovieDetails: publicProcedure
     .input(z.object({ movieId: z.number() }))
     .output(TmdbMovieDetailsSchema)
     .query(({ input }) => {
-      return getMovieDetails(input.movieId);
+      try {
+        return getMovieDetails(input.movieId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching movie details",
+          cause: error,
+        });
+      }
     }),
   getPopularMovies: publicProcedure
     .input(z.object({ page: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
-      return getPopularMovies(input.page || 1);
+      try {
+        return getPopularMovies(input.page || 1);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching popular movies",
+          cause: error,
+        });
+      }
     }),
   getTopRatedMovies: publicProcedure
     .input(z.object({ page: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
-      return getTopRatedMovies(input.page || 1);
+      try {
+        return getTopRatedMovies(input.page || 1);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching top rated movies",
+          cause: error,
+        });
+      }
     }),
   getUpcomingMovies: publicProcedure
     .input(z.object({ page: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
-      return getUpcomingMovies(input.page || 1);
+      try {
+        return getUpcomingMovies(input.page || 1);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching upcoming movies",
+          cause: error,
+        });
+      }
     }),
   getNowPlayingMovies: publicProcedure
     .input(z.object({ page: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
-      return getNowPlayingMovies(input.page || 1);
+      try {
+        return getNowPlayingMovies(input.page || 1);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching now playing movies",
+          cause: error,
+        });
+      }
     }),
   searchKeywords: publicProcedure
     .input(z.object({ query: z.string(), page: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbKeywordSchema))
     .query(({ input }) => {
-      return searchKeywords(input.query, input.page || 1);
+      try {
+        return searchKeywords(input.query, input.page || 1);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching search keywords",
+          cause: error,
+        });
+      }
     }),
   searchMovies: publicProcedure
     .input(z.object({ query: z.string(), page: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
-      return searchMovies(input.query, input.page || 1);
+      try {
+        return searchMovies(input.query, input.page || 1);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching search movies",
+          cause: error,
+        });
+      }
     }),
 });
