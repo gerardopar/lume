@@ -10,7 +10,10 @@
     // for monorepo
     "baseUrl": ".",
     "paths": {
-      "@my/api": ["packages/api/src"]
+      "@my/api": ["packages/api/src"],
+      "@utils/*": ["apps/client/src/utils/*"],
+      "@components/*": ["apps/client/src/components/*"],
+      "@pages/*": ["apps/client/src/pages/*"]
     }
   }
 }
