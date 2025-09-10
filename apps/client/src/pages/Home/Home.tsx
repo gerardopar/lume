@@ -1,15 +1,15 @@
 import React from "react";
 
-import { trpc } from "../../utils/trpc";
+import { Hero } from "@components/hero/Hero";
+import { Header } from "@components/header/Header";
 
 export const Home: React.FC = () => {
-  const { data } = trpc.hello.useQuery();
-
-  console.log(data);
-
   return (
-    <div>
-      <h1>Home</h1>
+    <div className="h-screen w-full bg-black">
+      <Header />
+      <div className="h-full w-full flex flex-col">
+        <Hero />
+      </div>
     </div>
   );
 };
