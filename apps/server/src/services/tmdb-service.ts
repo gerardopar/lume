@@ -2,6 +2,7 @@ import axios from "axios";
 import { env } from "../../env";
 
 import { TmdbMovie, TmdbPaginatedResponse } from "../types/tmdb.types";
+import { TmdbMovieDetails } from "../validators/movies-details.validators";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3";
 
@@ -22,5 +23,12 @@ export const getPopularMoviesByGenre = async (genreId: number, page = 1) => {
       },
     }
   );
+  return res.data;
+};
+
+export const getMovieDetails = async (
+  movieId: number
+): Promise<TmdbMovieDetails> => {
+  const res = await tmdb.get(`/movie/${movieId}`);
   return res.data;
 };
