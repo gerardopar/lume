@@ -1,3 +1,4 @@
+// Movie
 export interface TmdbMovie {
   adult: boolean;
   backdrop_path: string | null;
@@ -20,4 +21,17 @@ export interface TmdbPaginatedResponse<T> {
   results: T[];
   total_pages: number;
   total_results: number;
+}
+
+// Keyword Search
+export interface TmdbKeywordSearchResponse {
+  page: number;
+  results: TmdbKeywordSearchResponseResult[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface TmdbKeywordSearchResponseResult {
+  id: number;
+  name: string;
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Movie
 export const TmdbMovieSchema = z.object({
   adult: z.boolean(),
   backdrop_path: z.string().nullable(),
@@ -32,3 +33,16 @@ export const TmdbPaginatedResponseSchema = <T extends z.ZodTypeAny>(
 export type TmdbPaginatedResponse<T> = z.infer<
   ReturnType<typeof TmdbPaginatedResponseSchema<z.ZodTypeAny>>
 >;
+
+// Keyword Search
+export const TmdbKeywordSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export const TmdbKeywordSearchResponseSchema = z.object({
+  page: z.number(),
+  results: z.array(TmdbKeywordSchema),
+  total_pages: z.number(),
+  total_results: z.number(),
+});

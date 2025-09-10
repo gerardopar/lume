@@ -1,7 +1,11 @@
 import axios from "axios";
 import { env } from "../../env";
 
-import { TmdbMovie, TmdbPaginatedResponse } from "../types/tmdb.types";
+import {
+  TmdbMovie,
+  TmdbPaginatedResponse,
+  TmdbKeywordSearchResponse,
+} from "../types/tmdb.types";
 import { TmdbMovieDetails } from "../validators/movies-details.validators";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3";
@@ -74,5 +78,12 @@ export const searchMovies = async (query: string, page = 1) => {
     "/search/movie",
     { params: { query, page } }
   );
+  return res.data;
+};
+
+export const searchKeywords = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbKeywordSearchResponse>("/search/keyword", {
+    params: { query, page },
+  });
   return res.data;
 };

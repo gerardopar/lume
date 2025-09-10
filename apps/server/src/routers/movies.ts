@@ -3,6 +3,7 @@ import { publicProcedure, router } from "../trpc";
 
 import {
   searchMovies,
+  searchKeywords,
   getMovieDetails,
   getPopularMovies,
   getTopRatedMovies,
@@ -14,6 +15,7 @@ import {
 import {
   TmdbMovieSchema,
   TmdbPaginatedResponseSchema,
+  TmdbKeywordSchema,
 } from "../validators/movies.validators";
 import { TmdbMovieDetailsSchema } from "../validators/movies-details.validators";
 
@@ -53,6 +55,12 @@ export const moviesRouter = router({
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
       return getNowPlayingMovies(input.page || 1);
+    }),
+  searchKeywords: publicProcedure
+    .input(z.object({ query: z.string(), page: z.number().optional() }))
+    .output(TmdbPaginatedResponseSchema(TmdbKeywordSchema))
+    .query(({ input }) => {
+      return searchKeywords(input.query, input.page || 1);
     }),
   searchMovies: publicProcedure
     .input(z.object({ query: z.string(), page: z.number().optional() }))
