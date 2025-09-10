@@ -68,3 +68,11 @@ export const getNowPlayingMovies = async (page = 1) => {
   );
   return res.data;
 };
+
+export const searchMovies = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
+    "/search/movie",
+    { params: { query, page } }
+  );
+  return res.data;
+};

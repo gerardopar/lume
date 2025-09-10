@@ -2,6 +2,7 @@ import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
 import {
+  searchMovies,
   getMovieDetails,
   getPopularMovies,
   getTopRatedMovies,
@@ -52,5 +53,11 @@ export const moviesRouter = router({
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
       return getNowPlayingMovies(input.page || 1);
+    }),
+  searchMovies: publicProcedure
+    .input(z.object({ query: z.string(), page: z.number().optional() }))
+    .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
+    .query(({ input }) => {
+      return searchMovies(input.query, input.page || 1);
     }),
 });
