@@ -1,16 +1,27 @@
+import React from "react";
+import AppRouter from "./router/AppRouter";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc } from "./utils/trpc";
+import { httpBatchLink } from "@trpc/client";
 
-function App() {
-  const hello = trpc.hello.useQuery();
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: "http://localhost:8080/trpc", // match your server
+    }),
+  ],
+});
 
-  if (hello.isLoading) return <p>Loading...</p>;
-  if (hello.error) return <p>Error: {hello.error.message}</p>;
-
+const App: React.FC = () => {
   return (
-    <div className="w-full flex items-center justify-center h-[100vh] bg-black">
-      <h1 className="text-4xl text-white">{hello.data?.greeting}</h1>
-    </div>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AppRouter />
+      </QueryClientProvider>
+    </trpc.Provider>
   );
-}
+};
 
 export default App;
