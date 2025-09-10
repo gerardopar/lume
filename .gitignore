@@ -1,0 +1,13 @@
+# dependencies
+node_modules
+pnpm-lock.yaml
+
+# build
+dist
+build
+
+# logs
+*.log
+
+# misc
+.DS_Store
