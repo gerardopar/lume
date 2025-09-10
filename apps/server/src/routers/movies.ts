@@ -5,6 +5,8 @@ import {
   getMovieDetails,
   getPopularMovies,
   getTopRatedMovies,
+  getUpcomingMovies,
+  getNowPlayingMovies,
   getPopularMoviesByGenre,
 } from "../services/tmdb-service";
 
@@ -38,5 +40,17 @@ export const moviesRouter = router({
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
       return getTopRatedMovies(input.page || 1);
+    }),
+  getUpcomingMovies: publicProcedure
+    .input(z.object({ page: z.number().optional() }))
+    .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
+    .query(({ input }) => {
+      return getUpcomingMovies(input.page || 1);
+    }),
+  getNowPlayingMovies: publicProcedure
+    .input(z.object({ page: z.number().optional() }))
+    .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
+    .query(({ input }) => {
+      return getNowPlayingMovies(input.page || 1);
     }),
 });

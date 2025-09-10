@@ -52,3 +52,19 @@ export const getTopRatedMovies = async (page: number = 1) => {
   );
   return res.data;
 };
+
+export const getUpcomingMovies = async (page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
+    "/movie/upcoming",
+    { params: { page } }
+  );
+  return res.data;
+};
+
+export const getNowPlayingMovies = async (page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
+    "/movie/now_playing",
+    { params: { page } }
+  );
+  return res.data;
+};
