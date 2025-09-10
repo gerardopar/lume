@@ -32,3 +32,23 @@ export const getMovieDetails = async (
   const res = await tmdb.get(`/movie/${movieId}`);
   return res.data;
 };
+
+export const getPopularMovies = async (page: number = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
+    "/movie/popular",
+    {
+      params: {
+        page,
+      },
+    }
+  );
+  return res.data;
+};
+
+export const getTopRatedMovies = async (page: number = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
+    "/movie/top_rated",
+    { params: { page } }
+  );
+  return res.data;
+};

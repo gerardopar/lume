@@ -2,8 +2,10 @@ import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
 import {
-  getPopularMoviesByGenre,
   getMovieDetails,
+  getPopularMovies,
+  getTopRatedMovies,
+  getPopularMoviesByGenre,
 } from "../services/tmdb-service";
 
 import {
@@ -24,5 +26,17 @@ export const moviesRouter = router({
     .output(TmdbMovieDetailsSchema)
     .query(({ input }) => {
       return getMovieDetails(input.movieId);
+    }),
+  getPopularMovies: publicProcedure
+    .input(z.object({ page: z.number().optional() }))
+    .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
+    .query(({ input }) => {
+      return getPopularMovies(input.page || 1);
+    }),
+  getTopRatedMovies: publicProcedure
+    .input(z.object({ page: z.number().optional() }))
+    .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
+    .query(({ input }) => {
+      return getTopRatedMovies(input.page || 1);
     }),
 });
