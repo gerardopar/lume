@@ -1,7 +1,7 @@
 import { trpc } from "./utils/trpc";
 
 function App() {
-  const hello = trpc.hello.useQuery({ name: "World!" });
+  const hello = trpc.hello.useQuery();
 
   if (hello.isLoading) return <p>Loading...</p>;
   if (hello.error) return <p>Error: {hello.error.message}</p>;
