@@ -3,7 +3,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { appRouter } from "./trpc";
+import { appRouter } from "./appRouter";
 
 const app = express();
 const port = process.env.PORT || 8080;
