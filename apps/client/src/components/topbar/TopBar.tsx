@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+
 import BellIcon from "@components/svgs/BellIcon";
 import SearchIcon from "@components/svgs/SearchIcon";
 
 export const TopBar: React.FC = () => {
+  const [search, setSearch] = useState<string>("");
+
   return (
     <header className="w-full mb-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center flex-1 max-w-[60%] relative">
           <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search"
             className={`
