@@ -19,7 +19,7 @@ export const Hero: React.FC = () => {
   );
 
   return (
-    <div className="h-[50%] w-full">
+    <div className="h-[50%] w-full rounded-2xl overflow-hidden">
       <img
         src={poster!}
         alt="backdrop"
@@ -28,3 +28,5 @@ export const Hero: React.FC = () => {
     </div>
   );
 };
+
+export default Hero;
