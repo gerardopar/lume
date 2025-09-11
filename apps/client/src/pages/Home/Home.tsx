@@ -1,15 +1,16 @@
 import React from "react";
 
-import { Hero } from "@components/hero/Hero";
+import Hero from "@components/hero/Hero";
+import Sidenav from "@components/sidenav/Sidenav";
 
 export const Home: React.FC = () => {
   return (
-    <div className="h-screen w-full bg-lume-primary-dark p-6">
+    <div className="h-screen flex w-full bg-lume-primary-dark p-6">
       {/* left handle panel */}
-      <div className="max-[300px] w-full"></div>
+      <Sidenav />
 
       {/* right handle panel */}
-      <div className="h-full w-full flex flex-col">
+      <div className="h-full w-full flex flex-col px-6">
         <Hero />
       </div>
     </div>
