@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+/* Tailwind v4: define design tokens via @theme */
+@theme {
+  /* Colors */
+  --color-lume-primary-dark: #222831;
+
+  /* Fonts (optional — enables `font-poppins` / `font-inter`) */
+  --font-poppins: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
