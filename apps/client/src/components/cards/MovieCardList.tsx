@@ -125,6 +125,9 @@ export const MovieCardList: React.FC<{
   if (isLoading) {
     return (
       <div className={`w-full relative ${className}`}>
+        {title && (
+          <h2 className="text-xl font-bold font-inter mb-4 ml-2">{title}</h2>
+        )}
         <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
           {[...Array(10)].map((_, idx) => (
             <MovieCardSkeleton key={idx} />
@@ -167,6 +170,13 @@ export const MovieCardList: React.FC<{
             <MovieCard movie={movie} />
           </div>
         ))}
+        {isFetchingNextPage && (
+          <>
+            {[...Array(3)].map((_, idx) => (
+              <MovieCardSkeleton key={`skeleton-${idx}`} />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
