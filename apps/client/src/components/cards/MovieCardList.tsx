@@ -1,7 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import { trpc } from "@utils/trpc";
-import MovieCard from "./MovieCard";
 import { inView } from "motion";
+
+import MovieCard from "./MovieCard";
+import ChevronLeft from "@components/svgs/ChevronLeft";
+import ChevronRight from "@components/svgs/ChevronRight";
+
 import type { TmdbMovie } from "@my/api";
 
 export const MovieCardList: React.FC<{
@@ -20,7 +24,21 @@ export const MovieCardList: React.FC<{
       }
     );
 
-  // Auto-fetch when scrolling near the bottom
+  const movies = data?.pages.flatMap((p) => p.results) ?? [];
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollByAmount = (amount: number) => {
+    if (scrollRef.current) {
+      const el = scrollRef.current;
+      el.scrollBy({ left: amount, behavior: "smooth" });
+
+      const isNearEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 300;
+      if (isNearEnd && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+  };
+
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -30,7 +48,6 @@ export const MovieCardList: React.FC<{
       timeoutId = setTimeout(() => {
         if (!hasNextPage || isFetchingNextPage) return;
 
-        // Check if we're near the bottom of the page (within 200px)
         const scrollPosition =
           window.innerHeight + document.documentElement.scrollTop;
         const bottomPosition = document.documentElement.offsetHeight - 200;
@@ -48,29 +65,10 @@ export const MovieCardList: React.FC<{
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const movies = data?.pages.flatMap((p) => p.results) ?? [];
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
-  // Arrow navigation (with auto-fetch if near end)
-  const scrollByAmount = (amount: number) => {
-    if (scrollRef.current) {
-      const el = scrollRef.current;
-      el.scrollBy({ left: amount, behavior: "smooth" });
-
-      // Check if user reached near the end after arrow scroll
-      const isNearEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 300;
-      if (isNearEnd && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    }
-  };
-
-  // Animate cards once
   useEffect(() => {
     const cards = document.querySelectorAll(".movie-card:not(.animated)");
     cards.forEach((card, idx) => {
       inView(card, () => {
-        // Animate using CSS classes instead of motion.animate
         card.animate(
           [
             { opacity: 0, transform: "translateY(20px)" },
@@ -88,7 +86,6 @@ export const MovieCardList: React.FC<{
     });
   }, [movies]);
 
-  // Auto-fetch next page when scrolling manually to the end
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -106,25 +103,25 @@ export const MovieCardList: React.FC<{
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="w-full relative">
-      {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
+    <div className="w-full relative mt-4">
+      {title && (
+        <h2 className="text-xl font-bold font-inter mb-4 ml-2">{title}</h2>
+      )}
 
-      {/* Arrows */}
       <button
         onClick={() => scrollByAmount(-300)}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-2 rounded-full"
+        className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px]"
       >
-        {"<"}
+        <ChevronLeft />
       </button>
 
       <button
         onClick={() => scrollByAmount(300)}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 p-2 rounded-full"
+        className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px]"
       >
-        {">"}
+        <ChevronRight />
       </button>
 
-      {/* Scrollable row */}
       <div
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
@@ -135,14 +132,6 @@ export const MovieCardList: React.FC<{
           </div>
         ))}
       </div>
-
-      {/* Indicators */}
-      {/* {isFetchingNextPage && (
-        <p className="text-sm text-center opacity-60 mt-2">Loading more…</p>
-      )}
-      {!hasNextPage && (
-        <p className="text-sm text-center opacity-60 mt-2">No more movies</p>
-      )} */}
     </div>
   );
 };

@@ -14,9 +14,9 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
 
   return (
     <div
-      className="h-[275px] w-[200px] rounded-2xl overflow-hidden"
+      className="h-[275px] w-[200px] rounded-2xl overflow-hidden shadow-lg"
       style={{
-        backgroundImage: `url(${poster})`,
+        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)),url(${poster})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
