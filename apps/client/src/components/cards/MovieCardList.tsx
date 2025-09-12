@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { trpc } from "@utils/trpc";
 import { inView } from "motion";
 
@@ -7,13 +7,19 @@ import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
 
 import type { TmdbMovie } from "@my/api";
+import MovieCardSkeleton from "@components/skeleton/MovieCardSkeleton";
 
 export const MovieCardList: React.FC<{
   title?: string;
   genreId: number;
   className?: string;
 }> = ({ title, genreId, className }) => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
+
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     trpc.movies.getPopularMoviesByGenre.useInfiniteQuery(
       { genreId },
       {
@@ -26,17 +32,25 @@ export const MovieCardList: React.FC<{
     );
 
   const movies = data?.pages.flatMap((p) => p.results) ?? [];
-  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollByAmount = (amount: number) => {
     if (scrollRef.current) {
       const el = scrollRef.current;
       el.scrollBy({ left: amount, behavior: "smooth" });
+      updateScrollState();
 
       const isNearEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 300;
       if (isNearEnd && hasNextPage && !isFetchingNextPage) {
         fetchNextPage();
       }
+    }
+  };
+
+  const updateScrollState = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setIsAtStart(scrollLeft < 10);
+      setIsAtEnd(scrollLeft + clientWidth >= scrollWidth - 10);
     }
   };
 
@@ -92,6 +106,8 @@ export const MovieCardList: React.FC<{
     if (!el) return;
 
     const handleScroll = () => {
+      updateScrollState();
+
       const { scrollLeft, clientWidth, scrollWidth } = el;
       const isAtEnd = scrollLeft + clientWidth >= scrollWidth - 50;
       if (isAtEnd && hasNextPage && !isFetchingNextPage) {
@@ -100,8 +116,23 @@ export const MovieCardList: React.FC<{
     };
 
     el.addEventListener("scroll", handleScroll);
+    // Initial check
+    updateScrollState();
+
     return () => el.removeEventListener("scroll", handleScroll);
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  if (isLoading) {
+    return (
+      <div className={`w-full relative ${className}`}>
+        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+          {[...Array(10)].map((_, idx) => (
+            <MovieCardSkeleton key={idx} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`w-full relative ${className}`}>
@@ -109,19 +140,23 @@ export const MovieCardList: React.FC<{
         <h2 className="text-xl font-bold font-inter mb-4 ml-2">{title}</h2>
       )}
 
-      <button
-        onClick={() => scrollByAmount(-300)}
-        className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px]"
-      >
-        <ChevronLeft />
-      </button>
+      {!isAtStart && (
+        <button
+          onClick={() => scrollByAmount(-300)}
+          className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px] transition-opacity duration-300"
+        >
+          <ChevronLeft />
+        </button>
+      )}
 
-      <button
-        onClick={() => scrollByAmount(300)}
-        className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px]"
-      >
-        <ChevronRight />
-      </button>
+      {!isAtEnd && (
+        <button
+          onClick={() => scrollByAmount(300)}
+          className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px] transition-opacity duration-300"
+        >
+          <ChevronRight />
+        </button>
+      )}
 
       <div
         ref={scrollRef}

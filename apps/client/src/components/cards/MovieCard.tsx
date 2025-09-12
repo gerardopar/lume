@@ -1,7 +1,9 @@
 import React from "react";
+
+import HeartIcon from "@components/svgs/HeartIcon";
+
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 import type { TmdbMovie } from "@my/api";
-import HeartIcon from "@components/svgs/HeartIcon";
 
 export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   const { title, poster_path } = movie;
@@ -12,7 +14,7 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
     <div className="relative min-h-[320px] max-h-[320px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300">
       <div
         className={`
-        relative h-[275px] w-[200px] rounded-2xl overflow-hidden shadow-lg group
+        relative h-[275px] w-[180px] rounded-2xl overflow-hidden shadow-lg group
         bg-cover bg-center
       `}
         style={{ backgroundImage: `url(${poster})` }}
