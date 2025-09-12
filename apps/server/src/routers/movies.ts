@@ -22,12 +22,20 @@ import { TmdbMovieDetailsSchema } from "../validators/movies-details.validators"
 
 export const moviesRouter = router({
   getPopularMoviesByGenre: publicProcedure
-    .input(z.object({ genreId: z.number() }))
+    .input(
+      z.object({
+        genreId: z.number(),
+        cursor: z.number().optional(),
+      })
+    )
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
-    .query(({ input }) => {
+    .query(async ({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getPopularMoviesByGenre(input.genreId);
+        return await getPopularMoviesByGenre(input.genreId, page);
       } catch (error) {
+        console.error("Error in getPopularMoviesByGenre:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error fetching popular movies by genre",
