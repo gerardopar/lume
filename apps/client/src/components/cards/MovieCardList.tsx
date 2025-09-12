@@ -11,7 +11,8 @@ import type { TmdbMovie } from "@my/api";
 export const MovieCardList: React.FC<{
   title?: string;
   genreId: number;
-}> = ({ title, genreId }) => {
+  className?: string;
+}> = ({ title, genreId, className }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     trpc.movies.getPopularMoviesByGenre.useInfiniteQuery(
       { genreId },
@@ -103,7 +104,7 @@ export const MovieCardList: React.FC<{
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="w-full relative mt-4">
+    <div className={`w-full relative ${className}`}>
       {title && (
         <h2 className="text-xl font-bold font-inter mb-4 ml-2">{title}</h2>
       )}

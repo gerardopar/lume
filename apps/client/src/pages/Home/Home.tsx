@@ -12,7 +12,11 @@ export const Home: React.FC = () => {
     <MainLayout>
       <TopBar />
       <Hero />
-      <MovieCardList title="Animation" genreId={GenresEnum.Animation} />
+      <MovieCardList
+        title="Animation"
+        genreId={GenresEnum.Animation}
+        className="mt-4"
+      />
       <MovieCardList title="Comedy" genreId={GenresEnum.Comedy} />
     </MainLayout>
   );
