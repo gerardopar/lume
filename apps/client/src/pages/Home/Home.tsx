@@ -12,7 +12,8 @@ export const Home: React.FC = () => {
     <MainLayout>
       <TopBar />
       <Hero />
-      <MovieCardList title="Popular Movies" genreId={GenresEnum.Animation} />
+      <MovieCardList title="Animation" genreId={GenresEnum.Animation} />
+      <MovieCardList title="Comedy" genreId={GenresEnum.Comedy} />
     </MainLayout>
   );
 };

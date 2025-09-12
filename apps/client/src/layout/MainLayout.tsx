@@ -11,7 +11,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
       <Sidenav />
 
       {/* main content panel */}
-      <div className="h-full w-full flex flex-col px-6 overflow-y-scroll">
+      <div className="h-full w-full flex flex-col px-6 overflow-y-scroll relative">
         {children}
       </div>
     </div>

@@ -7,7 +7,7 @@ export const TopBar: React.FC = () => {
   const [search, setSearch] = useState<string>("");
 
   return (
-    <header className="w-full mb-6">
+    <header className="w-full sticky top-0 z-50 bg-lume-primary-dark pb-4 mb-2">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center flex-1 max-w-[60%] relative">
           <input
