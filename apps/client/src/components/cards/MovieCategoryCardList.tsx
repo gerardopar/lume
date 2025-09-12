@@ -9,7 +9,7 @@ import ChevronRight from "@components/svgs/ChevronRight";
 import type { TmdbMovie } from "@my/api";
 import MovieCardSkeleton from "@components/skeleton/MovieCardSkeleton";
 
-export const MovieCardList: React.FC<{
+export const MovieCategoryCardList: React.FC<{
   title?: string;
   genreId: number;
   className?: string;
@@ -126,7 +126,7 @@ export const MovieCardList: React.FC<{
     return (
       <div className={`w-full relative ${className}`}>
         {title && (
-          <h2 className="text-xl font-bold font-inter mb-4 ml-2">{title}</h2>
+          <h2 className="text-xl font-bold font-inter mb-2 ml-2">{title}</h2>
         )}
         <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
           {[...Array(10)].map((_, idx) => (
@@ -140,7 +140,7 @@ export const MovieCardList: React.FC<{
   return (
     <div className={`w-full relative ${className}`}>
       {title && (
-        <h2 className="text-xl font-bold font-inter mb-4 ml-2">{title}</h2>
+        <h2 className="text-xl font-bold font-inter mb-2 ml-2">{title}</h2>
       )}
 
       {!isAtStart && (
@@ -182,4 +182,4 @@ export const MovieCardList: React.FC<{
   );
 };
 
-export default MovieCardList;
+export default MovieCategoryCardList;

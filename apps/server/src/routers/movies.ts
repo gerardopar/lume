@@ -58,11 +58,13 @@ export const moviesRouter = router({
       }
     }),
   getPopularMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getPopularMovies(input.page || 1);
+        return getPopularMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -72,11 +74,13 @@ export const moviesRouter = router({
       }
     }),
   getTopRatedMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getTopRatedMovies(input.page || 1);
+        return getTopRatedMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -86,11 +90,13 @@ export const moviesRouter = router({
       }
     }),
   getUpcomingMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getUpcomingMovies(input.page || 1);
+        return getUpcomingMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -100,11 +106,13 @@ export const moviesRouter = router({
       }
     }),
   getNowPlayingMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getNowPlayingMovies(input.page || 1);
+        return getNowPlayingMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
