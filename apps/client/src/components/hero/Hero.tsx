@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
-
-import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
-
-import { getRandomMovie, getGenres } from "../../helpers/movie.helpers";
-
 import { trpc } from "@utils/trpc";
 
+import HeroSkeleton from "@components/skeleton/HeroSkeleton";
+
+import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
+import { getRandomMovie, getGenres } from "../../helpers/movie.helpers";
+
 export const Hero: React.FC = () => {
-  const { data } = trpc.movies.getPopularMovies.useQuery({
+  const { data, isLoading } = trpc.movies.getPopularMovies.useQuery({
     page: 1,
   });
 
@@ -19,6 +19,8 @@ export const Hero: React.FC = () => {
     () => buildImageUrl(config, "backdrop", backdrop_path!, "original"),
     [backdrop_path]
   );
+
+  if (isLoading) return <HeroSkeleton />;
 
   return (
     <div
