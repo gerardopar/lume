@@ -24,7 +24,7 @@ export const Hero: React.FC = () => {
 
   return (
     <div
-      className="h-[50%] w-full flex flex-col rounded-2xl overflow-hidden p-6"
+      className="h-[50%] min-h-[400px] w-full flex flex-col rounded-2xl overflow-hidden p-6"
       style={{
         backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${poster})`,
         backgroundSize: "cover",
