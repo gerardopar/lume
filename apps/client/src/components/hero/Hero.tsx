@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 
@@ -11,11 +11,14 @@ export const Hero: React.FC = () => {
     page: 1,
   });
 
-  const movie = getRandomMovie(data?.results ?? []);
+  const movie = useMemo(() => getRandomMovie(data?.results ?? []), [data]);
   const { title, overview, backdrop_path } = movie ?? {};
 
-  const genres = getGenres(movie!, 3);
-  const poster = buildImageUrl(config, "backdrop", backdrop_path!, "original");
+  const genres = useMemo(() => getGenres(movie!, 3), [movie]);
+  const poster = useMemo(
+    () => buildImageUrl(config, "backdrop", backdrop_path!, "original"),
+    [backdrop_path]
+  );
 
   return (
     <div
