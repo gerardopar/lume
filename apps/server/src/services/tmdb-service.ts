@@ -106,9 +106,25 @@ export const searchMulti = async (query: string, page = 1) => {
     "/search/multi",
     { params: { query, page } }
   );
-  return res.data;
-};
 
+  // filter out person results
+  let results = res.data.results.filter(
+    (result) => result.media_type !== "person"
+  );
+
+  // sort movies first, then tv shows
+  results = results.sort((a, b) => {
+    if (a.media_type === b.media_type) return 0;
+    if (a.media_type === "movie") return -1;
+    if (b.media_type === "movie") return 1;
+    return 0;
+  });
+
+  return {
+    ...res.data,
+    results,
+  };
+};
 export const tmdbSearch = async (
   query: string,
   page: number = 1,
