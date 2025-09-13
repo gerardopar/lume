@@ -1,7 +1,7 @@
 import React from "react";
 
 import BellIcon from "@components/svgs/BellIcon";
-import SuggestionsInput from "@components/SuggestionsInput/SuggestionsInput";
+import SuggestionsInput from "@components/suggestionsInput/SuggestionsInput";
 
 export const TopBar: React.FC = () => {
   return (
