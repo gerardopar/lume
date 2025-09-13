@@ -6,7 +6,10 @@ import SuggestionsFilterDropdown from "./SuggestionsFilterDropdown";
 import SearchIcon from "@components/svgs/SearchIcon";
 import XIcon from "@components/svgs/XIcon";
 
-import { FilterOptionEnum } from "./suggestions-input.helpers";
+import {
+  FilterOptionEnum,
+  normalizeResultByFilter,
+} from "./suggestions-input.helpers";
 
 export const SuggestionsInput: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -32,7 +35,7 @@ export const SuggestionsInput: React.FC = () => {
   }, [search, debouncedUpdate]);
 
   const { data, isLoading } = trpc.movies.searchKeywords.useQuery(
-    { query: debouncedSearch },
+    { query: debouncedSearch, filter: activeFilter },
     { enabled: debouncedSearch.length > 0 }
   );
 
@@ -58,7 +61,11 @@ export const SuggestionsInput: React.FC = () => {
 
       if (e.key === "Enter" && highlightedIndex >= 0) {
         e.preventDefault();
-        setSearch(results[highlightedIndex].name);
+        const item = normalizeResultByFilter(
+          activeFilter,
+          results[highlightedIndex]
+        );
+        setSearch(item.name);
         setOpen(false);
         setHighlightedIndex(-1);
 
@@ -132,27 +139,33 @@ export const SuggestionsInput: React.FC = () => {
 
         {open && results.length > 0 && (
           <ul className="absolute top-full w-full bg-lume-secondary-dark rounded-b-xl shadow-lg z-50 overflow-hidden max-h-[200px] overflow-y-scroll touch-pan-up">
-            {results.map((item, idx) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  className={`cursor-pointer w-full text-base font-poppins font-[200] text-left px-4 py-2 capitalize
+            {results.map((item, idx) => {
+              const itemByMediaType = normalizeResultByFilter(
+                activeFilter,
+                item
+              );
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`cursor-pointer w-full text-base font-poppins font-[200] text-left px-4 py-2 capitalize
                       ${
                         idx === highlightedIndex
                           ? "bg-lume-primary-dark/70 text-white"
                           : "hover:bg-lume-primary-dark/50 text-lume-primary-light"
                       }
                     `}
-                  onClick={() => {
-                    setSearch(item.name);
-                    setOpen(false);
-                    setHighlightedIndex(-1);
-                  }}
-                >
-                  {item.name}
-                </button>
-              </li>
-            ))}
+                    onClick={() => {
+                      setSearch(itemByMediaType.name);
+                      setOpen(false);
+                      setHighlightedIndex(-1);
+                    }}
+                  >
+                    {itemByMediaType.name}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
