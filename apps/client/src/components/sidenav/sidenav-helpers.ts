@@ -1,9 +1,10 @@
+import React from "react";
+
 import { HomeIcon } from "../svgs/HomeIcon";
 import { UserIcon } from "../svgs/UserIcon";
 import { HeartIcon } from "../svgs/HeartIcon";
 import { CompassIcon } from "../svgs/CompassIcon";
 import { SettingsIcon } from "../svgs/SettingsIcon";
-import React from "react";
 
 export interface SidenavLink {
   id: number;

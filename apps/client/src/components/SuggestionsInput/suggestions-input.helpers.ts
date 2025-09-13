@@ -4,6 +4,11 @@ export enum FilterOptionEnum {
   TV = "tv",
 }
 
+export enum MediaTypeEnum {
+  Movie = "movie",
+  TV = "tv",
+}
+
 export interface FilterOption {
   id: number;
   value: FilterOptionEnum;

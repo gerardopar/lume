@@ -3,13 +3,16 @@ import debounce from "lodash/debounce";
 import { trpc } from "@utils/trpc";
 
 import SuggestionsFilterDropdown from "./SuggestionsFilterDropdown";
+import SuggestionsResultsList from "./SuggestionsResultsList";
 import SearchIcon from "@components/svgs/SearchIcon";
 import XIcon from "@components/svgs/XIcon";
 
 import {
   FilterOptionEnum,
+  MediaTypeEnum,
   normalizeResultByFilter,
 } from "./suggestions-input.helpers";
+import type { MultiSearchResult } from "@my/api";
 
 export const SuggestionsInput: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -104,6 +107,13 @@ export const SuggestionsInput: React.FC = () => {
 
   const inputDecoration = getInputDecoration();
 
+  const movieResults = results.filter(
+    (result) => (result as MultiSearchResult).media_type === "movie"
+  );
+  const tvShowResults = results.filter(
+    (result) => (result as MultiSearchResult).media_type === "tv"
+  );
+
   return (
     <div className="w-full flex items-center">
       <SuggestionsFilterDropdown
@@ -139,33 +149,47 @@ export const SuggestionsInput: React.FC = () => {
 
         {open && results.length > 0 && (
           <ul className="absolute top-full w-full bg-lume-secondary-dark rounded-b-xl shadow-lg z-50 overflow-hidden max-h-[200px] overflow-y-scroll touch-pan-up">
-            {results.map((item, idx) => {
-              const itemByMediaType = normalizeResultByFilter(
-                activeFilter,
-                item
-              );
-              return (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    className={`cursor-pointer w-full text-base font-poppins font-[200] text-left px-4 py-2 capitalize
-                      ${
-                        idx === highlightedIndex
-                          ? "bg-lume-primary-dark/70 text-white"
-                          : "hover:bg-lume-primary-dark/50 text-lume-primary-light"
-                      }
-                    `}
-                    onClick={() => {
-                      setSearch(itemByMediaType.name);
-                      setOpen(false);
-                      setHighlightedIndex(-1);
-                    }}
-                  >
-                    {itemByMediaType.name}
-                  </button>
-                </li>
-              );
-            })}
+            {movieResults.length > 0 && (
+              <>
+                <p className="px-4 text-left text-sm font-inter text-lume-primary-light/70 mb-2">
+                  Movies
+                </p>
+                <SuggestionsResultsList
+                  results={movieResults as MultiSearchResult[]}
+                  activeFilter={activeFilter}
+                  highlightedIndex={highlightedIndex}
+                  setHighlightedIndex={setHighlightedIndex}
+                  setSearch={setSearch}
+                  setOpen={setOpen}
+                  mediaType={MediaTypeEnum.Movie}
+                />
+              </>
+            )}
+
+            {tvShowResults.length > 0 && movieResults.length > 0 && (
+              <>
+                <div className="px-4 text-left">
+                  <div className="divider" />
+                </div>
+              </>
+            )}
+
+            {tvShowResults.length > 0 && (
+              <>
+                <p className="px-4 text-left text-sm font-inter text-lume-primary-light/70 mb-2">
+                  TV Shows
+                </p>
+                <SuggestionsResultsList
+                  results={tvShowResults as MultiSearchResult[]}
+                  activeFilter={activeFilter}
+                  highlightedIndex={highlightedIndex}
+                  setHighlightedIndex={setHighlightedIndex}
+                  setSearch={setSearch}
+                  setOpen={setOpen}
+                  mediaType={MediaTypeEnum.TV}
+                />
+              </>
+            )}
           </ul>
         )}
       </div>
