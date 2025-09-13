@@ -4,19 +4,20 @@ import { publicProcedure, router } from "../trpc";
 
 import {
   searchMovies,
-  searchKeywords,
   getMovieDetails,
   getPopularMovies,
   getTopRatedMovies,
   getUpcomingMovies,
   getNowPlayingMovies,
   getPopularMoviesByGenre,
+  tmdbSearch,
 } from "../services/tmdb-service";
+
+import { FilterOptionEnum } from "../types/tmdb.types";
 
 import {
   TmdbMovieSchema,
   TmdbPaginatedResponseSchema,
-  TmdbKeywordSchema,
 } from "../validators/movies.validators";
 import { TmdbMovieDetailsSchema } from "../validators/movies-details.validators";
 
@@ -122,25 +123,40 @@ export const moviesRouter = router({
       }
     }),
   searchKeywords: publicProcedure
-    .input(z.object({ query: z.string(), page: z.number().optional() }))
-    .output(TmdbPaginatedResponseSchema(TmdbKeywordSchema))
-    .query(({ input }) => {
+    .input(
+      z.object({
+        query: z.string(),
+        cursor: z.number().optional(),
+        filter: z
+          .enum([
+            FilterOptionEnum.All,
+            FilterOptionEnum.Movies,
+            FilterOptionEnum.TV,
+          ])
+          .optional()
+          .default(FilterOptionEnum.All),
+      })
+    )
+    .query(async ({ input }) => {
+      const page = input.cursor ?? 1;
       try {
-        return searchKeywords(input.query, input.page || 1);
+        return await tmdbSearch(input.query, page, input.filter);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching search keywords",
+          message: "Error fetching search",
           cause: error,
         });
       }
     }),
   searchMovies: publicProcedure
-    .input(z.object({ query: z.string(), page: z.number().optional() }))
+    .input(z.object({ query: z.string(), cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return searchMovies(input.query, input.page || 1);
+        return searchMovies(input.query, page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

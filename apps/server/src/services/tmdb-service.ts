@@ -5,6 +5,9 @@ import {
   TmdbMovie,
   TmdbPaginatedResponse,
   TmdbKeywordSearchResponse,
+  TmdbTvShow,
+  MultiSearchResult,
+  FilterOptionEnum,
 } from "../types/tmdb.types";
 import { TmdbMovieDetails } from "../validators/movies-details.validators";
 
@@ -76,6 +79,13 @@ export const getNowPlayingMovies = async (page = 1) => {
   return res.data;
 };
 
+export const searchKeywords = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbKeywordSearchResponse>("/search/keyword", {
+    params: { query, page },
+  });
+  return res.data;
+};
+
 export const searchMovies = async (query: string, page = 1) => {
   const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
     "/search/movie",
@@ -84,9 +94,33 @@ export const searchMovies = async (query: string, page = 1) => {
   return res.data;
 };
 
-export const searchKeywords = async (query: string, page = 1) => {
-  const res = await tmdb.get<TmdbKeywordSearchResponse>("/search/keyword", {
+export const searchTvShows = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbTvShow>>("/search/tv", {
     params: { query, page },
   });
   return res.data;
+};
+
+export const searchMulti = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<MultiSearchResult>>(
+    "/search/multi",
+    { params: { query, page } }
+  );
+  return res.data;
+};
+
+export const tmdbSearch = async (
+  query: string,
+  page: number = 1,
+  filter?: FilterOptionEnum
+) => {
+  if (filter === FilterOptionEnum.All) {
+    return searchMulti(query, page);
+  } else if (filter === FilterOptionEnum.Movies) {
+    return searchMovies(query, page);
+  } else if (filter === FilterOptionEnum.TV) {
+    return searchTvShows(query, page);
+  }
+
+  return searchMulti(query, page);
 };
