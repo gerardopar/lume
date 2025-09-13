@@ -2,8 +2,11 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import debounce from "lodash/debounce";
 import { trpc } from "@utils/trpc";
 
+import SuggestionsFilterDropdown from "./SuggestionsFilterDropdown";
 import SearchIcon from "@components/svgs/SearchIcon";
-import XIcon from "@components/svgs/X";
+import XIcon from "@components/svgs/XIcon";
+
+import { FilterOptionEnum } from "./suggestions-input.helpers";
 
 export const SuggestionsInput: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -11,6 +14,10 @@ export const SuggestionsInput: React.FC = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+
+  const [activeFilter, setActiveFilter] = useState<FilterOptionEnum>(
+    FilterOptionEnum.All
+  );
 
   const debouncedUpdate = useMemo(
     () =>
@@ -91,20 +98,25 @@ export const SuggestionsInput: React.FC = () => {
   const inputDecoration = getInputDecoration();
 
   return (
-    <div className="flex items-center flex-1 max-w-[60%] relative">
-      <input
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setOpen(true);
-          setHighlightedIndex(-1);
-        }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        onKeyDown={handleKeyDown}
-        type="text"
-        placeholder="Search"
-        className={`
+    <div className="w-full flex items-center">
+      <SuggestionsFilterDropdown
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+      />
+      <div className="flex items-center flex-1 max-w-[60%] relative">
+        <input
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setOpen(true);
+            setHighlightedIndex(-1);
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          onKeyDown={handleKeyDown}
+          type="text"
+          placeholder="Search"
+          className={`
               w-full bg-lume-secondary-dark rounded-full p-2 py-[10px] placeholder:text-lume-primary-light 
               focus:outline-none placeholder:font-poppins placeholder:font-[200] placeholder:text-[16px] pl-4
               font-poppins font-[200] text-base
@@ -114,35 +126,36 @@ export const SuggestionsInput: React.FC = () => {
                   : ""
               }
             `}
-      />
+        />
 
-      {inputDecoration}
+        {inputDecoration}
 
-      {open && results.length > 0 && (
-        <ul className="absolute top-full w-full bg-lume-secondary-dark rounded-b-xl shadow-lg z-50 overflow-hidden max-h-[200px] overflow-y-scroll touch-pan-up">
-          {results.map((item, idx) => (
-            <li key={item.id}>
-              <button
-                type="button"
-                className={`w-full text-base font-poppins font-[200] text-left px-4 py-2 capitalize
+        {open && results.length > 0 && (
+          <ul className="absolute top-full w-full bg-lume-secondary-dark rounded-b-xl shadow-lg z-50 overflow-hidden max-h-[200px] overflow-y-scroll touch-pan-up">
+            {results.map((item, idx) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className={`cursor-pointer w-full text-base font-poppins font-[200] text-left px-4 py-2 capitalize
                       ${
                         idx === highlightedIndex
                           ? "bg-lume-primary-dark/70 text-white"
                           : "hover:bg-lume-primary-dark/50 text-lume-primary-light"
                       }
                     `}
-                onClick={() => {
-                  setSearch(item.name);
-                  setOpen(false);
-                  setHighlightedIndex(-1);
-                }}
-              >
-                {item.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                  onClick={() => {
+                    setSearch(item.name);
+                    setOpen(false);
+                    setHighlightedIndex(-1);
+                  }}
+                >
+                  {item.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
