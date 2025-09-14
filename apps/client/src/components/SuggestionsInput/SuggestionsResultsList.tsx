@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 
 import ChevronRight from "@components/svgs/ChevronRight";
+import MovieDetails from "../movie/MovieDetails";
 
 import {
   FilterOptionEnum,
@@ -78,7 +79,10 @@ export const SuggestionsResultsList: React.FC<{
                 setSearch(itemByMediaType.name);
                 setOpen(false);
                 setHighlightedIndex(-1);
-                open(<div>hello world</div>, { type: ModalTypesEnum.Bottom });
+                open(<MovieDetails movie={itemByMediaType} />, {
+                  type: ModalTypesEnum.Bottom,
+                  modalBoxClassName: "p-0",
+                });
               }}
             >
               <img
