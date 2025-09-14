@@ -3,7 +3,7 @@ import { UserRecord } from "firebase-admin/auth";
 
 import { User } from "../models/user";
 
-import { updateFirebaseUser } from "../firebase/firebase.helpers.js";
+import { updateFirebaseUser } from "../firebase/firebase.helpers";
 
 export const getUserById = async (id: string) => {
   try {

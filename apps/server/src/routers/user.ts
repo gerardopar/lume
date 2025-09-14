@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { protectedProcedure, publicProcedure, router } from "../trpc.js";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 import {
   getUserByFirebaseUid,
@@ -13,8 +13,8 @@ import {
 
 import { User } from "../models/user";
 
-import { getProfileUploadUrl } from "../aws/s3.helpers.js";
-import { deleteFirebaseUser } from "../firebase/firebase.helpers.js";
+import { getProfileUploadUrl } from "../aws/s3.helpers";
+import { deleteFirebaseUser } from "../firebase/firebase.helpers";
 
 export const userRouter = router({
   createUser: publicProcedure
@@ -137,13 +137,14 @@ export const userRouter = router({
       try {
         const firebaseUid = ctx.user?.uid!;
         const user = await getUserByFirebaseUid(firebaseUid);
+
         if (!user)
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "User not found",
           });
 
-        await deleteUser(user._id!);
+        await deleteUser(user?._id?.toString()!);
         await deleteFirebaseUser(firebaseUid);
 
         return user;

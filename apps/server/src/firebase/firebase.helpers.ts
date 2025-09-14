@@ -1,4 +1,4 @@
-import { firebaseAdmin } from "./firebase.js";
+import { firebaseAdmin } from "./firebase";
 import { UserRecord } from "firebase-admin/auth";
 import { TRPCError } from "@trpc/server";
 
