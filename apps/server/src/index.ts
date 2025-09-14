@@ -5,6 +5,7 @@ import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
 
 import { connectRedis } from "./cache/redisClient";
+import { connectDB } from "./db/db";
 
 import { appRouter } from "./appRouter";
 
@@ -28,6 +29,7 @@ app.use(
 
 const startServer = async () => {
   try {
+    await connectDB();
     await connectRedis();
 
     app.listen(port, () => {
