@@ -11,6 +11,11 @@ import {
 } from "../types/tmdb.types";
 import { TmdbMovieDetails } from "../validators/movies-details.validators";
 
+import {
+  MovieVideosResponse,
+  TVSeasonVideosResponse,
+} from "../types/tmdb.types";
+
 const TMDB_API_URL = "https://api.themoviedb.org/3";
 
 const tmdb = axios.create({
@@ -139,4 +144,19 @@ export const tmdbSearch = async (
   }
 
   return searchMulti(query, page);
+};
+
+export const getMovieVideos = async (movieId: number) => {
+  const res = await tmdb.get<MovieVideosResponse>(`/movie/${movieId}/videos`);
+  return res.data;
+};
+
+export const getTvSeasonVideos = async (
+  seriesId: number,
+  seasonNumber: number
+) => {
+  const res = await tmdb.get<TVSeasonVideosResponse>(
+    `/tv/${seriesId}/season/${seasonNumber}/videos`
+  );
+  return res.data;
 };

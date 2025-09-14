@@ -131,3 +131,30 @@ export interface MultiSearchResponse {
   total_results: number;
   total_pages: number;
 }
+
+// Video result from Movie or TV Season
+export interface VideoResult {
+  id: string;
+  iso_639_1: string | null;
+  iso_3166_1: string | null;
+  key: string; // e.g. the YouTube video key or similar
+  name: string;
+  site: string; // e.g. "YouTube"
+  size: number; // e.g. 720, 1080
+  type: string; // e.g. "Trailer", "Teaser", "Clip"
+  official?: boolean; // sometimes present in responses
+  published_at?: string; // timestamp, ISO format
+}
+
+// Response for Movie Videos
+export interface MovieVideosResponse {
+  id: number;
+  results: VideoResult[];
+}
+
+// Response for TV Season Videos
+export interface TVSeasonVideosResponse {
+  id: number; // the TV show ID
+  season_number: number;
+  results: VideoResult[];
+}
