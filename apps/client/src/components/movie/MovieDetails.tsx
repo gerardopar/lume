@@ -1,6 +1,7 @@
 import React from "react";
 import { trpc } from "@utils/trpc";
-import { keepPreviousData } from "@tanstack/react-query";
+
+import VideoPlayer from "../video/VideoPlayer";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 import type { TmdbMovie } from "@my/api";
@@ -15,10 +16,9 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
     "original"
   );
 
-  const { data: videos } = trpc.movies.getMovieVideos.useQuery(
-    { movieId: movie.id },
-    { placeholderData: keepPreviousData }
-  );
+  const { data: videos } = trpc.movies.getMovieVideos.useQuery({
+    movieId: movie.id,
+  });
 
   const trailer = videos?.results.find(
     (v) => v.type === "Trailer" && v.site === "YouTube"
@@ -28,11 +28,14 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
     <div className="relative w-full h-[500px] overflow-hidden bg-lume-primary-dark">
       {/* Right-side trailer or fallback backdrop */}
       <div className="absolute right-0 top-0 w-1/2 h-full z-0 overflow-hidden">
-        <img
-          src={backdropPath}
-          alt={movie.title}
-          className="object-cover w-full h-full"
-        />
+        {trailer && <VideoPlayer videoKey={trailer.key} />}
+        {!trailer && backdropPath && (
+          <img
+            src={backdropPath!}
+            alt={movie.title}
+            className="object-cover w-full h-full"
+          />
+        )}
       </div>
 
       {/* Gradient overlay */}
@@ -42,7 +45,7 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
       <div className="relative z-20 flex items-center p-6 h-full">
         <div className="w-[200px] h-[300px] min-h-[300px] min-w-[200px] rounded-2xl overflow-hidden shadow-lg">
           <img
-            src={posterPath}
+            src={posterPath!}
             alt={movie.title}
             className="object-cover w-full h-full"
           />
