@@ -20,6 +20,7 @@ export type ModalState = {
 export type ModalOptions = {
   type?: ModalTypesEnum;
   dismissible?: boolean;
+  modalBoxClassName?: string; // content container
 };
 
 export const modalStore = createStore<ModalState>(
@@ -29,6 +30,7 @@ export const modalStore = createStore<ModalState>(
     options: {
       type: ModalTypesEnum.Middle,
       dismissible: true,
+      modalBoxClassName: "",
     },
   },
   {
@@ -38,7 +40,7 @@ export const modalStore = createStore<ModalState>(
     mutative: true,
   }
 ).extendActions(({ set }) => ({
-  open: (content: ReactNode, options?: { type?: ModalTypesEnum }) => {
+  open: (content: ReactNode, options?: ModalOptions) => {
     set("state", (draft) => {
       draft.isOpen = true;
       draft.content = content;
@@ -52,7 +54,11 @@ export const modalStore = createStore<ModalState>(
     set("state", (draft) => {
       draft.isOpen = false;
       draft.content = null;
-      draft.options = { type: ModalTypesEnum.Middle, dismissible: true };
+      draft.options = {
+        type: ModalTypesEnum.Middle,
+        dismissible: true,
+        modalBoxClassName: "",
+      };
       return draft;
     });
   },

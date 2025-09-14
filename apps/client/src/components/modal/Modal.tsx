@@ -7,7 +7,8 @@ import { modalStore, ModalTypesEnum } from "../../stores/modals";
 export const Modal: React.FC = () => {
   const content = modalStore.useTracked("content");
   const isOpen = modalStore.useTracked("isOpen");
-  const { type, dismissible } = modalStore.useTracked("options");
+  const { type, dismissible, modalBoxClassName } =
+    modalStore.useTracked("options");
 
   const { close } = modalStore.actions;
 
@@ -67,18 +68,18 @@ export const Modal: React.FC = () => {
           {/* Modal box */}
           <motion.div
             key="modal-box"
-            className="modal-box"
+            className={`modal-box ${modalBoxClassName}`}
             initial={{ opacity: 0, y: offsetY, scale: scaleValue }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: offsetY, scale: scaleValue }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             {content}
-            <div className="modal-action">
+            {/* <div className="modal-action">
               <button className="btn" onClick={close}>
                 Close
               </button>
-            </div>
+            </div> */}
           </motion.div>
         </motion.div>
       )}
