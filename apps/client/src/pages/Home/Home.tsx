@@ -14,8 +14,19 @@ export const Home: React.FC = () => {
       <TopBar />
       <Hero />
       <MoviePopularCardList className="mt-4" />
-      <MovieCategoryCardList title="Animation" genreId={GenresEnum.Animation} />
+      <MovieCategoryCardList title="Action" genreId={GenresEnum.Action} />
+      <MovieCategoryCardList title="Adventure" genreId={GenresEnum.Adventure} />
       <MovieCategoryCardList title="Comedy" genreId={GenresEnum.Comedy} />
+      <MovieCategoryCardList title="Drama" genreId={GenresEnum.Drama} />
+      <MovieCategoryCardList
+        title="Sci-Fi"
+        genreId={GenresEnum.ScienceFiction}
+      />
+      <MovieCategoryCardList title="Thriller" genreId={GenresEnum.Thriller} />
+      <MovieCategoryCardList title="Horror" genreId={GenresEnum.Horror} />
+      <MovieCategoryCardList title="Fantasy" genreId={GenresEnum.Fantasy} />
+      <MovieCategoryCardList title="Crime" genreId={GenresEnum.Crime} />
+      <MovieCategoryCardList title="Romance" genreId={GenresEnum.Romance} />
     </MainLayout>
   );
 };

@@ -24,7 +24,7 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
         })
       }
       role="button"
-      className="relative min-h-[320px] max-h-[320px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300"
+      className="cursor-pointer relative min-h-[320px] max-h-[320px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300"
     >
       <div
         className={`

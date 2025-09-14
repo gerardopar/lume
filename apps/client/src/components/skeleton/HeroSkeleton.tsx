@@ -2,7 +2,7 @@ import React from "react";
 
 export const HeroSkeleton: React.FC = () => {
   return (
-    <div className="h-[50%] w-full flex flex-col rounded-2xl overflow-hidden p-6 bg-lume-secondary-dark animate-pulse">
+    <div className="h-[50%] min-h-[400px] w-full flex flex-col rounded-2xl overflow-hidden p-6 bg-lume-secondary-dark animate-pulse">
       <div className="w-full flex items-center justify-end">
         <div className="h-6 w-28 rounded-full bg-gray-600" />
       </div>
