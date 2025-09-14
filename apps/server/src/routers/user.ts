@@ -1,0 +1,169 @@
+import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import { protectedProcedure, publicProcedure, router } from "../trpc.js";
+
+import {
+  getUserByFirebaseUid,
+  createUser,
+  getUserById,
+  getUserByEmail,
+  updateUser,
+  deleteUser,
+} from "../accessLayer/user";
+
+import { User } from "../models/user";
+
+import { getProfileUploadUrl } from "../aws/s3.helpers.js";
+import { deleteFirebaseUser } from "../firebase/firebase.helpers.js";
+
+export const userRouter = router({
+  createUser: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+        firebaseUid: z.string(),
+        picture: z.string().optional(),
+      })
+    )
+    .output(z.object({ user: z.instanceof(User) }))
+    .mutation(async ({ input }) => {
+      try {
+        const existingUser = await getUserByFirebaseUid(input.firebaseUid);
+        if (existingUser)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "User already exists",
+          });
+
+        const user = await createUser(input);
+
+        return {
+          user,
+        };
+      } catch (error) {
+        throw error;
+      }
+    }),
+  getUserById: publicProcedure
+    .input(z.string())
+    .output(z.instanceof(User))
+    .query(async ({ input }) => {
+      try {
+        const user = await getUserById(input);
+        if (!user)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }),
+  getUserByEmail: publicProcedure
+    .input(z.string())
+    .output(z.instanceof(User))
+    .query(async ({ input }) => {
+      try {
+        const user = await getUserByEmail(input);
+        if (!user)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }),
+  getUserByFirebaseUid: publicProcedure
+    .input(z.string())
+    .output(z.instanceof(User))
+    .query(async ({ input }) => {
+      try {
+        const user = await getUserByFirebaseUid(input);
+        if (!user)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }),
+  getLoggedInUser: publicProcedure
+    .output(z.instanceof(User))
+    .query(async ({ ctx }) => {
+      try {
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+        if (!user)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }),
+  updateUser: publicProcedure
+    .input(
+      z.object({
+        name: z.string().optional(),
+        username: z.string().optional(),
+        bio: z.string().optional(),
+        picture: z.string().optional(),
+      })
+    )
+    .output(z.instanceof(User))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const user = await updateUser(ctx.user?.uid!, input);
+        if (!user)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }),
+  deleteUser: publicProcedure
+    .output(z.instanceof(User))
+    .mutation(async ({ ctx }) => {
+      try {
+        const firebaseUid = ctx.user?.uid!;
+        const user = await getUserByFirebaseUid(firebaseUid);
+        if (!user)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+
+        await deleteUser(user._id!);
+        await deleteFirebaseUser(firebaseUid);
+
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }),
+  getPresignedProfileUploadUrl: protectedProcedure
+    .input(
+      z.object({
+        contentType: z.string(),
+        fileExtension: z.string(),
+      })
+    )
+    .output(z.object({ uploadUrl: z.string(), fileUrl: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return await getProfileUploadUrl(
+        ctx?.user?.uid!,
+        input?.contentType!,
+        input?.fileExtension!
+      );
+    }),
+});
