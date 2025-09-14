@@ -15,6 +15,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoKey }) => {
       controls={false}
       width="100%"
       height="100%"
+      style={{ aspectRatio: "16/9", scale: "1.5" }}
     />
   );
 };

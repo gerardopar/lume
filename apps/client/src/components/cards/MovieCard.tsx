@@ -1,17 +1,31 @@
 import React from "react";
 
 import HeartIcon from "@components/svgs/HeartIcon";
+import MovieDetails from "../movie/MovieDetails";
+
+import { useModal, ModalTypesEnum } from "../../stores/modals";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 import type { TmdbMovie } from "@my/api";
 
 export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
+  const { open } = useModal();
+
   const { title, poster_path } = movie;
 
   const poster = buildImageUrl(config, "poster", poster_path!, "original");
 
   return (
-    <div className="relative min-h-[320px] max-h-[320px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300">
+    <div
+      onClick={() =>
+        open(<MovieDetails movie={movie} />, {
+          type: ModalTypesEnum.Bottom,
+          modalBoxClassName: "p-0",
+        })
+      }
+      role="button"
+      className="relative min-h-[320px] max-h-[320px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300"
+    >
       <div
         className={`
         relative h-[275px] w-[180px] rounded-2xl overflow-hidden shadow-lg group
