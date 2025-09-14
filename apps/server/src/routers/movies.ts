@@ -4,30 +4,45 @@ import { publicProcedure, router } from "../trpc";
 
 import {
   searchMovies,
-  searchKeywords,
   getMovieDetails,
   getPopularMovies,
   getTopRatedMovies,
   getUpcomingMovies,
   getNowPlayingMovies,
   getPopularMoviesByGenre,
+  tmdbSearch,
+  getMovieVideos,
+  getTvSeasonVideos,
 } from "../services/tmdb-service";
+
+import { FilterOptionEnum } from "../types/tmdb.types";
 
 import {
   TmdbMovieSchema,
   TmdbPaginatedResponseSchema,
-  TmdbKeywordSchema,
 } from "../validators/movies.validators";
 import { TmdbMovieDetailsSchema } from "../validators/movies-details.validators";
+import {
+  MovieVideosResponseSchema,
+  TVSeasonVideosResponseSchema,
+} from "../validators/videos.validators";
 
 export const moviesRouter = router({
   getPopularMoviesByGenre: publicProcedure
-    .input(z.object({ genreId: z.number() }))
+    .input(
+      z.object({
+        genreId: z.number(),
+        cursor: z.number().optional(),
+      })
+    )
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
-    .query(({ input }) => {
+    .query(async ({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getPopularMoviesByGenre(input.genreId);
+        return await getPopularMoviesByGenre(input.genreId, page);
       } catch (error) {
+        console.error("Error in getPopularMoviesByGenre:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error fetching popular movies by genre",
@@ -50,11 +65,13 @@ export const moviesRouter = router({
       }
     }),
   getPopularMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getPopularMovies(input.page || 1);
+        return getPopularMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -64,11 +81,13 @@ export const moviesRouter = router({
       }
     }),
   getTopRatedMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getTopRatedMovies(input.page || 1);
+        return getTopRatedMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -78,11 +97,13 @@ export const moviesRouter = router({
       }
     }),
   getUpcomingMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getUpcomingMovies(input.page || 1);
+        return getUpcomingMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -92,11 +113,13 @@ export const moviesRouter = router({
       }
     }),
   getNowPlayingMovies: publicProcedure
-    .input(z.object({ page: z.number().optional() }))
+    .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return getNowPlayingMovies(input.page || 1);
+        return getNowPlayingMovies(page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -106,29 +129,72 @@ export const moviesRouter = router({
       }
     }),
   searchKeywords: publicProcedure
-    .input(z.object({ query: z.string(), page: z.number().optional() }))
-    .output(TmdbPaginatedResponseSchema(TmdbKeywordSchema))
-    .query(({ input }) => {
+    .input(
+      z.object({
+        query: z.string(),
+        cursor: z.number().optional(),
+        filter: z
+          .enum([
+            FilterOptionEnum.All,
+            FilterOptionEnum.Movies,
+            FilterOptionEnum.TV,
+          ])
+          .optional()
+          .default(FilterOptionEnum.All),
+      })
+    )
+    .query(async ({ input }) => {
+      const page = input.cursor ?? 1;
       try {
-        return searchKeywords(input.query, input.page || 1);
+        return await tmdbSearch(input.query, page, input.filter);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching search keywords",
+          message: "Error fetching search",
           cause: error,
         });
       }
     }),
   searchMovies: publicProcedure
-    .input(z.object({ query: z.string(), page: z.number().optional() }))
+    .input(z.object({ query: z.string(), cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
     .query(({ input }) => {
+      const page = input.cursor ?? 1;
+
       try {
-        return searchMovies(input.query, input.page || 1);
+        return searchMovies(input.query, page);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error fetching search movies",
+          cause: error,
+        });
+      }
+    }),
+  getMovieVideos: publicProcedure
+    .input(z.object({ movieId: z.number() }))
+    .output(MovieVideosResponseSchema)
+    .query(({ input }) => {
+      try {
+        return getMovieVideos(input.movieId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching movie videos",
+          cause: error,
+        });
+      }
+    }),
+  getTvSeasonVideos: publicProcedure
+    .input(z.object({ seriesId: z.number(), seasonNumber: z.number() }))
+    .output(TVSeasonVideosResponseSchema)
+    .query(({ input }) => {
+      try {
+        return getTvSeasonVideos(input.seriesId, input.seasonNumber);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching TV season videos",
           cause: error,
         });
       }

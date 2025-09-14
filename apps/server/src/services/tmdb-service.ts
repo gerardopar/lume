@@ -5,8 +5,16 @@ import {
   TmdbMovie,
   TmdbPaginatedResponse,
   TmdbKeywordSearchResponse,
+  TmdbTvShow,
+  MultiSearchResult,
+  FilterOptionEnum,
 } from "../types/tmdb.types";
 import { TmdbMovieDetails } from "../validators/movies-details.validators";
+
+import {
+  MovieVideosResponse,
+  TVSeasonVideosResponse,
+} from "../types/tmdb.types";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3";
 
@@ -76,6 +84,13 @@ export const getNowPlayingMovies = async (page = 1) => {
   return res.data;
 };
 
+export const searchKeywords = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbKeywordSearchResponse>("/search/keyword", {
+    params: { query, page },
+  });
+  return res.data;
+};
+
 export const searchMovies = async (query: string, page = 1) => {
   const res = await tmdb.get<TmdbPaginatedResponse<TmdbMovie>>(
     "/search/movie",
@@ -84,9 +99,64 @@ export const searchMovies = async (query: string, page = 1) => {
   return res.data;
 };
 
-export const searchKeywords = async (query: string, page = 1) => {
-  const res = await tmdb.get<TmdbKeywordSearchResponse>("/search/keyword", {
+export const searchTvShows = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<TmdbTvShow>>("/search/tv", {
     params: { query, page },
   });
+  return res.data;
+};
+
+export const searchMulti = async (query: string, page = 1) => {
+  const res = await tmdb.get<TmdbPaginatedResponse<MultiSearchResult>>(
+    "/search/multi",
+    { params: { query, page } }
+  );
+
+  // filter out person results
+  let results = res.data.results.filter(
+    (result) => result.media_type !== "person"
+  );
+
+  // sort movies first, then tv shows
+  results = results.sort((a, b) => {
+    if (a.media_type === b.media_type) return 0;
+    if (a.media_type === "movie") return -1;
+    if (b.media_type === "movie") return 1;
+    return 0;
+  });
+
+  return {
+    ...res.data,
+    results,
+  };
+};
+export const tmdbSearch = async (
+  query: string,
+  page: number = 1,
+  filter?: FilterOptionEnum
+) => {
+  if (filter === FilterOptionEnum.All) {
+    return searchMulti(query, page);
+  } else if (filter === FilterOptionEnum.Movies) {
+    return searchMovies(query, page);
+  } else if (filter === FilterOptionEnum.TV) {
+    return searchTvShows(query, page);
+  }
+
+  return searchMulti(query, page);
+};
+
+export const getMovieVideos = async (movieId: number) => {
+  const res = await tmdb.get<MovieVideosResponse>(`/movie/${movieId}/videos`);
+  return res.data;
+};
+
+export const getTvSeasonVideos = async (
+  seriesId: number,
+  seasonNumber: number
+) => {
+  const res = await tmdb.get<TVSeasonVideosResponse>(
+    `/tv/${seriesId}/season/${seasonNumber}/videos`
+  );
   return res.data;
 };

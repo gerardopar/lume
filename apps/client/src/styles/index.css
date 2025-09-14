@@ -1,1 +1,16 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+/* Tailwind v4: define design tokens via @theme */
+@theme {
+  /* Colors */
+  --color-lume-primary-dark: #222831;
+  --color-lume-secondary-dark: #393e46;
+  --color-lume-primary-light: #eeeeee;
+  --color-lume-green: #46cdcf;
+  --color-lume-red: #fc2947;
+
+  /* Fonts (optional — enables `font-poppins` / `font-inter`) */
+  --font-poppins: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
