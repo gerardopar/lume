@@ -19,6 +19,7 @@ export type ModalState = {
 
 export type ModalOptions = {
   type?: ModalTypesEnum;
+  dismissible?: boolean;
 };
 
 export const modalStore = createStore<ModalState>(
@@ -27,6 +28,7 @@ export const modalStore = createStore<ModalState>(
     content: null,
     options: {
       type: ModalTypesEnum.Middle,
+      dismissible: true,
     },
   },
   {
@@ -50,7 +52,7 @@ export const modalStore = createStore<ModalState>(
     set("state", (draft) => {
       draft.isOpen = false;
       draft.content = null;
-      draft.options = { type: ModalTypesEnum.Middle };
+      draft.options = { type: ModalTypesEnum.Middle, dismissible: true };
       return draft;
     });
   },
