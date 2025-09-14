@@ -10,6 +10,8 @@ import {
 } from "./suggestions-input.helpers";
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 
+import { useModal } from "../../stores/modals";
+
 import type { MultiSearchResult } from "@my/api";
 
 export const SuggestionsResultsList: React.FC<{
@@ -29,6 +31,8 @@ export const SuggestionsResultsList: React.FC<{
   setOpen,
   mediaType,
 }) => {
+  const { open } = useModal();
+
   return (
     <>
       {results.map((item, idx) => {
@@ -74,6 +78,7 @@ export const SuggestionsResultsList: React.FC<{
                 setSearch(itemByMediaType.name);
                 setOpen(false);
                 setHighlightedIndex(-1);
+                open(<div>hello world</div>);
               }}
             >
               <img
