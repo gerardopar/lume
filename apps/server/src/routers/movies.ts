@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../trpc";
+import redisClient from "../cache/redisClient";
 
 import {
   searchMovies,
@@ -27,6 +28,8 @@ import {
   TVSeasonVideosResponseSchema,
 } from "../validators/videos.validators";
 
+const CACHE_TTL = 60 * 60; // 1 hour
+
 export const moviesRouter = router({
   getPopularMoviesByGenre: publicProcedure
     .input(
@@ -39,16 +42,37 @@ export const moviesRouter = router({
     .query(async ({ input }) => {
       const page = input.cursor ?? 1;
 
-      try {
-        return await getPopularMoviesByGenre(input.genreId, page);
-      } catch (error) {
-        console.error("Error in getPopularMoviesByGenre:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching popular movies by genre",
-          cause: error,
-        });
+      // cache only the first 5 pages
+      if (page <= 5) {
+        const cacheKey = `movies:popular:genre:${input.genreId}:page:${page}`;
+
+        try {
+          // Try cache first
+          const cached = await redisClient.get(cacheKey);
+          if (cached) {
+            return JSON.parse(cached);
+          }
+
+          // Otherwise fetch from TMDB
+          const res = await getPopularMoviesByGenre(input.genreId, page);
+
+          await redisClient.set(cacheKey, JSON.stringify(res), {
+            EX: CACHE_TTL,
+          });
+
+          return res;
+        } catch (error) {
+          console.error("Error in getPopularMoviesByGenre:", error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error fetching popular movies by genre",
+            cause: error,
+          });
+        }
       }
+
+      // If page > 5, skip caching
+      return getPopularMoviesByGenre(input.genreId, page);
     }),
   getMovieDetails: publicProcedure
     .input(z.object({ movieId: z.number() }))
@@ -65,21 +89,38 @@ export const moviesRouter = router({
       }
     }),
   getPopularMovies: publicProcedure
-    .input(z.object({ cursor: z.number().optional() }))
-    .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
-    .query(({ input }) => {
-      const page = input.cursor ?? 1;
+  .input(z.object({ cursor: z.number().optional() }))
+  .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
+  .query(async ({ input }) => {
+    const page = input.cursor ?? 1;
+
+    // cache only first 5 pages
+    if (page <= 5) {
+      const cacheKey = `movies:popular:page:${page}`;
 
       try {
-        return getPopularMovies(page);
+        const cached = await redisClient.get(cacheKey);
+        if (cached) {
+          return JSON.parse(cached);
+        }
+
+        const res = await getPopularMovies(page);
+        await redisClient.set(cacheKey, JSON.stringify(res), { EX: CACHE_TTL });
+
+        return res;
       } catch (error) {
+        console.error("Error in getPopularMovies:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error fetching popular movies",
           cause: error,
         });
       }
-    }),
+    }
+
+    // if page > 5, skip cache
+    return getPopularMovies(page);
+  });,
   getTopRatedMovies: publicProcedure
     .input(z.object({ cursor: z.number().optional() }))
     .output(TmdbPaginatedResponseSchema(TmdbMovieSchema))
