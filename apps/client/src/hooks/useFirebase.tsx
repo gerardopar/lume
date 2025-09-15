@@ -7,9 +7,13 @@ import {
 } from "firebase/auth";
 
 import { userStore } from "../stores/user";
+import { useToast } from "../stores/toasts";
+
+import ErrorToast from "../components/toast/ErrorToast";
 
 export const useFirebase = () => {
   const auth = getAuth();
+  const { open } = useToast();
 
   const user = userStore.useTracked("user");
   const { setUser, setHydrated, clearUser } = userStore.actions;
@@ -75,16 +79,25 @@ export const useFirebase = () => {
     } catch (error: unknown) {
       if ((error as { code: string }).code === "auth/email-already-in-use") {
         console.error("Email already in use");
+        open(<ErrorToast message="Email already in use" />, {
+          duration: 5000,
+        });
         return;
       }
 
       if ((error as { code: string }).code === "auth/invalid-email") {
         console.error("Invalid email");
+        open(<ErrorToast message="Invalid email" />, {
+          duration: 5000,
+        });
         return;
       }
 
       if ((error as { message: string }).message) {
         console.error((error as { message: string }).message);
+        open(<ErrorToast message={(error as { message: string }).message} />, {
+          duration: 5000,
+        });
         return;
       }
     }
