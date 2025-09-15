@@ -7,7 +7,13 @@ import { trpc } from "../utils/trpc";
 import { getAuth } from "firebase/auth";
 import type { PropsWithChildren } from "react";
 
+import { userStore } from "../stores/user";
+
 export const TrpcProvider = ({ children }: PropsWithChildren) => {
+  const user = userStore.useTracked("user");
+
+  console.log("user", user);
+
   const queryClient = new QueryClient();
   const auth = getAuth();
 

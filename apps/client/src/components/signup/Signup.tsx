@@ -1,24 +1,61 @@
 import React, { useState } from "react";
+import { z } from "zod";
 
 import { useFirebase } from "../../hooks/useFirebase";
 import { useModal } from "../../stores/modals";
 
+import GoogleIcon from "../../assets/images/google-logo.png";
+import { CloseButton } from "../shared/CloseButton";
+
+import { emailRegex, passwordRegex } from "../../const/regex";
+
+const schema = z.object({
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .regex(emailRegex, "Invalid email address"),
+  password: z
+    .string()
+    .nonempty("Password is required")
+    .regex(passwordRegex, "Invalid password"),
+});
+
 export const Signup: React.FC = () => {
   const { close } = useModal();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const {
     handleCreateUserWithEmailAndPassword: createUserWithEmailAndPassword,
   } = useFirebase();
 
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validate = () => {
+    const result = schema.safeParse({ email, password });
+
+    if (!result.success) {
+      const formatted = result.error.flatten().fieldErrors;
+      setErrors({
+        email: formatted.email?.[0],
+        password: formatted.password?.[0],
+      });
+      return false;
+    }
+
+    setErrors({});
+    return true;
+  };
+
   const handleCreateUserWithEmailAndPassword = async (
     email: string,
     password: string
   ) => {
-    if (email.length < 3 || password.length < 3) return;
+    if (!validate()) return;
 
     try {
       setIsLoading(true);
@@ -32,29 +69,91 @@ export const Signup: React.FC = () => {
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleCreateUserWithEmailAndPassword(email, password);
-      }}
-    >
-      <div className="mb-4">
-        <label htmlFor="email">Email</label>
-        <input type="email" onChange={(e) => setEmail(e.target.value)} />
-      </div>
+    <>
+      <div className="pb-4">
+        <CloseButton
+          onClick={() => close()}
+          className="absolute top-4 right-4"
+        />
+        <h2 className="text-2xl font-inter font-bold">Sign up to Lume.</h2>
+        <div className="text-sm font-poppins mt-1">
+          Already have an account?{" "}
+          <button
+            type="button"
+            className="text-lume-green cursor-pointer hover:underline"
+            onClick={() => {}}
+          >
+            Login
+          </button>
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleCreateUserWithEmailAndPassword(email, password);
+          }}
+          className="mt-4"
+        >
+          <div className="mb-4 w-full">
+            <p className="mb-2 font-poppins font-[400] text-sm pl-1">Email</p>
+            <input
+              type="email"
+              placeholder="Email address"
+              onChange={(e) => setEmail(e.target.value)}
+              className={`w-full p-2 border-lume-secondary-dark/90 border-[1px] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-lume-primary-dark font-poppins font-[200] pl-2 ${
+                errors.email ? "border-red-400" : ""
+              }`}
+            />
+            {errors.email && (
+              <p className="text-red-400 pl-1 text-xs mt-1">{errors.email}</p>
+            )}
+          </div>
 
-      <div className="mb-4">
-        <label htmlFor="password">Password</label>
-        <input type="password" onChange={(e) => setPassword(e.target.value)} />
-      </div>
+          <div className="mb-6 w-full">
+            <div className="w-full flex items-center justify-between">
+              <p className="mb-2 font-poppins font-[400] text-sm pl-1">
+                Password
+              </p>
+              {/* <button
+              type="button"
+              className="text-lume-green font-poppins font-[400] text-sm pl-1"
+            >
+              Forgot password?
+            </button> */}
+            </div>
+            <input
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className={`w-full p-2 border-lume-secondary-dark/90 border-[1px] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-lume-primary-dark font-poppins font-[200] pl-2 ${
+                errors.password ? "border-red-400" : ""
+              }`}
+            />
+            {errors.password && (
+              <p className="text-red-400 pl-1 text-xs mt-1">
+                {errors.password}
+              </p>
+            )}
+          </div>
 
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-lume-green/90 text-white p-2 rounded-[10px] w-full cursor-pointer hover:bg-lume-green/60 transition-colors duration-200 ease-in-out"
+          >
+            {isLoading ? "Signing up..." : "Sign up"}
+          </button>
+        </form>
+      </div>
+      <div className="divider font-poppins font-[200]">OR</div>
       <button
-        type="submit"
-        disabled={isLoading}
-        className="bg-lume-primary-dark text-white p-2 rounded"
+        type="button"
+        className="btn btn-outline flex items-center justify-center w-full relative hover:bg-lume-primary-dark/50 border-lume-secondary-dark/90 border-[1px] rounded-[10px]"
       >
-        {isLoading ? "Signing up..." : "Sign Up"}
+        <div className="flex items-center justify-center h-auto w-[25px] absolute left-2 top-1/2 -translate-y-1/2">
+          <img src={GoogleIcon} alt="Google" />
+        </div>
+        <span className="ml-2">Sign up with Google</span>
       </button>
-    </form>
+    </>
   );
 };
