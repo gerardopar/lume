@@ -42,7 +42,12 @@ export const userRouter = router({
           user,
         };
       } catch (error) {
-        throw error;
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error creating user",
+          cause: error,
+        });
       }
     }),
   getUserById: publicProcedure
@@ -58,7 +63,11 @@ export const userRouter = router({
           });
         return user;
       } catch (error) {
-        throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error getting user by id",
+          cause: error,
+        });
       }
     }),
   getUserByEmail: publicProcedure
@@ -74,7 +83,11 @@ export const userRouter = router({
           });
         return user;
       } catch (error) {
-        throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error getting user by email",
+          cause: error,
+        });
       }
     }),
   getUserByFirebaseUid: publicProcedure
@@ -90,7 +103,11 @@ export const userRouter = router({
           });
         return user;
       } catch (error) {
-        throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error getting user by firebase uid",
+          cause: error,
+        });
       }
     }),
   getLoggedInUser: publicProcedure
@@ -105,7 +122,11 @@ export const userRouter = router({
           });
         return user;
       } catch (error) {
-        throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error getting logged in user",
+          cause: error,
+        });
       }
     }),
   updateUser: publicProcedure
@@ -128,7 +149,11 @@ export const userRouter = router({
           });
         return user;
       } catch (error) {
-        throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error updating user",
+          cause: error,
+        });
       }
     }),
   deleteUser: publicProcedure
@@ -149,7 +174,11 @@ export const userRouter = router({
 
         return user;
       } catch (error) {
-        throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error deleting user",
+          cause: error,
+        });
       }
     }),
   getPresignedProfileUploadUrl: protectedProcedure

@@ -42,6 +42,7 @@ const UserSchema = new Schema<User>(
       required: false,
       lowercase: true,
       unique: true,
+      sparse: true,
     },
   },
   { timestamps: true }

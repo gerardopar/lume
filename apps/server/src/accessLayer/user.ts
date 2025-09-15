@@ -56,6 +56,7 @@ export const createUser = async ({
     const newUser = await User.create({ email, name, firebaseUid, picture });
     return newUser;
   } catch (error) {
+    console.error(error);
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: "Unable to create user",
