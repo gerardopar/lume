@@ -8,12 +8,14 @@ import {
 
 import { userStore } from "../stores/user";
 import { useToast } from "../stores/toasts";
+import { useModal } from "../stores/modals";
 
 import ErrorToast from "../components/toast/ErrorToast";
 
 export const useFirebase = () => {
   const auth = getAuth();
   const { open } = useToast();
+  const { close: closeModal } = useModal();
 
   const user = userStore.useTracked("user");
   const { setUser, setHydrated, clearUser } = userStore.actions;
@@ -69,12 +71,17 @@ export const useFirebase = () => {
       if (credentials?.user) {
         const user = credentials?.user;
 
-        await createUserMutation({
-          email: user?.email ?? "",
-          name: "",
-          firebaseUid: user?.uid,
-          picture: user?.photoURL ?? "",
-        });
+        await createUserMutation(
+          {
+            email: user?.email ?? "",
+            name: "",
+            firebaseUid: user?.uid,
+            picture: user?.photoURL ?? "",
+          },
+          {
+            onSuccess: () => closeModal(),
+          }
+        );
       }
     } catch (error: unknown) {
       if ((error as { code: string }).code === "auth/email-already-in-use") {
@@ -124,6 +131,8 @@ export const useFirebase = () => {
           photoURL: user?.photoURL ?? "",
           providerId: user?.providerId,
         });
+
+        closeModal();
       }
     } catch (error: unknown) {
       if ((error as { code: string }).code === "auth/invalid-email") {
