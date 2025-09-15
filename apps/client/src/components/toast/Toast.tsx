@@ -30,12 +30,16 @@ export const Toast: React.FC = () => {
 
   const toastType = toastTypeMap[type || ToastTypesEnum.End];
 
+  const zIndex = `z-[1000]`; // takes higher z-index than backdrop / modals
+
   if (!content || !isOpen) return null;
 
   return ReactDOM.createPortal(
     <AnimatePresence>
       {isOpen && (
-        <motion.div className={`${toastType} toast`}>{content}</motion.div>
+        <motion.div className={`toast ${zIndex} ${toastType}`}>
+          {content}
+        </motion.div>
       )}
     </AnimatePresence>,
     document.body
