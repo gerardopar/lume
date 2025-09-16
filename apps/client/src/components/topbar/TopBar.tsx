@@ -2,6 +2,7 @@ import React from "react";
 
 import BellIcon from "@components/svgs/BellIcon";
 import AuthWrapper from "@components/auth/AuthWrapper";
+import UserProfilePicture from "@components/shared/UserProfilePicture";
 import SuggestionsInput from "@components/SuggestionsInput/SuggestionsInput";
 
 import { useModal } from "../../stores/modals";
@@ -25,10 +26,7 @@ export const TopBar: React.FC = () => {
               open(<AuthWrapper />);
             }}
           >
-            <img
-              className="w-full h-full object-cover"
-              src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp"
-            />
+            <UserProfilePicture />
           </div>
         </div>
       </div>
