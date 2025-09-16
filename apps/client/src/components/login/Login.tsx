@@ -7,7 +7,7 @@ import { useModal } from "../../stores/modals";
 import EyeIcon from "../svgs/EyeIcon";
 import EyeClosedIcon from "../svgs/EyeClosedIcon";
 import { CloseButton } from "../shared/CloseButton";
-import GoogleIcon from "../../assets/images/google-logo.png";
+import GoogleAuthButton from "../shared/GoogleAuthButton";
 
 import { emailRegex, passwordRegex } from "../../const/regex";
 
@@ -150,15 +150,7 @@ export const Login: React.FC<{
         </form>
       </div>
       <div className="divider font-poppins font-[200]">OR</div>
-      <button
-        type="button"
-        className="btn btn-outline flex items-center justify-center w-full relative hover:bg-lume-primary-dark/50 border-lume-secondary-dark/90 border-[1px] rounded-[10px]"
-      >
-        <div className="flex items-center justify-center h-auto w-[25px] absolute left-2 top-1/2 -translate-y-1/2">
-          <img src={GoogleIcon} alt="Google" />
-        </div>
-        <span className="ml-2">Sign in with Google</span>
-      </button>
+      <GoogleAuthButton text="Sign in with Google" />
     </>
   );
 };
