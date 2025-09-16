@@ -1,7 +1,7 @@
 import React from "react";
 
 import BellIcon from "@components/svgs/BellIcon";
-import { Signup } from "@components/signup/Signup";
+import AuthWrapper from "@components/auth/AuthWrapper";
 import SuggestionsInput from "@components/SuggestionsInput/SuggestionsInput";
 
 import { useModal } from "../../stores/modals";
@@ -22,7 +22,7 @@ export const TopBar: React.FC = () => {
             role="button"
             className="rounded-full overflow-hidden bg-lume-secondary-dark h-[40px] w-[40px] flex justify-center items-center"
             onClick={() => {
-              open(<Signup />);
+              open(<AuthWrapper />);
             }}
           >
             <img

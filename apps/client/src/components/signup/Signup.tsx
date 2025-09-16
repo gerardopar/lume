@@ -22,7 +22,9 @@ const schema = z.object({
     .regex(passwordRegex, "Invalid password"),
 });
 
-export const Signup: React.FC = () => {
+export const Signup: React.FC<{
+  setActiveAuthForm: React.Dispatch<React.SetStateAction<"login" | "signup">>;
+}> = ({ setActiveAuthForm }) => {
   const { close } = useModal();
 
   const {
@@ -82,7 +84,7 @@ export const Signup: React.FC = () => {
           <button
             type="button"
             className="text-lume-green cursor-pointer hover:underline"
-            onClick={() => {}}
+            onClick={() => setActiveAuthForm("login")}
           >
             Login
           </button>
@@ -165,3 +167,5 @@ export const Signup: React.FC = () => {
     </>
   );
 };
+
+export default Signup;

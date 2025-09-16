@@ -22,12 +22,12 @@ const schema = z.object({
     .regex(passwordRegex, "Invalid password"),
 });
 
-export const Login: React.FC = () => {
+export const Login: React.FC<{
+  setActiveAuthForm: React.Dispatch<React.SetStateAction<"login" | "signup">>;
+}> = ({ setActiveAuthForm }) => {
   const { close } = useModal();
 
-  const {
-    handleCreateUserWithEmailAndPassword: createUserWithEmailAndPassword,
-  } = useFirebase();
+  const { handleSignInWithEmailAndPassword } = useFirebase();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -53,16 +53,12 @@ export const Login: React.FC = () => {
     return true;
   };
 
-  const handleCreateUserWithEmailAndPassword = async (
-    email: string,
-    password: string
-  ) => {
+  const handleSignin = async (email: string, password: string) => {
     if (!validate()) return;
 
     try {
       setIsLoading(true);
-      await createUserWithEmailAndPassword(email, password);
-      close();
+      await handleSignInWithEmailAndPassword(email, password);
     } catch (error) {
       console.error(error);
     } finally {
@@ -77,21 +73,21 @@ export const Login: React.FC = () => {
           onClick={() => close()}
           className="absolute top-4 right-4"
         />
-        <h2 className="text-2xl font-inter font-bold">Sign up to Lume.</h2>
+        <h2 className="text-2xl font-inter font-bold">Sign in to Lume.</h2>
         <div className="text-sm font-poppins mt-1">
-          Already have an account?{" "}
+          Don't have an account?{" "}
           <button
             type="button"
             className="text-lume-green cursor-pointer hover:underline"
-            onClick={() => {}}
+            onClick={() => setActiveAuthForm("signup")}
           >
-            Login
+            Sign up
           </button>
         </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleCreateUserWithEmailAndPassword(email, password);
+            handleSignin(email, password);
           }}
           className="mt-4"
         >
@@ -115,12 +111,6 @@ export const Login: React.FC = () => {
               <p className="mb-2 font-poppins font-[400] text-sm pl-1">
                 Password
               </p>
-              {/* <button
-              type="button"
-              className="text-lume-green font-poppins font-[400] text-sm pl-1"
-            >
-              Forgot password?
-            </button> */}
             </div>
             <div className="w-full relative">
               <input
@@ -155,7 +145,7 @@ export const Login: React.FC = () => {
             disabled={isLoading}
             className="bg-lume-green/90 text-white p-2 rounded-[10px] w-full cursor-pointer hover:bg-lume-green/60 transition-colors duration-200 ease-in-out"
           >
-            {isLoading ? "Signing up..." : "Sign up"}
+            {isLoading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>
@@ -167,7 +157,7 @@ export const Login: React.FC = () => {
         <div className="flex items-center justify-center h-auto w-[25px] absolute left-2 top-1/2 -translate-y-1/2">
           <img src={GoogleIcon} alt="Google" />
         </div>
-        <span className="ml-2">Sign up with Google</span>
+        <span className="ml-2">Sign in with Google</span>
       </button>
     </>
   );
