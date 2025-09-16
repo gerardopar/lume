@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { trpc } from "@utils/trpc";
 import {
   getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
@@ -12,6 +14,8 @@ import { useModal } from "../stores/modals";
 
 import ErrorToast from "../components/toast/ErrorToast";
 
+const TOAST_DURATION = 5000;
+
 export const useFirebase = () => {
   const auth = getAuth();
   const { open } = useToast();
@@ -20,8 +24,7 @@ export const useFirebase = () => {
   const user = userStore.useTracked("user");
   const { setUser, setHydrated, clearUser } = userStore.actions;
 
-  const { mutateAsync: createUserMutation } =
-    trpc.user.createUser.useMutation();
+  const { mutateAsync: upsertUser } = trpc.user.createUser.useMutation();
 
   useEffect(() => {
     let isMounted = true;
@@ -63,7 +66,7 @@ export const useFirebase = () => {
   ) => {
     try {
       const credentials = await createUserWithEmailAndPassword(
-        getAuth(),
+        auth,
         email,
         password
       );
@@ -71,7 +74,7 @@ export const useFirebase = () => {
       if (credentials?.user) {
         const user = credentials?.user;
 
-        await createUserMutation(
+        await upsertUser(
           {
             email: user?.email ?? "",
             name: "",
@@ -87,7 +90,7 @@ export const useFirebase = () => {
       if ((error as { code: string }).code === "auth/email-already-in-use") {
         console.error("Email already in use");
         open(<ErrorToast message="Email already in use" />, {
-          duration: 5000,
+          duration: TOAST_DURATION,
         });
         return;
       }
@@ -95,7 +98,7 @@ export const useFirebase = () => {
       if ((error as { code: string }).code === "auth/invalid-email") {
         console.error("Invalid email");
         open(<ErrorToast message="Invalid email" />, {
-          duration: 5000,
+          duration: TOAST_DURATION,
         });
         return;
       }
@@ -103,7 +106,7 @@ export const useFirebase = () => {
       if ((error as { message: string }).message) {
         console.error((error as { message: string }).message);
         open(<ErrorToast message={(error as { message: string }).message} />, {
-          duration: 5000,
+          duration: TOAST_DURATION,
         });
         return;
       }
@@ -116,7 +119,7 @@ export const useFirebase = () => {
   ) => {
     try {
       const credentials = await signInWithEmailAndPassword(
-        getAuth(),
+        auth,
         email,
         password
       );
@@ -132,16 +135,70 @@ export const useFirebase = () => {
           providerId: user?.providerId,
         });
 
+        // Upsert user in database
+        await upsertUser(
+          {
+            email: user?.email ?? "",
+            name: "",
+            firebaseUid: user?.uid,
+            picture: user?.photoURL ?? "",
+          },
+          {
+            onSuccess: () => closeModal(),
+          }
+        );
+
         closeModal();
       }
     } catch (error: unknown) {
       if ((error as { code: string }).code === "auth/invalid-email") {
         console.error("Invalid email");
+        open(<ErrorToast message="Invalid email" />, {
+          duration: TOAST_DURATION,
+        });
         return;
       }
 
       if ((error as { message: string }).message) {
         console.error((error as { message: string }).message);
+        open(<ErrorToast message={(error as { message: string }).message} />, {
+          duration: TOAST_DURATION,
+        });
+        return;
+      }
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const { user } = await signInWithPopup(auth, provider);
+
+      setUser({
+        uid: user?.uid,
+        email: user?.email ?? "",
+        displayName: user?.displayName ?? "",
+        photoURL: user?.photoURL ?? "",
+        providerId: user?.providerId,
+      });
+
+      await upsertUser(
+        {
+          email: user?.email ?? "",
+          name: "",
+          firebaseUid: user?.uid,
+          picture: user?.photoURL ?? "",
+        },
+        {
+          onSuccess: () => closeModal(),
+        }
+      );
+    } catch (error) {
+      if ((error as { message: string }).message) {
+        console.error((error as { message: string }).message);
+        open(<ErrorToast message={(error as { message: string }).message} />, {
+          duration: TOAST_DURATION,
+        });
         return;
       }
     }
@@ -159,6 +216,7 @@ export const useFirebase = () => {
   return {
     handleCreateUserWithEmailAndPassword,
     handleSignInWithEmailAndPassword,
+    handleSignInWithGoogle,
     handleSignOut,
   };
 };

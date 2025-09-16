@@ -29,18 +29,11 @@ export const userRouter = router({
     .output(z.object({ user: z.instanceof(User) }))
     .mutation(async ({ input }) => {
       try {
-        const existingUser = await getUserByFirebaseUid(input.firebaseUid);
-        if (existingUser)
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "User already exists",
-          });
+        let user = await getUserByFirebaseUid(input.firebaseUid);
 
-        const user = await createUser(input);
+        if (!user) user = await createUser(input);
 
-        return {
-          user,
-        };
+        return { user };
       } catch (error) {
         console.error(error);
         throw new TRPCError({
