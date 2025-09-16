@@ -8,13 +8,11 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 
-import { userStore } from "../stores/user";
-import { useToast } from "../stores/toasts";
-import { useModal } from "../stores/modals";
-
 import ErrorToast from "../components/toast/ErrorToast";
 
-const TOAST_DURATION = 5000;
+import { userStore } from "../stores/user";
+import { useModal } from "../stores/modals";
+import { useToast, DEFAULT_TOAST_DURATION } from "../stores/toasts";
 
 export const useFirebase = () => {
   const auth = getAuth();
@@ -90,7 +88,7 @@ export const useFirebase = () => {
       if ((error as { code: string }).code === "auth/email-already-in-use") {
         console.error("Email already in use");
         open(<ErrorToast message="Email already in use" />, {
-          duration: TOAST_DURATION,
+          duration: DEFAULT_TOAST_DURATION,
         });
         return;
       }
@@ -98,7 +96,7 @@ export const useFirebase = () => {
       if ((error as { code: string }).code === "auth/invalid-email") {
         console.error("Invalid email");
         open(<ErrorToast message="Invalid email" />, {
-          duration: TOAST_DURATION,
+          duration: DEFAULT_TOAST_DURATION,
         });
         return;
       }
@@ -106,7 +104,7 @@ export const useFirebase = () => {
       if ((error as { message: string }).message) {
         console.error((error as { message: string }).message);
         open(<ErrorToast message={(error as { message: string }).message} />, {
-          duration: TOAST_DURATION,
+          duration: DEFAULT_TOAST_DURATION,
         });
         return;
       }
@@ -154,7 +152,7 @@ export const useFirebase = () => {
       if ((error as { code: string }).code === "auth/invalid-email") {
         console.error("Invalid email");
         open(<ErrorToast message="Invalid email" />, {
-          duration: TOAST_DURATION,
+          duration: DEFAULT_TOAST_DURATION,
         });
         return;
       }
@@ -162,7 +160,7 @@ export const useFirebase = () => {
       if ((error as { message: string }).message) {
         console.error((error as { message: string }).message);
         open(<ErrorToast message={(error as { message: string }).message} />, {
-          duration: TOAST_DURATION,
+          duration: DEFAULT_TOAST_DURATION,
         });
         return;
       }
@@ -197,7 +195,7 @@ export const useFirebase = () => {
       if ((error as { message: string }).message) {
         console.error((error as { message: string }).message);
         open(<ErrorToast message={(error as { message: string }).message} />, {
-          duration: TOAST_DURATION,
+          duration: DEFAULT_TOAST_DURATION,
         });
         return;
       }

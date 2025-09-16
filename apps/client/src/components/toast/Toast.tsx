@@ -13,10 +13,10 @@ export const Toast: React.FC = () => {
   const { close } = toastStore.actions;
 
   useEffect(() => {
-    if (duration) {
+    if (duration && isOpen) {
       setTimeout(() => close(), duration);
     }
-  }, [duration]);
+  }, [duration, isOpen]);
 
   // Map modal type to className
   const toastTypeMap: Record<ToastTypesEnum, string> = {

@@ -2,12 +2,15 @@ import React from "react";
 
 import BellIcon from "@components/svgs/BellIcon";
 import AuthWrapper from "@components/auth/AuthWrapper";
+import UserProfile from "@components/user-profile/UserProfile";
 import UserProfilePicture from "@components/shared/UserProfilePicture";
 import SuggestionsInput from "@components/SuggestionsInput/SuggestionsInput";
 
 import { useModal } from "../../stores/modals";
+import { useCurrentUser } from "../../stores/user";
 
 export const TopBar: React.FC = () => {
+  const { isLoggedIn } = useCurrentUser();
   const { open } = useModal();
 
   return (
@@ -23,7 +26,8 @@ export const TopBar: React.FC = () => {
             role="button"
             className="rounded-full overflow-hidden bg-lume-secondary-dark h-[40px] w-[40px] flex justify-center items-center"
             onClick={() => {
-              open(<AuthWrapper />);
+              if (isLoggedIn) open(<UserProfile />);
+              else open(<AuthWrapper />);
             }}
           >
             <UserProfilePicture />

@@ -3,6 +3,8 @@ import { createStore } from "zustand-x";
 
 // to be used with <Toast />
 
+export const DEFAULT_TOAST_DURATION = 5000;
+
 export enum ToastTypesEnum {
   Start = "start",
   Center = "center",
@@ -31,7 +33,7 @@ export const toastStore = createStore<ToastState>(
     options: {
       type: ToastTypesEnum.End,
       dismissible: true,
-      duration: 3000,
+      duration: DEFAULT_TOAST_DURATION,
     },
   },
   {
@@ -58,6 +60,7 @@ export const toastStore = createStore<ToastState>(
       draft.options = {
         type: ToastTypesEnum.End,
         dismissible: true,
+        duration: DEFAULT_TOAST_DURATION,
       };
       return draft;
     });

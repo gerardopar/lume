@@ -42,5 +42,5 @@ export const userStore = createStore<UserState>(
 
 export const useCurrentUser = () => {
   const user = userStore.useTracked("user");
-  return user ?? null;
+  return { user, isLoggedIn: !!user };
 };
