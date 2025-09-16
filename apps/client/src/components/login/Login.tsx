@@ -22,7 +22,7 @@ const schema = z.object({
     .regex(passwordRegex, "Invalid password"),
 });
 
-export const Signup: React.FC = () => {
+export const Login: React.FC = () => {
   const { close } = useModal();
 
   const {
@@ -62,6 +62,7 @@ export const Signup: React.FC = () => {
     try {
       setIsLoading(true);
       await createUserWithEmailAndPassword(email, password);
+      close();
     } catch (error) {
       console.error(error);
     } finally {
@@ -114,6 +115,12 @@ export const Signup: React.FC = () => {
               <p className="mb-2 font-poppins font-[400] text-sm pl-1">
                 Password
               </p>
+              {/* <button
+              type="button"
+              className="text-lume-green font-poppins font-[400] text-sm pl-1"
+            >
+              Forgot password?
+            </button> */}
             </div>
             <div className="w-full relative">
               <input
@@ -165,3 +172,5 @@ export const Signup: React.FC = () => {
     </>
   );
 };
+
+export default Login;
