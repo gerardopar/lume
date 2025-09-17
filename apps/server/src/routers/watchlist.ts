@@ -15,7 +15,7 @@ import {
   UpdateWatchlistItemSchema,
 } from "../validators/watchlist";
 
-export const moviesRouter = router({
+export const watchlistRouter = router({
   createWatchlistItem: protectedProcedure
     .input(CreateWatchlistItemSchema)
     .mutation(async ({ ctx, input }) => {
