@@ -101,10 +101,17 @@ export const Signup: React.FC<{
             <input
               type="email"
               placeholder="Email address"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setErrors(() => ({
+                  ...errors,
+                  email: "",
+                }));
+                setEmail(e.target.value);
+              }}
               className={`w-full p-2 border-lume-secondary-dark/90 border-[1px] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-lume-primary-dark font-poppins font-[200] pl-2 ${
                 errors.email ? "border-red-400" : ""
               }`}
+              value={email}
             />
             {errors.email && (
               <p className="text-red-400 pl-1 text-xs mt-1">{errors.email}</p>
@@ -120,11 +127,18 @@ export const Signup: React.FC<{
             <div className="w-full relative">
               <input
                 type={showPassword ? "text" : "password"}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setErrors(() => ({
+                    ...errors,
+                    password: "",
+                  }));
+                  setPassword(e.target.value);
+                }}
                 placeholder="Password"
                 className={`w-full p-2 border-lume-secondary-dark/90 border-[1px] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-lume-primary-dark font-poppins font-[200] pl-2 ${
                   errors.password ? "border-red-400" : ""
                 }`}
+                value={password}
               />
               <button
                 type="button"

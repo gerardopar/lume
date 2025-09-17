@@ -26,7 +26,7 @@ export const UserProfilePicture: React.FC<{
   const { open } = useToast();
   const currentUser = userStore.useTracked("user");
 
-  const { setUser } = userStore.actions;
+  const { updateUser: updateUserStore } = userStore.actions;
 
   const {
     mutateAsync: getPresignedProfileUploadUrl,
@@ -80,7 +80,7 @@ export const UserProfilePicture: React.FC<{
       // Update user record in DB with new profile picture URL
       await updateUser({ picture: fileUrl });
       // Update current user in store
-      setUser({ ...currentUser, photoURL: fileUrl });
+      updateUserStore({ ...currentUser, photoURL: fileUrl });
 
       open(<SuccessToast message="Profile picture updated" />, {
         duration: DEFAULT_TOAST_DURATION,

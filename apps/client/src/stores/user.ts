@@ -32,6 +32,12 @@ export const userStore = createStore<UserState>(
       return draft;
     });
   },
+  updateUser: (user: Partial<UserInfo>) => {
+    set("state", (draft) => {
+      draft.user = { ...draft.user, ...user };
+      return draft;
+    });
+  },
   setHydrated: (hydrated: boolean) => {
     set("state", (draft) => {
       draft.hydrated = hydrated;
