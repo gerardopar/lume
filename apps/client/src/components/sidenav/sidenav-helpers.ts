@@ -1,4 +1,5 @@
 import React from "react";
+import { nanoid } from "nanoid";
 
 import { HomeIcon } from "../svgs/HomeIcon";
 import { UserIcon } from "../svgs/UserIcon";
@@ -7,7 +8,7 @@ import { CompassIcon } from "../svgs/CompassIcon";
 import { SettingsIcon } from "../svgs/SettingsIcon";
 
 export interface SidenavLink {
-  id: number;
+  id: string;
   label: string;
   path: string;
   Icon: React.FC<{ className?: string }>;
@@ -15,32 +16,32 @@ export interface SidenavLink {
 
 export const sidenavLinks: SidenavLink[] = [
   {
-    id: 1,
+    id: nanoid(),
     label: "Home",
     path: "/",
     Icon: HomeIcon,
   },
   {
-    id: 2,
-    label: "Explore",
-    path: "/explore",
-    Icon: CompassIcon,
-  },
-  {
-    id: 3,
+    id: nanoid(),
     label: "Favorites",
     path: "/favorites",
     Icon: HeartIcon,
   },
+  {
+    id: nanoid(),
+    label: "My Watchlist",
+    path: "/watchlist",
+    Icon: CompassIcon,
+  },
 
   {
-    id: 4,
+    id: nanoid(),
     label: "Profile",
     path: "/profile",
     Icon: UserIcon,
   },
   {
-    id: 5,
+    id: nanoid(),
     label: "Settings",
     path: "/settings",
     Icon: SettingsIcon,
