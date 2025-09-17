@@ -1,5 +1,6 @@
 import React from "react";
 
+import DeleteUserProfileButton from "../delete-user-profile/DeleteUserProfileButton";
 import UserProfilePicture from "../shared/UserProfilePicture";
 import UserProfileUpdateForm from "./UserProfileUpdateForm";
 import CloseButton from "@components/shared/CloseButton";
@@ -11,7 +12,7 @@ export const UserProfile: React.FC = () => {
 
   return (
     <div className="w-full">
-      <CloseButton onClick={close} className="absolute top-4 right-4" />
+      <CloseButton onClick={() => close()} className="absolute top-4 right-4" />
       <h1 className="font-inter font-bold text-2xl text-lume-primary-light">
         Your Profile
       </h1>
@@ -24,12 +25,7 @@ export const UserProfile: React.FC = () => {
       </div>
 
       <UserProfileUpdateForm />
-      <button
-        type="button"
-        className="bg-red-400 text-white p-2 rounded-[10px] w-full cursor-pointer transition-colors duration-200 ease-in-out mt-2"
-      >
-        Delete Account
-      </button>
+      <DeleteUserProfileButton />
     </div>
   );
 };
