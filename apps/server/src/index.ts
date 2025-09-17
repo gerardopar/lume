@@ -1,12 +1,14 @@
 import "dotenv/config";
 
-import express from "express";
 import cors from "cors";
-import * as trpcExpress from "@trpc/server/adapters/express";
+import express from "express";
+import { createExpressMiddleware } from "@trpc/server/adapters/express";
 
 import { connectRedis } from "./cache/redisClient";
+import { connectDB } from "./db/db";
 
 import { appRouter } from "./appRouter";
+import { createContext } from "./context";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -18,16 +20,20 @@ app.use(
   })
 );
 
+app.use(express.json());
+
+// Mount tRPC
 app.use(
   "/trpc",
-  trpcExpress.createExpressMiddleware({
+  createExpressMiddleware({
     router: appRouter,
-    createContext: () => ({}),
+    createContext,
   })
 );
 
 const startServer = async () => {
   try {
+    await connectDB();
     await connectRedis();
 
     app.listen(port, () => {

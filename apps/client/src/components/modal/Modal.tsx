@@ -5,16 +5,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { modalStore, ModalTypesEnum } from "../../stores/modals";
 
 export const Modal: React.FC = () => {
-  const content = modalStore.useTracked("content");
-  const isOpen = modalStore.useTracked("isOpen");
-  const { type, dismissible, modalBoxClassName } =
-    modalStore.useTracked("options");
-
+  const modals = modalStore.useTracked("modals");
   const { close } = modalStore.actions;
 
-  if (!content || !isOpen) return null;
-
-  // Map modal type to className
+  // Lookup tables
   const modalTypeMap: Record<ModalTypesEnum, string> = {
     [ModalTypesEnum.Top]: "modal-top",
     [ModalTypesEnum.Middle]: "modal-middle",
@@ -23,9 +17,6 @@ export const Modal: React.FC = () => {
     [ModalTypesEnum.End]: "modal-end",
   };
 
-  const modalType = modalTypeMap[type || ModalTypesEnum.Middle];
-
-  // Lookup tables for motion values
   const offsetYMap: Record<ModalTypesEnum, number> = {
     [ModalTypesEnum.Top]: -50,
     [ModalTypesEnum.Middle]: 0,
@@ -42,47 +33,45 @@ export const Modal: React.FC = () => {
     [ModalTypesEnum.End]: 1,
   };
 
-  const offsetY = offsetYMap[type || ModalTypesEnum.Middle] ?? 0;
-  const scaleValue = scaleMap[type || ModalTypesEnum.Middle] ?? 1;
-
   return ReactDOM.createPortal(
     <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          key="backdrop"
-          className={`modal modal-open ${modalType}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          {/* Backdrop */}
+      {modals.map((m) => {
+        const type = m.options.type ?? ModalTypesEnum.Middle;
+        const modalType = modalTypeMap[type];
+        const offsetY = offsetYMap[type] ?? 0;
+        const scaleValue = scaleMap[type] ?? 1;
+
+        return (
           <motion.div
-            key="backdrop-overlay"
-            className="modal-backdrop"
-            onClick={dismissible ? close : () => {}}
+            key={m.id}
+            className={`modal modal-open ${modalType}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-          />
-
-          {/* Modal box */}
-          <motion.div
-            key="modal-box"
-            className={`modal-box ${modalBoxClassName}`}
-            initial={{ opacity: 0, y: offsetY, scale: scaleValue }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: offsetY, scale: scaleValue }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            style={{ zIndex: 50 + modals.indexOf(m) }} // newer modals on top
           >
-            {content}
-            {/* <div className="modal-action">
-              <button className="btn" onClick={close}>
-                Close
-              </button>
-            </div> */}
+            {/* Backdrop */}
+            <motion.div
+              className="modal-backdrop"
+              onClick={m.options.dismissible ? () => close(m.id) : undefined}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            {/* Modal box */}
+            <motion.div
+              className={`modal-box ${m.options.modalBoxClassName}`}
+              initial={{ opacity: 0, y: offsetY, scale: scaleValue }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: offsetY, scale: scaleValue }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              {m.content}
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        );
+      })}
     </AnimatePresence>,
     document.body
   );
