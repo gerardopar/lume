@@ -15,6 +15,7 @@ import { User } from "../models/user";
 
 import { getProfileUploadUrl } from "../aws/s3.helpers";
 import { deleteFirebaseUser } from "../firebase/firebase.helpers";
+import { userSchema } from "../validators/user";
 
 export const userRouter = router({
   createUser: publicProcedure
@@ -26,7 +27,7 @@ export const userRouter = router({
         picture: z.string().optional(),
       })
     )
-    .output(z.object({ user: z.instanceof(User) }))
+    .output(z.object({ user: userSchema }))
     .mutation(async ({ input }) => {
       try {
         let user = await getUserByFirebaseUid(input.firebaseUid);
@@ -43,9 +44,9 @@ export const userRouter = router({
         });
       }
     }),
-  getUserById: publicProcedure
+  getUserById: protectedProcedure
     .input(z.string())
-    .output(z.instanceof(User))
+    .output(userSchema)
     .query(async ({ input }) => {
       try {
         const user = await getUserById(input);
@@ -63,9 +64,9 @@ export const userRouter = router({
         });
       }
     }),
-  getUserByEmail: publicProcedure
+  getUserByEmail: protectedProcedure
     .input(z.string())
-    .output(z.instanceof(User))
+    .output(userSchema)
     .query(async ({ input }) => {
       try {
         const user = await getUserByEmail(input);
@@ -83,9 +84,9 @@ export const userRouter = router({
         });
       }
     }),
-  getUserByFirebaseUid: publicProcedure
+  getUserByFirebaseUid: protectedProcedure
     .input(z.string())
-    .output(z.instanceof(User))
+    .output(userSchema)
     .query(async ({ input }) => {
       try {
         const user = await getUserByFirebaseUid(input);
@@ -103,11 +104,12 @@ export const userRouter = router({
         });
       }
     }),
-  getLoggedInUser: publicProcedure
-    .output(z.instanceof(User))
+  getLoggedInUser: protectedProcedure
+    .output(userSchema)
     .query(async ({ ctx }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
+
         if (!user)
           throw new TRPCError({
             code: "NOT_FOUND",
@@ -122,7 +124,7 @@ export const userRouter = router({
         });
       }
     }),
-  updateUser: publicProcedure
+  updateUser: protectedProcedure
     .input(
       z.object({
         name: z.string().optional(),
@@ -131,7 +133,7 @@ export const userRouter = router({
         picture: z.string().optional(),
       })
     )
-    .output(z.instanceof(User))
+    .output(userSchema)
     .mutation(async ({ input, ctx }) => {
       try {
         const user = await updateUser(ctx.user?.uid!, input);
@@ -149,8 +151,8 @@ export const userRouter = router({
         });
       }
     }),
-  deleteUser: publicProcedure
-    .output(z.instanceof(User))
+  deleteUser: protectedProcedure
+    .output(userSchema)
     .mutation(async ({ ctx }) => {
       try {
         const firebaseUid = ctx.user?.uid!;

@@ -39,7 +39,7 @@ export const TrpcProvider = ({ children }: PropsWithChildren) => {
               const user = auth.currentUser;
               if (!user) return {};
               try {
-                const token = await user.getIdToken();
+                const token = await user.getIdToken(true);
                 return {
                   Authorization: `Bearer ${token}`,
                 };
