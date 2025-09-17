@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 import { createStore } from "zustand-x";
+import { nanoid } from "nanoid";
 
-// to be used with <Modal />
-
+// Types
 export enum ModalTypesEnum {
   Top = "top",
   Middle = "middle", // Default
@@ -11,27 +11,26 @@ export enum ModalTypesEnum {
   End = "end",
 }
 
-export type ModalState = {
-  isOpen: boolean;
-  content: ReactNode | null;
-  options: ModalOptions;
-};
-
 export type ModalOptions = {
   type?: ModalTypesEnum;
   dismissible?: boolean;
   modalBoxClassName?: string; // content container
 };
 
+export type ModalEntry = {
+  id: string;
+  content: ReactNode;
+  options: ModalOptions;
+};
+
+export type ModalState = {
+  modals: ModalEntry[];
+};
+
+// Store
 export const modalStore = createStore<ModalState>(
   {
-    isOpen: false,
-    content: null,
-    options: {
-      type: ModalTypesEnum.Middle,
-      dismissible: true,
-      modalBoxClassName: "",
-    },
+    modals: [],
   },
   {
     name: "modal",
@@ -42,31 +41,43 @@ export const modalStore = createStore<ModalState>(
 ).extendActions(({ set }) => ({
   open: (content: ReactNode, options?: ModalOptions) => {
     set("state", (draft) => {
-      draft.isOpen = true;
-      draft.content = content;
-      if (options) {
-        draft.options = { ...draft.options, ...options };
+      draft?.modals?.push({
+        id: nanoid(),
+        content,
+        options: {
+          type: ModalTypesEnum.Middle,
+          dismissible: true,
+          modalBoxClassName: "",
+          ...options,
+        },
+      });
+      return draft;
+    });
+  },
+  close: (id?: string) => {
+    set("state", (draft) => {
+      if (id) {
+        draft.modals = draft?.modals?.filter((m) => m.id !== id);
+      } else {
+        draft?.modals?.pop(); // close last one by default
       }
       return draft;
     });
   },
-  close: () => {
+  closeAll: () => {
     set("state", (draft) => {
-      draft.isOpen = false;
-      draft.content = null;
-      draft.options = {
-        type: ModalTypesEnum.Middle,
-        dismissible: true,
-        modalBoxClassName: "",
-      };
+      draft.modals = [];
       return draft;
     });
   },
 }));
 
+// Hook
 export const useModal = () => {
   return {
+    modals: modalStore.useTracked("modals"),
     open: modalStore.actions.open,
     close: modalStore.actions.close,
+    closeAll: modalStore.actions.closeAll,
   };
 };

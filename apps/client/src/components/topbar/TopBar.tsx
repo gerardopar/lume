@@ -26,7 +26,10 @@ export const TopBar: React.FC = () => {
             role="button"
             className="rounded-full overflow-hidden bg-lume-secondary-dark h-[40px] w-[40px] flex justify-center items-center"
             onClick={() => {
-              if (isLoggedIn) open(<UserProfile />);
+              if (isLoggedIn)
+                open(<UserProfile />, {
+                  modalBoxClassName: "max-w-[400px]",
+                });
               else open(<AuthWrapper />);
             }}
           >

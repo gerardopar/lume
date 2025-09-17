@@ -24,6 +24,12 @@ export const UserProfile: React.FC = () => {
       </div>
 
       <UserProfileUpdateForm />
+      <button
+        type="button"
+        className="bg-red-400 text-white p-2 rounded-[10px] w-full cursor-pointer transition-colors duration-200 ease-in-out mt-2"
+      >
+        Delete Account
+      </button>
     </div>
   );
 };
