@@ -2,14 +2,14 @@ import React, { useRef, useEffect, useState } from "react";
 import { trpc } from "@utils/trpc";
 import { inView } from "motion";
 
-import MovieCard from "./MovieCard";
+import TvShowCard from "./TvShowCard";
 import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
 
-import type { TmdbMovie } from "@my/api";
-import MovieCardSkeleton from "@components/skeleton/CardSkeleton";
+import type { TmdbTvShow } from "@my/api";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 
-export const MoviePopularCardList: React.FC<{
+export const TvShowPopularCardList: React.FC<{
   className?: string;
 }> = ({ className }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -18,8 +18,8 @@ export const MoviePopularCardList: React.FC<{
   const [isAtEnd, setIsAtEnd] = useState(false);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    trpc.movies.getPopularMovies.useInfiniteQuery(
-      {},
+    trpc.tvShows.getPopularTvShows.useInfiniteQuery(
+      { cursor: 1 },
       {
         getNextPageParam: (lastPage) => {
           const nextPage = lastPage.page + 1;
@@ -29,7 +29,7 @@ export const MoviePopularCardList: React.FC<{
       }
     );
 
-  const movies = data?.pages.flatMap((p) => p.results) ?? [];
+  const tvShows = data?.pages.flatMap((p) => p.results) ?? [];
 
   const scrollByAmount = (amount: number) => {
     if (scrollRef.current) {
@@ -79,7 +79,7 @@ export const MoviePopularCardList: React.FC<{
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    const cards = document.querySelectorAll(".movie-card:not(.animated)");
+    const cards = document.querySelectorAll(".tv-show-card:not(.animated)");
     cards.forEach((card, idx) => {
       inView(card, () => {
         card.animate(
@@ -97,7 +97,7 @@ export const MoviePopularCardList: React.FC<{
         card.classList.add("animated");
       });
     });
-  }, [movies]);
+  }, [tvShows]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -124,9 +124,10 @@ export const MoviePopularCardList: React.FC<{
     return (
       <div className={`w-full relative ${className}`}>
         <h2 className="text-xl font-bold font-inter mb-2 ml-2">Popular</h2>
+
         <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
           {[...Array(10)].map((_, idx) => (
-            <MovieCardSkeleton key={idx} />
+            <CardSkeleton key={idx} />
           ))}
         </div>
       </div>
@@ -159,15 +160,15 @@ export const MoviePopularCardList: React.FC<{
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
       >
-        {movies.map((movie: TmdbMovie) => (
-          <div key={movie.id} className="movie-card opacity-0">
-            <MovieCard movie={movie} />
+        {tvShows.map((tvShow: TmdbTvShow) => (
+          <div key={tvShow.id} className="tv-show-card opacity-0">
+            <TvShowCard tvShow={tvShow} />
           </div>
         ))}
         {isFetchingNextPage && (
           <>
             {[...Array(3)].map((_, idx) => (
-              <MovieCardSkeleton key={`skeleton-${idx}`} />
+              <CardSkeleton key={`skeleton-${idx}`} />
             ))}
           </>
         )}
@@ -176,4 +177,4 @@ export const MoviePopularCardList: React.FC<{
   );
 };
 
-export default MoviePopularCardList;
+export default TvShowPopularCardList;
