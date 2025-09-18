@@ -10,6 +10,7 @@ import {
   getTvSeasonSeriesDetails,
   getTvSeasonVideos,
   searchTvShows,
+  getTrendingTvShows,
 } from "../services/tmdb-tv-shows-service";
 
 import {
@@ -88,6 +89,58 @@ export const tvShowsRouter = router({
       }
 
       return getPopularTvShows(page);
+    }),
+
+  getTrendingTvShows: publicProcedure
+    .input(
+      z.object({
+        timeWindow: z.enum(["day", "week"]).default("day"),
+        cursor: z.number().optional(),
+      })
+    )
+    .output(TvShowsPaginatedResponseSchema(TvShowSchema))
+    .query(async ({ input }) => {
+      const page = input.cursor ?? 1;
+      const cacheKey = `tv:trending:${input.timeWindow}:page:${page}`;
+
+      // attempt cache if first few pages
+      if (page <= 5) {
+        try {
+          const cached = await redisClient.get(cacheKey);
+          if (cached) {
+            return JSON.parse(cached);
+          }
+        } catch (err) {
+          console.error("Redis get error in getTrendingTvShows:", err);
+          // not critical, continue
+        }
+      }
+
+      // fetch from TMDB
+      let data;
+      try {
+        data = await getTrendingTvShows(input.timeWindow, page);
+      } catch (err) {
+        console.error("Error from getTrendingTvShows helper:", err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching trending TV shows",
+          cause: err,
+        });
+      }
+
+      // set cache if page <= some threshold
+      if (page <= 5) {
+        try {
+          await redisClient.set(cacheKey, JSON.stringify(data), {
+            EX: CACHE_TTL,
+          });
+        } catch (err) {
+          console.error("Redis set error in getTrendingTvShows:", err);
+        }
+      }
+
+      return data;
     }),
 
   getTvShowDetails: publicProcedure

@@ -22,6 +22,19 @@ export const getPopularTvShows = async (page = 1) => {
   return res.data;
 };
 
+export const getTrendingTvShows = async (
+  timeWindow: "day" | "week" = "day",
+  page = 1
+): Promise<TvShowsPaginatedResponse<TvShow>> => {
+  const res = await tmdb.get<TvShowsPaginatedResponse<TvShow>>(
+    `/trending/tv/${timeWindow}`,
+    {
+      params: { page },
+    }
+  );
+  return res.data;
+};
+
 export const getTvSeasonSeriesDetails = async (
   seriesId: number,
   seasonNumber: number
