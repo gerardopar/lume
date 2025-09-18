@@ -17,7 +17,6 @@ import {
   TvShowSchema,
   TvShowsPaginatedResponseSchema,
 } from "../validators/tmdb-tv-shows.validators";
-import { TVSeasonVideosResponseSchema } from "../validators/videos.validators";
 
 const CACHE_TTL = 60 * 60; // 1 hour
 
@@ -173,7 +172,6 @@ export const tvShowsRouter = router({
 
   getTvSeasonVideos: publicProcedure
     .input(z.object({ seriesId: z.number(), seasonNumber: z.number() }))
-    .output(TVSeasonVideosResponseSchema)
     .query(({ input }) => {
       try {
         return getTvSeasonVideos(input.seriesId, input.seasonNumber);

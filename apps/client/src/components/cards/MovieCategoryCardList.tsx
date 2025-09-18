@@ -5,9 +5,9 @@ import { inView } from "motion";
 import MovieCard from "./MovieCard";
 import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 import type { TmdbMovie } from "@my/api";
-import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const MovieCategoryCardList: React.FC<{
   title?: string;

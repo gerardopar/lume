@@ -22,7 +22,7 @@ export const TvShowDetails: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
   });
 
   const trailer = videos?.results.find(
-    (v) => v.type === "Trailer" && v.site === "YouTube"
+    (v) => v.type === "Teaser" && v.site === "YouTube"
   );
 
   return (
