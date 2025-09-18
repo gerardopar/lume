@@ -13,7 +13,6 @@ import {
   getPopularMoviesByGenre,
   tmdbSearch,
   getMovieVideos,
-  getTvSeasonVideos,
 } from "../services/tmdb-service";
 
 import { FilterOptionEnum } from "../types/tmdb.types";
@@ -23,10 +22,7 @@ import {
   TmdbPaginatedResponseSchema,
 } from "../validators/movies.validators";
 import { TmdbMovieDetailsSchema } from "../validators/movies-details.validators";
-import {
-  MovieVideosResponseSchema,
-  TVSeasonVideosResponseSchema,
-} from "../validators/videos.validators";
+import { MovieVideosResponseSchema } from "../validators/videos.validators";
 
 const CACHE_TTL = 60 * 60; // 1 hour
 
