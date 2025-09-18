@@ -228,18 +228,4 @@ export const moviesRouter = router({
         });
       }
     }),
-  getTvSeasonVideos: publicProcedure
-    .input(z.object({ seriesId: z.number(), seasonNumber: z.number() }))
-    .output(TVSeasonVideosResponseSchema)
-    .query(({ input }) => {
-      try {
-        return getTvSeasonVideos(input.seriesId, input.seasonNumber);
-      } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching TV season videos",
-          cause: error,
-        });
-      }
-    }),
 });
