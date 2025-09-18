@@ -7,7 +7,7 @@ import { sidenavLinks } from "./sidenav-helpers";
 
 export const Sidenav: React.FC = () => {
   return (
-    <div className="max-w-[240px] w-full bg-lume-secondary-dark rounded-2xl flex flex-col p-6">
+    <div className="max-w-[240px] w-full bg-lume-secondary-dark flex flex-col p-6">
       <nav className="flex flex-1 flex-col">
         {sidenavLinks.map((link, index) => {
           const { id, Icon, label, path } = link;

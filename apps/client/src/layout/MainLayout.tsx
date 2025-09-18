@@ -6,7 +6,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <div className="h-screen flex w-full bg-lume-primary-dark p-6">
+    <div className="h-screen flex w-full bg-lume-primary-dark">
       {/* side nav panel */}
       <Sidenav />
 

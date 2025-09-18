@@ -88,7 +88,7 @@ export const SuggestionsInput: React.FC = () => {
     switch (true) {
       case isLoading:
         return (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 cursor">
             <span className="loading loading-ring loading-xl" />
           </div>
         );
@@ -116,10 +116,6 @@ export const SuggestionsInput: React.FC = () => {
 
   return (
     <div className="w-full flex items-center">
-      <SuggestionsFilterDropdown
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
-      />
       <div className="flex items-center flex-1 max-w-[60%] relative">
         <input
           value={search}
@@ -134,7 +130,7 @@ export const SuggestionsInput: React.FC = () => {
           type="text"
           placeholder="Search"
           className={`
-              w-full bg-lume-secondary-dark rounded-full p-2 py-[10px] placeholder:text-lume-primary-light 
+              w-full bg-lume-secondary-dark rounded-full rounded-tr-none rounded-br-none p-2 py-[10px] placeholder:text-lume-primary-light 
               focus:outline-none placeholder:font-poppins placeholder:font-[200] placeholder:text-[16px] pl-4
               font-poppins font-[200] text-base
               ${
@@ -193,6 +189,10 @@ export const SuggestionsInput: React.FC = () => {
           </ul>
         )}
       </div>
+      <SuggestionsFilterDropdown
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+      />
     </div>
   );
 };

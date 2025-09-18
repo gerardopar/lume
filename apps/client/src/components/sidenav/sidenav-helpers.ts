@@ -1,11 +1,9 @@
 import React from "react";
 import { nanoid } from "nanoid";
 
-import { HomeIcon } from "../svgs/HomeIcon";
 import { UserIcon } from "../svgs/UserIcon";
 import { HeartIcon } from "../svgs/HeartIcon";
 import { CompassIcon } from "../svgs/CompassIcon";
-import { SettingsIcon } from "../svgs/SettingsIcon";
 
 export interface SidenavLink {
   id: string;
@@ -17,9 +15,21 @@ export interface SidenavLink {
 export const sidenavLinks: SidenavLink[] = [
   {
     id: nanoid(),
-    label: "Home",
+    label: "Movies",
     path: "/",
-    Icon: HomeIcon,
+    Icon: HeartIcon,
+  },
+  {
+    id: nanoid(),
+    label: "TV Shows",
+    path: "/tv-shows",
+    Icon: CompassIcon,
+  },
+  {
+    id: nanoid(),
+    label: "Profile",
+    path: "/profile",
+    Icon: UserIcon,
   },
   {
     id: nanoid(),
@@ -32,18 +42,5 @@ export const sidenavLinks: SidenavLink[] = [
     label: "My Watchlist",
     path: "/watchlist",
     Icon: CompassIcon,
-  },
-
-  {
-    id: nanoid(),
-    label: "Profile",
-    path: "/profile",
-    Icon: UserIcon,
-  },
-  {
-    id: nanoid(),
-    label: "Settings",
-    path: "/settings",
-    Icon: SettingsIcon,
   },
 ];
