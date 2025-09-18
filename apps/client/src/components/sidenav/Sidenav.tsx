@@ -15,7 +15,6 @@ export const Sidenav: React.FC = () => {
   const { isLoggedIn } = useCurrentUser();
   const { open } = useModal();
 
-  // routes that require auth
   const protectedPaths = ["/profile", "/favorites", "/watchlist"];
 
   return (
@@ -28,7 +27,6 @@ export const Sidenav: React.FC = () => {
 
           let icon = <Icon className="w-5 h-5 mr-2" />;
 
-          // swap icon with profile pic if logged in
           if (path === "/profile" && isLoggedIn) {
             icon = (
               <UserProfilePicture containerClassName="w-[24px] h-[24px] rounded-full border-[1px] border-lume-primary-light mr-2" />
@@ -38,11 +36,11 @@ export const Sidenav: React.FC = () => {
           return (
             <React.Fragment key={id}>
               <NavLink
-                to={isProtected && !isLoggedIn ? "" : path}
+                to={path}
                 onClick={(e) => {
                   if (isProtected && !isLoggedIn) {
-                    e.preventDefault(); // prevent navigation
-                    open(<AuthWrapper />); // open login modal
+                    e.preventDefault();
+                    open(<AuthWrapper />);
                   } else if (path === "/profile" && isLoggedIn) {
                     e.preventDefault();
                     open(<UserProfile />, {
@@ -52,9 +50,7 @@ export const Sidenav: React.FC = () => {
                 }}
                 className={({ isActive }) =>
                   `flex items-center font-poppins font-[200] text-lg py-2 ${
-                    isActive && !isProtected
-                      ? "text-lume-green"
-                      : "text-lume-primary-light"
+                    isActive ? "text-lume-green" : "text-lume-primary-light"
                   }`
                 }
               >
