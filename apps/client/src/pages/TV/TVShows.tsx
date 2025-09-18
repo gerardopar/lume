@@ -8,11 +8,11 @@ import MovieCategoryCardList from "@components/cards/MovieCategoryCardList";
 
 import { GenresEnum } from "../../const/genres";
 
-export const Home: React.FC = () => {
+export const TVShows: React.FC = () => {
   return (
     <MainLayout>
       <TopBar />
-      <Hero mediaType="movie" />
+      <Hero mediaType="tv" />
       <MoviePopularCardList className="mt-4" />
       <MovieCategoryCardList title="Action" genreId={GenresEnum.Action} />
       <MovieCategoryCardList title="Adventure" genreId={GenresEnum.Adventure} />
@@ -31,4 +31,4 @@ export const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default TVShows;

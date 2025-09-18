@@ -4,13 +4,13 @@ import { GENRES } from "../const/genres";
 
 export const getRandomMovie = (movies: TmdbMovie[]): TmdbMovie | undefined => {
   if (!movies || !movies.length) return undefined;
-  const moviesWIthBackdropPath = movies?.filter(
+  const moviesWithBackdropPath = movies?.filter(
     (movie) => movie?.backdrop_path
   );
   const randomIndex = Math.floor(
-    Math.random() * moviesWIthBackdropPath?.length
+    Math.random() * moviesWithBackdropPath?.length
   );
-  return moviesWIthBackdropPath?.[randomIndex];
+  return moviesWithBackdropPath?.[randomIndex];
 };
 
 export const getGenres = (movie: TmdbMovie, limit?: number) => {
