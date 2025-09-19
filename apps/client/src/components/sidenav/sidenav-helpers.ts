@@ -6,7 +6,6 @@ import { UserIcon } from "../svgs/UserIcon";
 import { PlayIcon } from "../svgs/PlayIcon";
 import { HeartIcon } from "../svgs/HeartIcon";
 import { MoviesIcon } from "../svgs/MoviesIcon";
-import { CompassIcon } from "../svgs/CompassIcon";
 
 export interface SidenavLink {
   id: string;
