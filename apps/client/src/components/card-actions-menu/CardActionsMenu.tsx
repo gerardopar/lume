@@ -5,9 +5,8 @@ import { trpc } from "@utils/trpc";
 import { AnimatePresence, motion } from "motion/react";
 
 import XIcon from "@components/svgs/XIcon";
-import HeartIcon from "@components/svgs/HeartIcon";
-import ShareIcon from "@components/svgs/ShareIcon";
 import CloseButton from "@components/shared/CloseButton";
+import CardActionItemLoader from "@components/loaders/CardActionItemLoader";
 import CardActionsMenuSkeleton from "@components/skeleton/CardActionsMenuSkeleton";
 
 import {
@@ -30,7 +29,7 @@ export const CardActionsMenu: React.FC<{
   const { data: isWatchlisted, isLoading: isWatchlistedLoading } =
     trpc.watchlist.checkWatchlistItem.useQuery({ tmdbId: cardItemId });
 
-  const { mutate: toggleFavorite } =
+  const { mutate: toggleFavorite, isPending: isFavoritePending } =
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
         await queryClient.cancelQueries([
@@ -60,7 +59,7 @@ export const CardActionsMenu: React.FC<{
       },
     });
 
-  const { mutate: toggleWatchlist } =
+  const { mutate: toggleWatchlist, isPending: isWatchlistPending } =
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
         await queryClient.cancelQueries([
@@ -136,8 +135,20 @@ export const CardActionsMenu: React.FC<{
                     ? `text-red-500 ${_isFavorited ? "fill-red-500" : ""}`
                     : "text-white";
 
-                let Icon = item.Icon;
+                let iconClassName = "w-4 h-4";
+
+                let Icon: React.FC<{ className?: string }> | React.ReactNode =
+                  item.Icon;
                 if (_isWatchlisted) Icon = XIcon;
+                if (
+                  (item.type === CardActionMenuEnum.Favorites &&
+                    isFavoritePending) ||
+                  (item.type === CardActionMenuEnum.Watchlist &&
+                    isWatchlistPending)
+                ) {
+                  Icon = CardActionItemLoader;
+                  iconClassName = "";
+                }
 
                 const handleClick = (e: React.MouseEvent) => {
                   e.stopPropagation();
@@ -163,9 +174,10 @@ export const CardActionsMenu: React.FC<{
                   <button
                     key={item.id}
                     onClick={handleClick}
-                    className="flex items-center gap-2 px-4 py-2 bg-lume-secondary-dark/60 rounded-lg hover:bg-lume-secondary-dark transition-all duration-300 cursor-pointer"
+                    disabled={isFavoritePending || isWatchlistPending}
+                    className="flex items-center max-h-[36px] gap-2 px-4 py-2 bg-lume-secondary-dark/60 rounded-lg hover:bg-lume-secondary-dark transition-all duration-300 cursor-pointer"
                   >
-                    <Icon className={`${iconColor} w-4 h-4`} />
+                    <Icon className={`${iconColor} ${iconClassName}`} />
                     <span className="text-white font-poppins font-[200] text-sm text-center">
                       {item.label}
                     </span>
@@ -182,17 +194,6 @@ export const CardActionsMenu: React.FC<{
   return (
     <div className="p-4">
       <h2 className="text-lg font-bold font-inter mb-2">Options</h2>
-      <ul className="flex flex-col gap-2">
-        <li className="font-poppins font-[200] text-lg flex items-center gap-2">
-          <HeartIcon className="w-4 h-4" /> Add to favorites
-        </li>
-        <li className="font-poppins font-[200] text-lg flex items-center gap-2">
-          <PlayIcon className="w-4 h-4" /> Add to Watchlist
-        </li>
-        <li className="font-poppins font-[200] text-lg flex items-center gap-2">
-          <ShareIcon className="w-4 h-4" /> Share
-        </li>
-      </ul>
     </div>
   );
 };
