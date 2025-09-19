@@ -2,9 +2,10 @@ import React from "react";
 
 import ThreeDotIcon from "@components/svgs/ThreeDotIcon";
 
-const CardActionsMenuButton: React.FC<{ onClick: () => void }> = ({
-  onClick,
-}) => {
+const CardActionsMenuButton: React.FC<{
+  onClick: () => void;
+  className?: string;
+}> = ({ onClick, className }) => {
   return (
     <button
       onClick={(e) => {
@@ -12,7 +13,7 @@ const CardActionsMenuButton: React.FC<{ onClick: () => void }> = ({
         onClick();
       }}
       type="button"
-      className="cursor-pointer"
+      className={`cursor-pointer ${className}`}
     >
       <ThreeDotIcon className="w-4 h-4 text-white" />
     </button>

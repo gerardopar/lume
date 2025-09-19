@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import CardActionsMenuButton from "@components/card-actions-menu/CardActionsMenuButton";
 import CardActionsMenu from "@components/card-actions-menu/CardActionsMenu";
@@ -13,7 +13,7 @@ import type { TmdbMovie } from "@my/api";
 export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   const { open } = useModal();
 
-  const [showMenu, setShowMenu] = React.useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const { title, poster_path } = movie;
 
@@ -37,7 +37,12 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
       `}
         style={{ backgroundImage: `url(${poster})` }}
       >
-        <button className="absolute top-2 right-2 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 hover:bg-lume-primary p-1.5">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="absolute top-2 right-2 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 hover:bg-lume-primary p-1.5 z-10 cursor-pointer"
+        >
           <HeartIcon className="w-4 h-4" />
         </button>
         <div
