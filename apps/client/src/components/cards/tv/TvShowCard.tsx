@@ -8,7 +8,7 @@ import TvShowDetails from "../../tv/TvShowDetails";
 import { useModal, ModalTypesEnum } from "../../../stores/modals";
 
 import { buildImageUrl, config } from "../../../helpers/tmdb-image.helpers";
-import type { TmdbTvShow } from "@my/api";
+import type { TmdbTvShow, MediaItemSnapshot } from "@my/api";
 
 export const TvShowCard: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
   const { open } = useModal();
@@ -18,6 +18,17 @@ export const TvShowCard: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
   const { name, poster_path } = tvShow;
 
   const poster = buildImageUrl(config, "poster", poster_path!, "original");
+
+  const snapshot: MediaItemSnapshot = {
+    tmdbId: tvShow.id,
+    mediaType: "tv",
+    title: tvShow.name,
+    posterPath: tvShow?.poster_path || "",
+    releaseDate: tvShow.first_air_date,
+    overview: tvShow.overview,
+    voteAverage: tvShow.vote_average,
+    genreIds: tvShow.genre_ids,
+  };
 
   return (
     <div
@@ -58,6 +69,7 @@ export const TvShowCard: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
             isInline
             handleCloseInline={() => setShowMenu(false)}
             cardItemId={tvShow.id}
+            snapshot={snapshot}
           />
         )}
       </div>

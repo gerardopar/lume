@@ -22,6 +22,7 @@ export const WatchlistItemZodSchema = z.object({
 
 // For creating a new item (exclude DB-managed fields)
 export const CreateWatchlistItemSchema = WatchlistItemZodSchema.omit({
+  userId: true,
   addedAt: true,
   watchedAt: true,
 });

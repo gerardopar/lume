@@ -8,7 +8,7 @@ import MovieDetails from "../movie/MovieDetails";
 import { useModal, ModalTypesEnum } from "../../stores/modals";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
-import type { TmdbMovie } from "@my/api";
+import type { TmdbMovie, MediaItemSnapshot } from "@my/api";
 
 export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   const { open } = useModal();
@@ -18,6 +18,17 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   const { title, poster_path } = movie;
 
   const poster = buildImageUrl(config, "poster", poster_path!, "original");
+
+  const snapshot: MediaItemSnapshot = {
+    tmdbId: movie.id,
+    mediaType: "movie",
+    title: movie.title,
+    posterPath: movie?.poster_path || "",
+    releaseDate: movie.release_date,
+    overview: movie.overview,
+    voteAverage: movie.vote_average,
+    genreIds: movie.genre_ids,
+  };
 
   return (
     <div
@@ -58,6 +69,7 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
             isInline
             handleCloseInline={() => setShowMenu(false)}
             cardItemId={movie.id}
+            snapshot={snapshot}
           />
         )}
       </div>
