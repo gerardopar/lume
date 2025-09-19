@@ -57,6 +57,7 @@ export const TvShowCard: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
           <CardActionsMenu
             isInline
             handleCloseInline={() => setShowMenu(false)}
+            cardItemId={tvShow.id}
           />
         )}
       </div>

@@ -57,6 +57,7 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
           <CardActionsMenu
             isInline
             handleCloseInline={() => setShowMenu(false)}
+            cardItemId={movie.id}
           />
         )}
       </div>
