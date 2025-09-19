@@ -42,7 +42,9 @@ export const watchlistRouter = router({
       try {
         const watchlistItem = await updateWatchlistItem(input.id, input.input);
 
-        await assertOwnership(ctx, watchlistItem?.userId!);
+        if (watchlistItem) {
+          await assertOwnership(ctx, watchlistItem.userId.toString());
+        }
 
         return watchlistItem;
       } catch (error) {
@@ -60,7 +62,9 @@ export const watchlistRouter = router({
       try {
         const watchlistItem = await deleteWatchlistItem(input.id);
 
-        await assertOwnership(ctx, watchlistItem?.userId!);
+        if (watchlistItem) {
+          await assertOwnership(ctx, watchlistItem.userId.toString());
+        }
 
         return watchlistItem;
       } catch (error) {
@@ -94,7 +98,9 @@ export const watchlistRouter = router({
       try {
         const watchlistItem = await getWatchlistItemById(input.id);
 
-        await assertOwnership(ctx, watchlistItem?.userId!);
+        if (watchlistItem) {
+          await assertOwnership(ctx, watchlistItem.userId.toString());
+        }
 
         return watchlistItem;
       } catch (error) {

@@ -42,7 +42,9 @@ export const favoritesRouter = router({
       try {
         const favorite = await updateFavoriteItem(input.id, input.input);
 
-        await assertOwnership(ctx, favorite?.userId!);
+        if (favorite) {
+          await assertOwnership(ctx, favorite.userId.toString());
+        }
 
         return favorite;
       } catch (error) {
@@ -60,7 +62,9 @@ export const favoritesRouter = router({
       try {
         const favorite = await deleteFavoriteItem(input.id);
 
-        await assertOwnership(ctx, favorite?.userId!);
+        if (favorite) {
+          await assertOwnership(ctx, favorite.userId.toString());
+        }
 
         return favorite;
       } catch (error) {
@@ -92,7 +96,9 @@ export const favoritesRouter = router({
       try {
         const favorite = await getFavoriteItemById(input.id);
 
-        await assertOwnership(ctx, favorite?.userId!);
+        if (favorite) {
+          await assertOwnership(ctx, favorite.userId.toString());
+        }
 
         return favorite;
       } catch (error) {
