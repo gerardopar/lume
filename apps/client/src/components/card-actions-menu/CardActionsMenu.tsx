@@ -152,6 +152,10 @@ export const CardActionsMenu: React.FC<{
                       tmdbId: cardItemId,
                       watchlistItem: snapshot,
                     });
+                  } else if (item.type === CardActionMenuEnum.Share) {
+                    // TODO: share
+                    // generates a link to the app with the media ID
+                    // opens a share sheet
                   }
                 };
 
