@@ -13,8 +13,6 @@ import {
 import {
   CreateFavoriteItemSchema,
   UpdateFavoriteItemSchema,
-  FavoriteItemOutputSchema,
-  FavoriteItemListOutputSchema,
 } from "../validators/favorites";
 
 export const favoritesRouter = router({
@@ -98,6 +96,77 @@ export const favoritesRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Unable to get favorite item",
+        });
+      }
+    }),
+
+  checkFavoriteItem: protectedProcedure
+    .input(z.object({ movieId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+        const favorite = await getFavoriteItemsByUser(user?._id?.toString()!);
+        const exists = favorite.some(
+          (item) => item.tmdbId.toString() === input.movieId
+        );
+        return { exists };
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to check favorite item",
+        });
+      }
+    }),
+
+  toggleFavoriteItem: protectedProcedure
+    .input(
+      z.object({
+        movieId: z.string(),
+        movie: CreateFavoriteItemSchema.optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+
+        if (!user?._id) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "User not found",
+          });
+        }
+
+        const favorites = await getFavoriteItemsByUser(user._id.toString());
+
+        const existing = favorites.find(
+          (item) => item.tmdbId.toString() === input.movieId
+        );
+
+        if (existing) {
+          await deleteFavoriteItem(existing._id.toString());
+          return { isFavorite: false };
+        } else {
+          if (!input.movie) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Movie snapshot is required to create favorite item",
+            });
+          }
+
+          const created = await createFavoriteItem({
+            ...input.movie,
+            userId: user._id.toString(),
+          });
+
+          return { isFavorite: true, favorite: created };
+        }
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to toggle favorite item",
+          cause: error,
         });
       }
     }),

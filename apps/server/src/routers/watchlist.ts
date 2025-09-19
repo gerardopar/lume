@@ -34,17 +34,13 @@ export const watchlistRouter = router({
         });
       }
     }),
+
   updateWatchlistItem: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        input: UpdateWatchlistItemSchema,
-      })
-    )
+    .input(z.object({ id: z.string(), input: UpdateWatchlistItemSchema }))
     .mutation(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO check if user is the owner of the watchlist item
+        // TODO check user ownership
         const watchlistItem = await updateWatchlistItem(input.id, input.input);
         return watchlistItem;
       } catch (error) {
@@ -55,12 +51,13 @@ export const watchlistRouter = router({
         });
       }
     }),
+
   deleteWatchlistItem: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO check if user is the owner of the watchlist item
+        // TODO check user ownership
         const watchlistItem = await deleteWatchlistItem(input.id);
         return watchlistItem;
       } catch (error) {
@@ -71,6 +68,7 @@ export const watchlistRouter = router({
         });
       }
     }),
+
   getWatchlistItemsByUser: protectedProcedure.query(async ({ ctx }) => {
     try {
       const user = await getUserByFirebaseUid(ctx.user?.uid!);
@@ -86,12 +84,13 @@ export const watchlistRouter = router({
       });
     }
   }),
+
   getWatchlistItemById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO check if user is the owner of the watchlist item
+        // TODO check user ownership
         const watchlistItem = await getWatchlistItemById(input.id);
         return watchlistItem;
       } catch (error) {
@@ -99,6 +98,76 @@ export const watchlistRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Unable to get watchlist item",
+        });
+      }
+    }),
+
+  checkWatchlistItem: protectedProcedure
+    .input(z.object({ movieId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+        const watchlist = await getWatchlistItemsByUser(user?._id?.toString()!);
+        const exists = watchlist.some(
+          (item) => item.tmdbId.toString() === input.movieId
+        );
+        return { exists };
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to check watchlist item",
+        });
+      }
+    }),
+  toggleWatchlistItem: protectedProcedure
+    .input(
+      z.object({
+        movieId: z.string(),
+        movie: CreateWatchlistItemSchema.optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+
+        if (!user?._id) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "User not found",
+          });
+        }
+
+        const watchlist = await getWatchlistItemsByUser(user._id.toString());
+
+        const existing = watchlist.find(
+          (item) => item.tmdbId.toString() === input.movieId
+        );
+
+        if (existing) {
+          await deleteWatchlistItem(existing._id.toString());
+          return { inWatchlist: false };
+        } else {
+          if (!input.movie) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Movie snapshot is required to add to watchlist",
+            });
+          }
+
+          const created = await createWatchlistItem({
+            ...input.movie,
+            userId: user._id.toString(),
+          });
+
+          return { inWatchlist: true, watchlist: created };
+        }
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to toggle watchlist item",
+          cause: error,
         });
       }
     }),
