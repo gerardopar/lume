@@ -14,6 +14,7 @@ import {
   CreateFavoriteItemSchema,
   UpdateFavoriteItemSchema,
 } from "../validators/favorites";
+import assertOwnership from "../helpers/assertOwnership";
 
 export const favoritesRouter = router({
   createFavoriteItem: protectedProcedure
@@ -39,9 +40,10 @@ export const favoritesRouter = router({
     .input(z.object({ id: z.string(), input: UpdateFavoriteItemSchema }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO: check user ownership
         const favorite = await updateFavoriteItem(input.id, input.input);
+
+        await assertOwnership(ctx, favorite?.userId!);
+
         return favorite;
       } catch (error) {
         console.error(error);
@@ -56,9 +58,10 @@ export const favoritesRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO: check user ownership
         const favorite = await deleteFavoriteItem(input.id);
+
+        await assertOwnership(ctx, favorite?.userId!);
+
         return favorite;
       } catch (error) {
         console.error(error);
@@ -87,9 +90,10 @@ export const favoritesRouter = router({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
-        const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO: check user ownership
         const favorite = await getFavoriteItemById(input.id);
+
+        await assertOwnership(ctx, favorite?.userId!);
+
         return favorite;
       } catch (error) {
         console.error(error);

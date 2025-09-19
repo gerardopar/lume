@@ -14,6 +14,7 @@ import {
   CreateWatchlistItemSchema,
   UpdateWatchlistItemSchema,
 } from "../validators/watchlist";
+import assertOwnership from "../helpers/assertOwnership";
 
 export const watchlistRouter = router({
   createWatchlistItem: protectedProcedure
@@ -39,9 +40,10 @@ export const watchlistRouter = router({
     .input(z.object({ id: z.string(), input: UpdateWatchlistItemSchema }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO check user ownership
         const watchlistItem = await updateWatchlistItem(input.id, input.input);
+
+        await assertOwnership(ctx, watchlistItem?.userId!);
+
         return watchlistItem;
       } catch (error) {
         console.error(error);
@@ -56,9 +58,10 @@ export const watchlistRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO check user ownership
         const watchlistItem = await deleteWatchlistItem(input.id);
+
+        await assertOwnership(ctx, watchlistItem?.userId!);
+
         return watchlistItem;
       } catch (error) {
         console.error(error);
@@ -89,9 +92,10 @@ export const watchlistRouter = router({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
-        const user = await getUserByFirebaseUid(ctx.user?.uid!);
-        // TODO check user ownership
         const watchlistItem = await getWatchlistItemById(input.id);
+
+        await assertOwnership(ctx, watchlistItem?.userId!);
+
         return watchlistItem;
       } catch (error) {
         console.error(error);
