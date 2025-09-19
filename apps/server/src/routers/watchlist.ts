@@ -113,13 +113,13 @@ export const watchlistRouter = router({
     }),
 
   checkWatchlistItem: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ tmdbId: z.number() }))
     .query(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
         const watchlist = await getWatchlistItemsByUser(user?._id?.toString()!);
         const exists = watchlist.some(
-          (item) => item.tmdbId.toString() === input.id
+          (item) => item.tmdbId.toString() === input.tmdbId.toString()
         );
         return { exists };
       } catch (error) {
@@ -133,7 +133,7 @@ export const watchlistRouter = router({
   toggleWatchlistItem: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        tmdbId: z.number(),
         watchlistItem: CreateWatchlistItemSchema.optional(),
       })
     )
@@ -150,9 +150,7 @@ export const watchlistRouter = router({
 
         const watchlist = await getWatchlistItemsByUser(user._id.toString());
 
-        const existing = watchlist.find(
-          (item) => item.tmdbId.toString() === input.id
-        );
+        const existing = watchlist.find((item) => item.tmdbId === input.tmdbId);
 
         if (existing) {
           await deleteWatchlistItem(existing._id.toString());

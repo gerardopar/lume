@@ -111,14 +111,12 @@ export const favoritesRouter = router({
     }),
 
   checkFavoriteItem: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ tmdbId: z.number() }))
     .query(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
         const favorite = await getFavoriteItemsByUser(user?._id?.toString()!);
-        const exists = favorite.some(
-          (item) => item.tmdbId.toString() === input.id
-        );
+        const exists = favorite.some((item) => item.tmdbId === input.tmdbId);
         return { exists };
       } catch (error) {
         console.error(error);
@@ -132,7 +130,7 @@ export const favoritesRouter = router({
   toggleFavoriteItem: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        tmdbId: z.number(),
         favoriteItem: CreateFavoriteItemSchema.optional(),
       })
     )
@@ -149,9 +147,7 @@ export const favoritesRouter = router({
 
         const favorites = await getFavoriteItemsByUser(user._id.toString());
 
-        const existing = favorites.find(
-          (item) => item.tmdbId.toString() === input.id
-        );
+        const existing = favorites.find((item) => item.tmdbId === input.tmdbId);
 
         if (existing) {
           await deleteFavoriteItem(existing._id.toString());
