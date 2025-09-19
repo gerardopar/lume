@@ -113,13 +113,13 @@ export const watchlistRouter = router({
     }),
 
   checkWatchlistItem: protectedProcedure
-    .input(z.object({ movieId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
         const watchlist = await getWatchlistItemsByUser(user?._id?.toString()!);
         const exists = watchlist.some(
-          (item) => item.tmdbId.toString() === input.movieId
+          (item) => item.tmdbId.toString() === input.id
         );
         return { exists };
       } catch (error) {
@@ -133,8 +133,8 @@ export const watchlistRouter = router({
   toggleWatchlistItem: protectedProcedure
     .input(
       z.object({
-        movieId: z.string(),
-        movie: CreateWatchlistItemSchema.optional(),
+        id: z.string(),
+        watchlistItem: CreateWatchlistItemSchema.optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -151,22 +151,23 @@ export const watchlistRouter = router({
         const watchlist = await getWatchlistItemsByUser(user._id.toString());
 
         const existing = watchlist.find(
-          (item) => item.tmdbId.toString() === input.movieId
+          (item) => item.tmdbId.toString() === input.id
         );
 
         if (existing) {
           await deleteWatchlistItem(existing._id.toString());
           return { inWatchlist: false };
         } else {
-          if (!input.movie) {
+          if (!input.watchlistItem) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Movie snapshot is required to add to watchlist",
+              message:
+                "Watchlist item snapshot is required to add to watchlist",
             });
           }
 
           const created = await createWatchlistItem({
-            ...input.movie,
+            ...input.watchlistItem,
             userId: user._id.toString(),
           });
 

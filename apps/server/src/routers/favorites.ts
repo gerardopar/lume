@@ -111,13 +111,13 @@ export const favoritesRouter = router({
     }),
 
   checkFavoriteItem: protectedProcedure
-    .input(z.object({ movieId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
         const user = await getUserByFirebaseUid(ctx.user?.uid!);
         const favorite = await getFavoriteItemsByUser(user?._id?.toString()!);
         const exists = favorite.some(
-          (item) => item.tmdbId.toString() === input.movieId
+          (item) => item.tmdbId.toString() === input.id
         );
         return { exists };
       } catch (error) {
@@ -132,8 +132,8 @@ export const favoritesRouter = router({
   toggleFavoriteItem: protectedProcedure
     .input(
       z.object({
-        movieId: z.string(),
-        movie: CreateFavoriteItemSchema.optional(),
+        id: z.string(),
+        favoriteItem: CreateFavoriteItemSchema.optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -150,22 +150,23 @@ export const favoritesRouter = router({
         const favorites = await getFavoriteItemsByUser(user._id.toString());
 
         const existing = favorites.find(
-          (item) => item.tmdbId.toString() === input.movieId
+          (item) => item.tmdbId.toString() === input.id
         );
 
         if (existing) {
           await deleteFavoriteItem(existing._id.toString());
           return { isFavorite: false };
         } else {
-          if (!input.movie) {
+          if (!input.favoriteItem) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Movie snapshot is required to create favorite item",
+              message:
+                "Favorite item snapshot is required to create favorite item",
             });
           }
 
           const created = await createFavoriteItem({
-            ...input.movie,
+            ...input.favoriteItem,
             userId: user._id.toString(),
           });
 
