@@ -9,6 +9,7 @@ import FavoritesPlaceholder from "../../components/empty-states/FavoritesPlaceho
 import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
 
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const Favorites: React.FC = () => {
   const { data: favorites, isLoading: favoritesLoading } =
@@ -28,31 +29,41 @@ export const Favorites: React.FC = () => {
           <FavoritesPlaceholder />
         )}
 
-        {!favoritesLoading && favoritesList.length > 0 && (
-          <div className="flex flex-wrap gap-4 mt-6">
-            {favoritesList.map((favorite: MediaItemSnapshot) => {
-              const normalizedFavorite = normalizeSnapshot(favorite);
+        <div className="w-full flex items-center justify-center">
+          {favoritesLoading && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-6">
+              {[...Array(12)].map((_, idx) => (
+                <CardSkeleton key={idx} />
+              ))}
+            </div>
+          )}
 
-              if (favorite.mediaType === "movie") {
-                return (
-                  <MovieCard
-                    key={`fav-movie-${favorite.tmdbId}`}
-                    movie={normalizedFavorite as TmdbMovie}
-                  />
-                );
-              }
-              if (favorite.mediaType === "tv") {
-                return (
-                  <TvShowCard
-                    key={`fav-tv-${favorite.tmdbId}`}
-                    tvShow={normalizedFavorite as TmdbTvShow}
-                  />
-                );
-              }
-              return null;
-            })}
-          </div>
-        )}
+          {!favoritesLoading && favoritesList.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-6">
+              {favoritesList.map((favorite: MediaItemSnapshot) => {
+                const normalizedFavorite = normalizeSnapshot(favorite);
+
+                if (favorite.mediaType === "movie") {
+                  return (
+                    <MovieCard
+                      key={`fav-movie-${favorite.tmdbId}`}
+                      movie={normalizedFavorite as TmdbMovie}
+                    />
+                  );
+                }
+                if (favorite.mediaType === "tv") {
+                  return (
+                    <TvShowCard
+                      key={`fav-tv-${favorite.tmdbId}`}
+                      tvShow={normalizedFavorite as TmdbTvShow}
+                    />
+                  );
+                }
+                return null;
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </MainLayout>
   );
