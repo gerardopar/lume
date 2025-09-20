@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { trpc } from "@utils/trpc";
 
 import HeroBg from "./HeroBg";
+import GenreChip from "@components/shared/GenreChip";
 import HeroSkeleton from "@components/skeleton/HeroSkeleton";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
@@ -101,12 +102,7 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
         <div className="flex flex-col justify-end gap-2 h-full">
           <div className="flex items-center gap-2">
             {genres.map((genre) => (
-              <span
-                key={genre}
-                className="shadow-lg text-xs inline px-4 py-1 rounded-full backdrop-blur-lg bg-white/10"
-              >
-                {genre}
-              </span>
+              <GenreChip genre={genre} />
             ))}
           </div>
 

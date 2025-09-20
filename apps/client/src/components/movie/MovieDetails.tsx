@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import _ from "lodash";
 
 import { trpc } from "@utils/trpc";
 
 import VideoPlayer from "../video/VideoPlayer";
+import CastList from "@components/cast/CastList";
+import GenreChip from "@components/shared/GenreChip";
+import WatchProvidersList from "@components/watch-providers/WatchProvidersList";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
+import { getGenres } from "../../helpers/movie.helpers";
 
 import type { TmdbMovie } from "@my/api";
-import CastList from "@components/cast/CastList";
-import WatchProvidersList from "@components/watch-providers/WatchProvidersList";
 
 export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   const { data } = trpc.movies.getMovieDetails.useQuery({
@@ -17,6 +19,8 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   });
 
   const { title, overview, poster_path, backdrop_path } = movie;
+  const movieGenres = useMemo(() => getGenres(movie!, 3), [movie]);
+
   const posterPath = buildImageUrl(config, "poster", poster_path!, "original");
   const backdropPath = buildImageUrl(
     config,
@@ -62,6 +66,11 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
           </div>
 
           <div className="flex w-full flex-col ml-6 gap-4">
+            <div className="flex items-center gap-2">
+              {movieGenres.map((genre) => (
+                <GenreChip genre={genre} />
+              ))}
+            </div>
             <h1 className="text-4xl font-bold font-inter text-white">
               {title}
             </h1>
