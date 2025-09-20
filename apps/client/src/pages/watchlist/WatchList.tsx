@@ -2,11 +2,19 @@ import React from "react";
 import { trpc } from "@utils/trpc";
 
 import MainLayout from "../../layout/MainLayout";
+import MovieCard from "@components/cards/MovieCard";
+import TvShowCard from "@components/cards/tv/TvShowCard";
 import WatchListPlaceholder from "../../components/empty-states/WatchListPlaceholder";
 
+import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
+
+import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
+
 export const WatchList: React.FC = () => {
-  const { data: watchlist, isLoading: watchlistLoading } =
+  const { data, isLoading: watchlistLoading } =
     trpc.watchlist.getWatchlistItemsByUser.useQuery();
+
+  const watchlist = data ?? [];
 
   return (
     <MainLayout>
@@ -18,6 +26,32 @@ export const WatchList: React.FC = () => {
 
         {!watchlistLoading && watchlist?.length === 0 && (
           <WatchListPlaceholder />
+        )}
+
+        {!watchlistLoading && watchlist.length > 0 && (
+          <div className="flex flex-wrap gap-4 mt-6">
+            {watchlist.map((favorite: MediaItemSnapshot) => {
+              const normalizedFavorite = normalizeSnapshot(favorite);
+
+              if (favorite.mediaType === "movie") {
+                return (
+                  <MovieCard
+                    key={`fav-movie-${favorite.tmdbId}`}
+                    movie={normalizedFavorite as TmdbMovie}
+                  />
+                );
+              }
+              if (favorite.mediaType === "tv") {
+                return (
+                  <TvShowCard
+                    key={`fav-tv-${favorite.tmdbId}`}
+                    tvShow={normalizedFavorite as TmdbTvShow}
+                  />
+                );
+              }
+              return null;
+            })}
+          </div>
         )}
       </div>
     </MainLayout>
