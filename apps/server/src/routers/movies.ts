@@ -13,6 +13,8 @@ import {
   getPopularMoviesByGenre,
   tmdbSearch,
   getMovieVideos,
+  getMovieWatchProviders,
+  getMovieCast,
 } from "../services/tmdb-service";
 
 import { FilterOptionEnum } from "../types/tmdb.types";
@@ -70,12 +72,35 @@ export const moviesRouter = router({
       // If page > 5, skip caching
       return getPopularMoviesByGenre(input.genreId, page);
     }),
-  getMovieDetails: publicProcedure
+  getMovieDetailsSimple: publicProcedure
     .input(z.object({ movieId: z.number() }))
     .output(TmdbMovieDetailsSchema)
     .query(({ input }) => {
       try {
         return getMovieDetails(input.movieId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching movie details",
+          cause: error,
+        });
+      }
+    }),
+  getMovieDetails: publicProcedure
+    .input(z.object({ movieId: z.number() }))
+    .query(async ({ input }) => {
+      try {
+        const movieDetails = await getMovieDetails(input.movieId);
+        const movieVideos = await getMovieVideos(input.movieId);
+        const movieCast = await getMovieCast(input.movieId);
+        const movieWatchProviders = await getMovieWatchProviders(input.movieId);
+
+        return {
+          movieDetails,
+          movieVideos,
+          movieCast,
+          movieWatchProviders,
+        };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -220,6 +245,34 @@ export const moviesRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error fetching movie videos",
+          cause: error,
+        });
+      }
+    }),
+  getMovieCast: publicProcedure
+    .input(z.object({ movieId: z.number() }))
+    .output(TmdbMovieDetailsSchema)
+    .query(({ input }) => {
+      try {
+        return getMovieCast(input.movieId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching movie cast",
+          cause: error,
+        });
+      }
+    }),
+  getMovieWatchProviders: publicProcedure
+    .input(z.object({ movieId: z.number() }))
+    .output(TmdbMovieDetailsSchema)
+    .query(({ input }) => {
+      try {
+        return getMovieWatchProviders(input.movieId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching movie watch providers",
           cause: error,
         });
       }

@@ -1,12 +1,21 @@
 import React from "react";
+import _ from "lodash";
+
 import { trpc } from "@utils/trpc";
 
 import VideoPlayer from "../video/VideoPlayer";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
+
 import type { TmdbMovie } from "@my/api";
+import CastList from "@components/cast/CastList";
+import WatchProvidersList from "@components/watch-providers/WatchProvidersList";
 
 export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
+  const { data } = trpc.movies.getMovieDetails.useQuery({
+    movieId: movie.id,
+  });
+
   const { title, overview, poster_path, backdrop_path } = movie;
   const posterPath = buildImageUrl(config, "poster", poster_path!, "original");
   const backdropPath = buildImageUrl(
@@ -16,46 +25,58 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
     "original"
   );
 
-  const { data: videos } = trpc.movies.getMovieVideos.useQuery({
-    movieId: movie.id,
-  });
+  const videos = data?.movieVideos?.results ?? [];
+  const cast = data?.movieCast?.cast ?? [];
+  const watchProviders = data?.movieWatchProviders?.results?.US ?? {};
 
-  const trailer = videos?.results.find(
+  const trailer = videos.find(
     (v) => v.type === "Trailer" && v.site === "YouTube"
   );
 
   return (
-    <div className="relative w-full h-[500px] overflow-hidden bg-lume-primary-dark">
-      {/* Right-side trailer or fallback backdrop */}
-      <div className="absolute right-0 top-0 w-1/2 h-full z-0 overflow-hidden">
-        {trailer && <VideoPlayer videoKey={trailer.key} />}
-        {!trailer && backdropPath && (
-          <img
-            src={backdropPath!}
-            alt={movie.title}
-            className="object-cover w-full h-full"
-          />
-        )}
-      </div>
-
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-10" />
-
-      {/* Content on left */}
-      <div className="relative z-20 flex items-center p-6 h-full">
-        <div className="w-[200px] h-[300px] min-h-[300px] min-w-[200px] rounded-2xl overflow-hidden shadow-lg">
-          <img
-            src={posterPath!}
-            alt={movie.title}
-            className="object-cover w-full h-full"
-          />
+    <div className="w-full">
+      <div className="relative w-full overflow-hidden bg-lume-primary-dark">
+        {/* Right-side trailer or fallback backdrop */}
+        <div className="absolute right-0 top-0 w-1/2 h-full z-0 overflow-hidden">
+          {trailer && <VideoPlayer videoKey={trailer.key} />}
+          {!trailer && backdropPath && (
+            <img
+              src={backdropPath!}
+              alt={movie.title}
+              className="object-cover w-full h-full"
+            />
+          )}
         </div>
 
-        <div className="flex flex-col ml-6 gap-4">
-          <h1 className="text-4xl font-bold font-inter text-white">{title}</h1>
-          <p className="text-base font-poppins text-white/80 font-[200] max-w-[50%]">
-            {overview}
-          </p>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-10" />
+
+        {/* Content on left */}
+        <div className="w-full relative z-20 flex items-center p-6 h-full">
+          <div className="w-[200px] h-[300px] min-h-[300px] min-w-[200px] rounded-2xl overflow-hidden shadow-lg">
+            <img
+              src={posterPath!}
+              alt={movie.title}
+              className="object-cover w-full h-full"
+            />
+          </div>
+
+          <div className="flex w-full flex-col ml-6 gap-4">
+            <h1 className="text-4xl font-bold font-inter text-white">
+              {title}
+            </h1>
+            <p className="text-base font-poppins text-white/80 font-[200] max-w-[50%]">
+              {overview}
+            </p>
+            <div className="flex space-x-8">
+              <CastList cast={cast} />
+              <div className="divider divider-horizontal h-full m-0" />
+              <WatchProvidersList
+                watchProviders={watchProviders}
+                className="ml-8"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

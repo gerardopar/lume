@@ -140,3 +140,15 @@ export const getMovieVideos = async (movieId: number) => {
   const res = await tmdb.get<MovieVideosResponse>(`/movie/${movieId}/videos`);
   return res.data;
 };
+
+export const getMovieCast = async (movieId: number) => {
+  const res = await tmdb.get<TmdbMovieDetails>(`/movie/${movieId}/credits`);
+  return res.data;
+};
+
+export const getMovieWatchProviders = async (movieId: number) => {
+  const res = await tmdb.get<TmdbMovieDetails>(
+    `/movie/${movieId}/watch/providers`
+  );
+  return res.data;
+};

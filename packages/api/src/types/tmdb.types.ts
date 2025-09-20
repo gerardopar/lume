@@ -152,3 +152,62 @@ export interface TVSeasonVideosResponse {
   season_number: number;
   results: VideoResult[];
 }
+
+// credits
+
+export interface CastMember {
+  adult: boolean;
+  cast_id: number;
+  character: string;
+  credit_id: string;
+  gender: number | null; // TMDB sometimes returns null
+  id: number;
+  known_for_department: string;
+  name: string;
+  order: number;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null; // may be null if no image
+}
+
+export interface CrewMember {
+  adult: boolean;
+  credit_id: string;
+  department: string;
+  gender: number | null;
+  id: number;
+  job: string;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export interface Credits {
+  id: number;
+  cast: CastMember[];
+  crew: CrewMember[];
+}
+
+// watch providers
+
+export interface WatchProvider {
+  display_priority: number;
+  logo_path: string | null; // may be null if no logo
+  provider_id: number;
+  provider_name: string;
+}
+
+export interface WatchProviderRegion {
+  link: string; // deeplink to TMDB watch page
+  flatrate?: WatchProvider[]; // subscription streaming
+  buy?: WatchProvider[]; // purchase options
+  rent?: WatchProvider[]; // rental options
+  free?: WatchProvider[]; // free streaming
+}
+
+export interface WatchProvidersResponse {
+  id: number; // movie or tv id
+  results: Record<string, WatchProviderRegion>; // keyed by country code, e.g. "US"
+}
