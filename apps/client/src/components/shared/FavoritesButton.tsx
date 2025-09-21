@@ -31,28 +31,31 @@ export const FavoritesButton: React.FC<{
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
         await queryClient.cancelQueries([
-          ["favorites.checkFavoriteItem", { tmdbId }],
+          "favorites.checkFavoriteItem",
+          { tmdbId },
         ]);
         const prev = queryClient.getQueryData<{ exists: boolean }>([
-          ["favorites.checkFavoriteItem", { tmdbId }],
+          "favorites.checkFavoriteItem",
+          { tmdbId },
         ]);
-        queryClient.setQueryData(
-          [["favorites.checkFavoriteItem", { tmdbId }]],
-          { exists: !prev?.exists }
-        );
+        queryClient.setQueryData(["favorites.checkFavoriteItem", { tmdbId }], {
+          exists: !prev?.exists,
+        });
+
         return { prev };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
           queryClient.setQueryData(
-            [["favorites.checkFavoriteItem", { tmdbId }]],
+            ["favorites.checkFavoriteItem", { tmdbId }],
             ctx.prev
           );
         }
       },
       onSettled: () => {
         queryClient.invalidateQueries([
-          ["favorites.checkFavoriteItem", { tmdbId }],
+          "favorites.checkFavoriteItem",
+          { tmdbId },
         ]);
       },
     });

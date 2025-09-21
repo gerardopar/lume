@@ -33,28 +33,32 @@ export const CardActionsMenu: React.FC<{
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
         await queryClient.cancelQueries([
-          ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
+          "favorites.checkFavoriteItem",
+          { tmdbId: cardItemId },
         ]);
         const prev = queryClient.getQueryData<{ exists: boolean }>([
-          ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
+          "favorites.checkFavoriteItem",
+          { tmdbId: cardItemId },
         ]);
         queryClient.setQueryData(
-          [["favorites.checkFavoriteItem", { tmdbId: cardItemId }]],
+          ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
           { exists: !prev?.exists }
         );
+
         return { prev };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
           queryClient.setQueryData(
-            [["favorites.checkFavoriteItem", { tmdbId: cardItemId }]],
+            ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
             ctx.prev
           );
         }
       },
       onSettled: () => {
         queryClient.invalidateQueries([
-          ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
+          "favorites.checkFavoriteItem",
+          { tmdbId: cardItemId },
         ]);
       },
     });
@@ -63,29 +67,62 @@ export const CardActionsMenu: React.FC<{
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
         await queryClient.cancelQueries([
-          ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
+          "watchlist.checkWatchlistItem",
+          { tmdbId: cardItemId },
         ]);
         const prev = queryClient.getQueryData<{ exists: boolean }>([
-          ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
+          "watchlist.checkWatchlistItem",
+          { tmdbId: cardItemId },
         ]);
         queryClient.setQueryData(
-          [["watchlist.checkWatchlistItem", { tmdbId: cardItemId }]],
+          ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
           { exists: !prev?.exists }
         );
-        return { prev };
+
+        await queryClient.cancelQueries(["watchlist.getWatchlistItemsByUser"]);
+
+        const prevWatchlistItems = queryClient.getQueryData<
+          MediaItemSnapshot[]
+        >(["watchlist.getWatchlistItemsByUser"]);
+
+        // Update the watchlist optimistically
+        queryClient.setQueryData(
+          ["watchlist.getWatchlistItemsByUser"],
+          (old: MediaItemSnapshot[] = []) => {
+            if (prev?.exists) {
+              // removing
+              return old.filter((item) => item.tmdbId !== cardItemId);
+            } else {
+              // adding
+              return [...old, snapshot];
+            }
+          }
+        );
+
+        return { prev, prevWatchlistItems };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
           queryClient.setQueryData(
-            [["watchlist.checkWatchlistItem", { tmdbId: cardItemId }]],
+            ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
             ctx.prev
+          );
+        }
+
+        if (ctx?.prevWatchlistItems) {
+          queryClient.setQueryData(
+            ["watchlist.getWatchlistItemsByUser"],
+            ctx.prevWatchlistItems
           );
         }
       },
       onSettled: () => {
         queryClient.invalidateQueries([
-          ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
+          "watchlist.checkWatchlistItem",
+          { tmdbId: cardItemId },
         ]);
+
+        queryClient.invalidateQueries(["watchlist.getWatchlistItemsByUser"]);
       },
     });
 

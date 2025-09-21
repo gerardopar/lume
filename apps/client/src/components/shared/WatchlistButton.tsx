@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import XIcon from "@components/svgs/XIcon";
 import PlusIcon from "@components/svgs/PlusIcon";
+import CardActionItemLoader from "@components/loaders/CardActionItemLoader";
 
 import type { MediaItemSnapshot } from "@my/api";
 
@@ -19,29 +20,61 @@ const WatchlistButton: React.FC<{
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
         await queryClient.cancelQueries([
-          ["watchlist.checkWatchlistItem", { tmdbId }],
+          "watchlist.checkWatchlistItem",
+          { tmdbId },
         ]);
         const prev = queryClient.getQueryData<{ exists: boolean }>([
-          ["watchlist.checkWatchlistItem", { tmdbId }],
+          "watchlist.checkWatchlistItem",
+          { tmdbId },
         ]);
+        queryClient.setQueryData(["watchlist.checkWatchlistItem", { tmdbId }], {
+          exists: !prev?.exists,
+        });
+
+        await queryClient.cancelQueries(["watchlist.getWatchlistItemsByUser"]);
+
+        const prevWatchlistItems = queryClient.getQueryData<
+          MediaItemSnapshot[]
+        >(["watchlist.getWatchlistItemsByUser"]);
+
+        // Update the watchlist optimistically
         queryClient.setQueryData(
-          [["watchlist.checkWatchlistItem", { tmdbId }]],
-          { exists: !prev?.exists }
+          ["watchlist.getWatchlistItemsByUser"],
+          (old: MediaItemSnapshot[] = []) => {
+            if (prev?.exists) {
+              // removing
+              return old.filter((item) => item.tmdbId !== tmdbId);
+            } else {
+              // adding
+              return [...old, snapshot];
+            }
+          }
         );
-        return { prev };
+
+        return { prev, prevWatchlistItems };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
           queryClient.setQueryData(
-            [["watchlist.checkWatchlistItem", { tmdbId }]],
+            ["watchlist.checkWatchlistItem", { tmdbId }],
             ctx.prev
+          );
+        }
+
+        if (ctx?.prevWatchlistItems) {
+          queryClient.setQueryData(
+            ["watchlist.getWatchlistItemsByUser"],
+            ctx.prevWatchlistItems
           );
         }
       },
       onSettled: () => {
         queryClient.invalidateQueries([
-          ["watchlist.checkWatchlistItem", { tmdbId }],
+          "watchlist.checkWatchlistItem",
+          { tmdbId },
         ]);
+
+        queryClient.invalidateQueries(["watchlist.getWatchlistItemsByUser"]);
       },
     });
 
