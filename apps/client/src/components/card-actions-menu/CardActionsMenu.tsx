@@ -19,7 +19,8 @@ export const CardActionsMenu: React.FC<{
   handleCloseInline?: () => void;
   cardItemId: number;
   snapshot: MediaItemSnapshot;
-}> = ({ isInline, handleCloseInline, cardItemId, snapshot }) => {
+  refetch?: () => void;
+}> = ({ isInline, handleCloseInline, cardItemId, snapshot, refetch }) => {
   const utils = trpc.useUtils();
 
   const { data: isFavorited, isLoading: isFavoritedLoading } =
@@ -32,33 +33,17 @@ export const CardActionsMenu: React.FC<{
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
         await utils.favorites.checkFavoriteItem.cancel({ tmdbId: cardItemId });
-        await utils.favorites.getFavoriteItemsByUser.cancel();
 
         const prev = utils.favorites.checkFavoriteItem.getData({
           tmdbId: cardItemId,
         });
-        const prevFavoriteItems =
-          utils.favorites.getFavoriteItemsByUser.getData();
 
         utils.favorites.checkFavoriteItem.setData(
           { tmdbId: cardItemId },
           { exists: !prev?.exists }
         );
 
-        utils.favorites.getFavoriteItemsByUser.setData(
-          undefined,
-          (old = []) => {
-            if (prev?.exists) {
-              // removing - filter out the item
-              return old.filter((item) => item.tmdbId !== cardItemId);
-            } else {
-              // adding - add the item
-              return [...old, snapshot];
-            }
-          }
-        );
-
-        return { prev, prevFavoriteItems };
+        return { prev };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
@@ -68,6 +53,9 @@ export const CardActionsMenu: React.FC<{
           );
         }
       },
+      onSuccess: () => {
+        refetch?.();
+      },
       onSettled: () => {
         utils.favorites.checkFavoriteItem.invalidate({ tmdbId: cardItemId });
       },
@@ -76,58 +64,32 @@ export const CardActionsMenu: React.FC<{
   const { mutate: toggleWatchlist, isPending: isWatchlistPending } =
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
-        // Cancel both queries
         await utils.watchlist.checkWatchlistItem.cancel({ tmdbId: cardItemId });
-        await utils.watchlist.getWatchlistItemsByUser.cancel();
 
-        // Get previous states
         const prev = utils.watchlist.checkWatchlistItem.getData({
           tmdbId: cardItemId,
         });
-        const prevWatchlistItems =
-          utils.watchlist.getWatchlistItemsByUser.getData();
 
-        // Update check query optimistically
         utils.watchlist.checkWatchlistItem.setData(
           { tmdbId: cardItemId },
           { exists: !prev?.exists }
         );
 
-        // Update watchlist optimistically
-        utils.watchlist.getWatchlistItemsByUser.setData(
-          undefined,
-          (old = []) => {
-            if (prev?.exists) {
-              // removing - filter out the item
-              return old.filter((item) => item.tmdbId !== cardItemId);
-            } else {
-              // adding - add the item
-              return [...old, snapshot];
-            }
-          }
-        );
-
-        return { prev, prevWatchlistItems };
+        return { prev };
       },
       onError: (_err, _vars, ctx) => {
-        // Revert on error
         if (ctx?.prev) {
           utils.watchlist.checkWatchlistItem.setData(
             { tmdbId: cardItemId },
             ctx.prev
           );
         }
-        if (ctx?.prevWatchlistItems !== undefined) {
-          utils.watchlist.getWatchlistItemsByUser.setData(
-            undefined,
-            ctx.prevWatchlistItems
-          );
-        }
+      },
+      onSuccess: () => {
+        refetch?.();
       },
       onSettled: () => {
-        // Invalidate both queries
         utils.watchlist.checkWatchlistItem.invalidate({ tmdbId: cardItemId });
-        utils.watchlist.getWatchlistItemsByUser.invalidate();
       },
     });
 

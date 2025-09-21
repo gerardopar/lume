@@ -12,8 +12,11 @@ import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
 
 export const Favorites: React.FC = () => {
-  const { data: favorites, isLoading: favoritesLoading } =
-    trpc.favorites.getFavoriteItemsByUser.useQuery();
+  const {
+    data: favorites,
+    isLoading: favoritesLoading,
+    refetch,
+  } = trpc.favorites.getFavoriteItemsByUser.useQuery();
 
   const favoritesList = favorites ?? [];
 
@@ -48,6 +51,7 @@ export const Favorites: React.FC = () => {
                     <MovieCard
                       key={`fav-movie-${favorite.tmdbId}`}
                       movie={normalizedFavorite as TmdbMovie}
+                      refetch={() => refetch()}
                     />
                   );
                 }
@@ -56,6 +60,7 @@ export const Favorites: React.FC = () => {
                     <TvShowCard
                       key={`fav-tv-${favorite.tmdbId}`}
                       tvShow={normalizedFavorite as TmdbTvShow}
+                      refetch={() => refetch()}
                     />
                   );
                 }

@@ -10,7 +10,8 @@ import type { MediaItemSnapshot } from "@my/api";
 const WatchlistButton: React.FC<{
   tmdbId: number;
   snapshot: MediaItemSnapshot;
-}> = ({ tmdbId, snapshot }) => {
+  refetch?: () => void;
+}> = ({ tmdbId, snapshot, refetch }) => {
   const utils = trpc.useUtils();
   const { data: isWatchlisted, isLoading: isWatchlistedLoading } =
     trpc.watchlist.checkWatchlistItem.useQuery({ tmdbId });
@@ -18,38 +19,18 @@ const WatchlistButton: React.FC<{
   const { mutate: toggleWatchlist, isPending: isWatchlistPending } =
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
-        // Cancel both queries
         await utils.watchlist.checkWatchlistItem.cancel({ tmdbId });
-        await utils.watchlist.getWatchlistItemsByUser.cancel();
 
-        // Get previous states
         const prev = utils.watchlist.checkWatchlistItem.getData({
           tmdbId,
         });
-        const prevWatchlistItems =
-          utils.watchlist.getWatchlistItemsByUser.getData();
 
-        // Update check query optimistically
         utils.watchlist.checkWatchlistItem.setData(
           { tmdbId: tmdbId },
           { exists: !prev?.exists }
         );
 
-        // Update watchlist optimistically
-        utils.watchlist.getWatchlistItemsByUser.setData(
-          undefined,
-          (old = []) => {
-            if (prev?.exists) {
-              // removing - filter out the item
-              return old.filter((item) => item.tmdbId !== tmdbId);
-            } else {
-              // adding - add the item
-              return [...old, snapshot];
-            }
-          }
-        );
-
-        return { prev, prevWatchlistItems };
+        return { prev };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
@@ -58,17 +39,12 @@ const WatchlistButton: React.FC<{
             ctx.prev
           );
         }
-
-        if (ctx?.prevWatchlistItems) {
-          utils.watchlist.getWatchlistItemsByUser.setData(
-            undefined,
-            ctx.prevWatchlistItems
-          );
-        }
+      },
+      onSuccess: () => {
+        refetch?.();
       },
       onSettled: () => {
         utils.watchlist.checkWatchlistItem.invalidate({ tmdbId });
-        utils.watchlist.getWatchlistItemsByUser.invalidate();
       },
     });
 

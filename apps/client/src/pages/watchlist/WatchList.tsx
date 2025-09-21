@@ -12,8 +12,11 @@ import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
 
 export const WatchList: React.FC = () => {
-  const { data, isLoading: watchlistLoading } =
-    trpc.watchlist.getWatchlistItemsByUser.useQuery();
+  const {
+    data,
+    isLoading: watchlistLoading,
+    refetch,
+  } = trpc.watchlist.getWatchlistItemsByUser.useQuery();
 
   const watchlist = data ?? [];
 
@@ -46,16 +49,18 @@ export const WatchList: React.FC = () => {
                 if (favorite.mediaType === "movie") {
                   return (
                     <MovieCard
-                      key={`fav-movie-${favorite.tmdbId}`}
+                      key={`watchlist-movie-${favorite.tmdbId}`}
                       movie={normalizedFavorite as TmdbMovie}
+                      refetch={() => refetch()}
                     />
                   );
                 }
                 if (favorite.mediaType === "tv") {
                   return (
                     <TvShowCard
-                      key={`fav-tv-${favorite.tmdbId}`}
+                      key={`watchlist-tv-${favorite.tmdbId}`}
                       tvShow={normalizedFavorite as TmdbTvShow}
+                      refetch={() => refetch()}
                     />
                   );
                 }

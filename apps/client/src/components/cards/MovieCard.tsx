@@ -10,7 +10,10 @@ import { useModal, ModalTypesEnum } from "../../stores/modals";
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 import type { TmdbMovie, MediaItemSnapshot } from "@my/api";
 
-export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
+export const MovieCard: React.FC<{
+  movie: TmdbMovie;
+  refetch?: () => void;
+}> = ({ movie, refetch }) => {
   const { open } = useModal();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -59,6 +62,7 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
             absolute top-2 right-2 rounded-full flex items-center justify-center opacity-0 
             group-hover:opacity-100 transition-opacity duration-300 bg-black/50 hover:bg-lume-primary p-1.5 
             z-10 cursor-pointer h-[36px] w-[36px] min-h-[36px] min-w-[36px]`}
+          refetch={refetch}
         />
         <div
           className="
@@ -74,6 +78,7 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
             handleCloseInline={() => setShowMenu(false)}
             cardItemId={movie.id}
             snapshot={snapshot}
+            refetch={refetch}
           />
         )}
       </div>
