@@ -5,6 +5,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import HeartIcon from "@components/svgs/HeartIcon";
 import CardActionItemLoader from "@components/loaders/CardActionItemLoader";
 
+import { useAuth } from "../../hooks/useAuth";
+import { useCurrentUser } from "../../stores/user";
+
 import type { MediaItemSnapshot } from "@my/api";
 
 export const FavoritesButton: React.FC<{
@@ -15,11 +18,13 @@ export const FavoritesButton: React.FC<{
   isEnabled?: boolean;
 }> = ({ className, iconClassName, tmdbId, snapshot, isEnabled = false }) => {
   const queryClient = useQueryClient();
+  const { isLoggedIn } = useCurrentUser();
+  const { showAuth } = useAuth();
 
   const { data: isFavorited, isLoading: isFavoritedLoading } =
     trpc.favorites.checkFavoriteItem.useQuery(
       { tmdbId },
-      { enabled: isEnabled }
+      { enabled: isEnabled && isLoggedIn }
     );
 
   const { mutate: toggleFavorite, isPending: isFavoritePending } =
@@ -60,6 +65,10 @@ export const FavoritesButton: React.FC<{
     <button
       onClick={(e) => {
         e.stopPropagation();
+        if (!isLoggedIn) {
+          showAuth();
+          return;
+        }
         toggleFavorite({ tmdbId, favoriteItem: snapshot });
       }}
       disabled={isFavoritePending}
