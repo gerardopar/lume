@@ -11,6 +11,8 @@ import {
   getTvSeasonVideos,
   searchTvShows,
   getTrendingTvShows,
+  getTvShowSeriesVideos,
+  getTvShowCast,
 } from "../services/tmdb-tv-shows-service";
 
 import {
@@ -142,11 +144,35 @@ export const tvShowsRouter = router({
       return data;
     }),
 
-  getTvShowDetails: publicProcedure
+  getTvShowDetailsSimple: publicProcedure
     .input(z.object({ seriesId: z.number() }))
     .query(({ input }) => {
       try {
         return getTvShowDetails(input.seriesId);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching TV show details",
+          cause: error,
+        });
+      }
+    }),
+
+  getTvShowDetails: publicProcedure
+    .input(z.object({ seriesId: z.number() }))
+    .query(({ input }) => {
+      try {
+        const tvShowDetails = getTvShowDetails(input.seriesId);
+        const tvShowVideos = getTvShowSeriesVideos(input.seriesId);
+        const tvShowCast = getTvShowCast(input.seriesId);
+        const tvShowWatchProviders = getTvShowCast(input.seriesId);
+
+        return {
+          tvShowDetails,
+          tvShowVideos,
+          tvShowCast,
+          tvShowWatchProviders,
+        };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

@@ -57,6 +57,11 @@ export const searchTvShows = async (query: string, page = 1) => {
   return res.data;
 };
 
+export const getTvShowSeriesVideos = async (seriesId: number) => {
+  const res = await tmdb.get<TVSeasonVideosResponse>(`/tv/${seriesId}/videos`);
+  return res.data;
+};
+
 export const getTvSeasonVideos = async (
   seriesId: number,
   seasonNumber: number
@@ -64,5 +69,15 @@ export const getTvSeasonVideos = async (
   const res = await tmdb.get<TVSeasonVideosResponse>(
     `/tv/${seriesId}/season/${seasonNumber}/videos`
   );
+  return res.data;
+};
+
+export const getTvShowCast = async (seriesId: number) => {
+  const res = await tmdb.get<TmdbTvShow>(`/tv/${seriesId}/credits`);
+  return res.data;
+};
+
+export const getTvShowWatchProviders = async (seriesId: number) => {
+  const res = await tmdb.get<TmdbTvShow>(`/tv/${seriesId}/watch/providers`);
   return res.data;
 };
