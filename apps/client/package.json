@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.87.1",
+    "@tanstack/react-query-devtools": "^5.89.0",
     "@trpc/client": "^11.5.1",
     "@trpc/react-query": "^11.5.1",
     "firebase": "^12.2.1",
