@@ -168,10 +168,10 @@ export const tvShowsRouter = router({
         const tvShowWatchProviders = getTvShowCast(input.seriesId);
 
         return {
-          tvShowDetails,
-          tvShowVideos,
-          tvShowCast,
-          tvShowWatchProviders,
+          details: tvShowDetails,
+          videos: tvShowVideos,
+          credits: tvShowCast,
+          watchProviders: tvShowWatchProviders,
         };
       } catch (error) {
         throw new TRPCError({
