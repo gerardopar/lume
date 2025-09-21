@@ -2,18 +2,25 @@ import React, { useMemo } from "react";
 import { trpc } from "@utils/trpc";
 
 import HeroBg from "./HeroBg";
+import MovieDetails from "../movie/MovieDetails";
 import GenreChip from "@components/shared/GenreChip";
+import TvShowDetails from "@components/tv/TvShowDetails";
 import HeroSkeleton from "@components/skeleton/HeroSkeleton";
 import WatchlistButton from "@components/shared/WatchlistButton";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 import { getRandomMovie, getGenres } from "../../helpers/movie.helpers";
 import { getRandomTvShow, getTvShowGenres } from "../../helpers/tvShow.helpers";
+
+import { ModalTypesEnum, useModal } from "../../stores/modals";
+
 import type { MediaItemSnapshot } from "@my/api";
 
 export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
   mediaType = "movie",
 }) => {
+  const { open } = useModal();
+
   const { data: movies, isLoading: moviesLoading } =
     trpc.movies.getPopularMovies.useQuery(
       {
@@ -110,6 +117,20 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
           genreIds: tvShow?.genre_ids,
         };
 
+  const viewModeDetails = () => {
+    if (mediaType === "movie") {
+      open(<MovieDetails movie={movie!} />, {
+        type: ModalTypesEnum.Bottom,
+        modalBoxClassName: "p-0",
+      });
+    } else {
+      open(<TvShowDetails tvShow={tvShow!} />, {
+        type: ModalTypesEnum.Bottom,
+        modalBoxClassName: "p-0",
+      });
+    }
+  };
+
   return (
     <div className="relative h-[50%] min-h-[400px] w-full flex flex-col rounded-2xl overflow-hidden p-6">
       <HeroBg poster={backdrop!} />
@@ -137,8 +158,11 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
           </p>
 
           <div className="flex items-center gap-2 mt-2">
-            <button className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50">
-              Watch Trailer
+            <button
+              onClick={viewModeDetails}
+              className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50"
+            >
+              View Details
             </button>
             <WatchlistButton
               tmdbId={movie?.id || tvShow?.id}
