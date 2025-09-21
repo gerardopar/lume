@@ -2,19 +2,25 @@ import React from "react";
 import _ from "lodash";
 
 import { getVisibleCast } from "../../helpers/cast.helpers";
+import CastListSkeleton from "@components/skeleton/CastListSkeleton";
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 
 import type { CastMember } from "@my/api";
 
-export const CastList: React.FC<{ cast: CastMember[]; className?: string }> = ({
-  cast,
-  className,
-}) => {
-  const { visibleCast, remainder: remainderCast } = getVisibleCast(cast);
+export const CastList: React.FC<{
+  cast: CastMember[];
+  className?: string;
+  isLoading?: boolean;
+}> = ({ cast, className, isLoading }) => {
+  const { visibleCast, remainder: remainderCast } = getVisibleCast(cast, 3, 6);
+
+  if (isLoading) {
+    return <CastListSkeleton count={6} className={className} />;
+  }
 
   return (
     <div className={`avatar-group -space-x-4 ${className}`}>
-      {visibleCast.map((c) => {
+      {visibleCast?.map((c) => {
         const profilePath = buildImageUrl(
           config,
           "profile",

@@ -6,6 +6,7 @@ import { trpc } from "@utils/trpc";
 import VideoPlayer from "../video/VideoPlayer";
 import CastList from "@components/cast/CastList";
 import GenreChip from "@components/shared/GenreChip";
+import GenreChipSkeleton from "@components/skeleton/GenreChipSkeleton";
 import WatchProvidersList from "@components/watch-providers/WatchProvidersList";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
@@ -14,7 +15,7 @@ import { getGenres } from "../../helpers/movie.helpers";
 import type { TmdbMovie } from "@my/api";
 
 export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
-  const { data } = trpc.movies.getMovieDetails.useQuery({
+  const { data, isLoading } = trpc.movies.getMovieDetails.useQuery({
     movieId: movie.id,
   });
 
@@ -67,9 +68,11 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
 
           <div className="flex w-full flex-col ml-6 gap-4">
             <div className="flex items-center gap-2">
-              {movieGenres.map((genre) => (
-                <GenreChip genre={genre} />
-              ))}
+              {isLoading ? (
+                <GenreChipSkeleton count={3} />
+              ) : (
+                movieGenres.map((genre) => <GenreChip genre={genre!} />)
+              )}
             </div>
             <h1 className="text-4xl font-bold font-inter text-white">
               {title}
@@ -78,10 +81,11 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
               {overview}
             </p>
             <div className="flex space-x-8">
-              <CastList cast={cast} />
+              <CastList cast={cast} isLoading={isLoading} />
               <div className="divider divider-horizontal h-full m-0" />
               <WatchProvidersList
                 watchProviders={watchProviders}
+                isLoading={isLoading}
                 className="ml-8"
               />
             </div>
