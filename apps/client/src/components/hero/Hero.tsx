@@ -4,10 +4,12 @@ import { trpc } from "@utils/trpc";
 import HeroBg from "./HeroBg";
 import GenreChip from "@components/shared/GenreChip";
 import HeroSkeleton from "@components/skeleton/HeroSkeleton";
+import WatchlistButton from "@components/shared/WatchlistButton";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
 import { getRandomMovie, getGenres } from "../../helpers/movie.helpers";
 import { getRandomTvShow, getTvShowGenres } from "../../helpers/tvShow.helpers";
+import type { MediaItemSnapshot } from "@my/api";
 
 export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
   mediaType = "movie",
@@ -85,6 +87,29 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
 
   if (moviesLoading || tvShowsLoading) return <HeroSkeleton />;
 
+  const snapShot: MediaItemSnapshot =
+    mediaType === "movie"
+      ? {
+          tmdbId: movie?.id,
+          mediaType: "movie",
+          title: movie?.title,
+          posterPath: movie?.poster_path || "",
+          releaseDate: movie?.release_date,
+          overview: movie?.overview,
+          voteAverage: movie?.vote_average,
+          genreIds: movie?.genre_ids,
+        }
+      : {
+          tmdbId: tvShow?.id,
+          mediaType: "tv",
+          title: tvShow?.name,
+          posterPath: tvShow?.poster_path || "",
+          releaseDate: tvShow?.first_air_date,
+          overview: tvShow?.overview,
+          voteAverage: tvShow?.vote_average,
+          genreIds: tvShow?.genre_ids,
+        };
+
   return (
     <div className="relative h-[50%] min-h-[400px] w-full flex flex-col rounded-2xl overflow-hidden p-6">
       <HeroBg poster={backdrop!} />
@@ -115,9 +140,10 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
             <button className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50">
               Watch Trailer
             </button>
-            <button className="shadow-lg btn btn-outline font-[400] rounded-full text-lume-primary-light hover:bg-lume-primary-light hover:text-lume-primary-dark hover:border-lume-primary-light">
-              Add to Watchlist
-            </button>
+            <WatchlistButton
+              tmdbId={movie?.id || tvShow?.id}
+              snapshot={snapShot}
+            />
           </div>
         </div>
       </div>

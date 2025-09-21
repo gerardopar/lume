@@ -4,12 +4,12 @@ import { trpc } from "@utils/trpc";
 import MainLayout from "../../layout/MainLayout";
 import MovieCard from "@components/cards/MovieCard";
 import TvShowCard from "@components/cards/tv/TvShowCard";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 import FavoritesPlaceholder from "../../components/empty-states/FavoritesPlaceholder";
 
 import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
 
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
-import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const Favorites: React.FC = () => {
   const { data: favorites, isLoading: favoritesLoading } =

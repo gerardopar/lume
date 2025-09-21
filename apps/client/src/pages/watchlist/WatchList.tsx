@@ -4,12 +4,12 @@ import { trpc } from "@utils/trpc";
 import MainLayout from "../../layout/MainLayout";
 import MovieCard from "@components/cards/MovieCard";
 import TvShowCard from "@components/cards/tv/TvShowCard";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 import WatchListPlaceholder from "../../components/empty-states/WatchListPlaceholder";
 
 import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
 
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
-import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const WatchList: React.FC = () => {
   const { data, isLoading: watchlistLoading } =
