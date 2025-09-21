@@ -96,10 +96,10 @@ export const moviesRouter = router({
         const movieWatchProviders = await getMovieWatchProviders(input.movieId);
 
         return {
-          movieDetails,
-          movieVideos,
-          movieCast,
-          movieWatchProviders,
+          details: movieDetails,
+          videos: movieVideos,
+          credits: movieCast,
+          watchProviders: movieWatchProviders,
         };
       } catch (error) {
         throw new TRPCError({

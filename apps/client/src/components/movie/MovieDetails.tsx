@@ -30,9 +30,9 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
     "original"
   );
 
-  const videos = data?.movieVideos?.results ?? [];
-  const cast = data?.movieCast?.cast ?? [];
-  const watchProviders = data?.movieWatchProviders?.results?.US ?? {};
+  const videos = data?.videos?.results ?? [];
+  const cast = data?.credits?.cast ?? [];
+  const watchProviders = data?.watchProviders?.results?.US ?? {};
 
   const trailer = videos.find(
     (v) => v.type === "Trailer" && v.site === "YouTube"
