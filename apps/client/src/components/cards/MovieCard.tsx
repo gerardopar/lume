@@ -1,19 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 
-import HeartIcon from "@components/svgs/HeartIcon";
+import CardActionsMenuButton from "@components/card-actions-menu/CardActionsMenuButton";
+import CardActionsMenu from "@components/card-actions-menu/CardActionsMenu";
+import FavoritesButton from "@components/shared/FavoritesButton";
 import MovieDetails from "../movie/MovieDetails";
 
 import { useModal, ModalTypesEnum } from "../../stores/modals";
 
 import { buildImageUrl, config } from "../../helpers/tmdb-image.helpers";
-import type { TmdbMovie } from "@my/api";
+import type { TmdbMovie, MediaItemSnapshot } from "@my/api";
 
-export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
+export const MovieCard: React.FC<{
+  movie: TmdbMovie;
+  refetch?: () => void;
+}> = ({ movie, refetch }) => {
   const { open } = useModal();
+
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [isCardActive, setIsCardActive] = useState<boolean>(false);
 
   const { title, poster_path } = movie;
 
   const poster = buildImageUrl(config, "poster", poster_path!, "original");
+
+  const snapshot: MediaItemSnapshot = {
+    tmdbId: movie.id,
+    mediaType: "movie",
+    title: movie.title,
+    posterPath: movie?.poster_path || "",
+    releaseDate: movie.release_date,
+    overview: movie.overview,
+    voteAverage: movie.vote_average,
+    genreIds: movie.genre_ids,
+  };
 
   return (
     <div
@@ -23,19 +42,28 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
           modalBoxClassName: "p-0",
         })
       }
+      onMouseEnter={() => setIsCardActive(true)}
+      onMouseLeave={() => setIsCardActive(false)}
       role="button"
-      className="cursor-pointer relative min-h-[320px] max-h-[320px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300"
+      className="cursor-pointer relative min-h-[340px] max-h-[320px] max-w-[200px] w-[200px] flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300"
     >
       <div
         className={`
-        relative h-[275px] w-[180px] rounded-2xl overflow-hidden shadow-lg group
+        relative min-h-[275px] w-[180px] rounded-2xl overflow-hidden shadow-lg group
         bg-cover bg-center
       `}
         style={{ backgroundImage: `url(${poster})` }}
       >
-        <button className="absolute top-2 right-2 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 hover:bg-lume-primary p-1.5">
-          <HeartIcon className="w-4 h-4" />
-        </button>
+        <FavoritesButton
+          isEnabled={isCardActive}
+          tmdbId={movie.id}
+          snapshot={snapshot}
+          className={`
+            absolute top-2 right-2 rounded-full flex items-center justify-center opacity-0 
+            group-hover:opacity-100 transition-opacity duration-300 bg-black/50 hover:bg-lume-primary p-1.5 
+            z-10 cursor-pointer h-[36px] w-[36px] min-h-[36px] min-w-[36px]`}
+          refetch={refetch}
+        />
         <div
           className="
           absolute inset-0 bg-gradient-to-b from-black/25 to-black/25
@@ -43,12 +71,24 @@ export const MovieCard: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
           group-hover:opacity-0
         "
         />
+
+        {showMenu && (
+          <CardActionsMenu
+            isInline
+            handleCloseInline={() => setShowMenu(false)}
+            cardItemId={movie.id}
+            snapshot={snapshot}
+            refetch={refetch}
+          />
+        )}
       </div>
 
-      <div className="mt-2 pb-2 pl-1">
+      <div className="mt-2 pb-2 flex items-start justify-between">
         <h2 className="text-white font-poppins font-[200] text-sm line-clamp-2">
           {title}
         </h2>
+
+        <CardActionsMenuButton onClick={() => setShowMenu(!showMenu)} />
       </div>
     </div>
   );

@@ -1,13 +1,14 @@
 import React from "react";
+import { nanoid } from "nanoid";
 
-import { HomeIcon } from "../svgs/HomeIcon";
+import { TvIcon } from "../svgs/TvIcon";
 import { UserIcon } from "../svgs/UserIcon";
+import { PlayIcon } from "../svgs/PlayIcon";
 import { HeartIcon } from "../svgs/HeartIcon";
-import { CompassIcon } from "../svgs/CompassIcon";
-import { SettingsIcon } from "../svgs/SettingsIcon";
+import { MoviesIcon } from "../svgs/MoviesIcon";
 
 export interface SidenavLink {
-  id: number;
+  id: string;
   label: string;
   path: string;
   Icon: React.FC<{ className?: string }>;
@@ -15,34 +16,33 @@ export interface SidenavLink {
 
 export const sidenavLinks: SidenavLink[] = [
   {
-    id: 1,
-    label: "Home",
+    id: nanoid(),
+    label: "Movies",
     path: "/",
-    Icon: HomeIcon,
+    Icon: MoviesIcon,
   },
   {
-    id: 2,
-    label: "Explore",
-    path: "/explore",
-    Icon: CompassIcon,
+    id: nanoid(),
+    label: "TV Shows",
+    path: "/tv-shows",
+    Icon: TvIcon,
   },
   {
-    id: 3,
-    label: "Favorites",
-    path: "/favorites",
-    Icon: HeartIcon,
-  },
-
-  {
-    id: 4,
+    id: nanoid(),
     label: "Profile",
     path: "/profile",
     Icon: UserIcon,
   },
   {
-    id: 5,
-    label: "Settings",
-    path: "/settings",
-    Icon: SettingsIcon,
+    id: nanoid(),
+    label: "Favorites",
+    path: "/favorites",
+    Icon: HeartIcon,
+  },
+  {
+    id: nanoid(),
+    label: "My Watchlist",
+    path: "/watchlist",
+    Icon: PlayIcon,
   },
 ];

@@ -10,7 +10,10 @@ export const CloseButton: React.FC<{
     <button
       type="button"
       className={`cursor-pointer ${className}`}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}
     >
       <XIcon />
     </button>

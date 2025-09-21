@@ -9,15 +9,19 @@ export const SuggestionsFilterDropdown: React.FC<{
   activeFilter: string;
   setActiveFilter: (value: FilterOptionEnum) => void;
 }> = ({ activeFilter, setActiveFilter }) => {
+  const activeFilterLabel = filterOptions.find(
+    (option) => option.value === activeFilter
+  )?.label;
+
   return (
-    <div className="dropdown dropdown-bottom min-w-[118px] w-[118px]">
+    <div className="dropdown dropdown-bottom min-w-[120px] w-[120px] border-lume-primary-dark border-l-[1px]">
       <div
         tabIndex={0}
         role="button"
-        className="font-poppins font-[200] capitalize px-4 py-[10px] rounded-full flex items-center justify-between bg-lume-secondary-dark text-white mr-2"
+        className="font-poppins font-[200] capitalize px-4 py-[10px] rounded-bl-none rounded-tl-none rounded-tr-full rounded-br-full flex items-center justify-end bg-lume-secondary-dark text-white mr-2 cursor-pointer"
       >
-        {activeFilter}
-        <ChevronDownIcon className="ml-2" />
+        {activeFilterLabel}
+        <ChevronDownIcon className="ml-2 w-5 h-5 min-w-[20px] min-h-[20px]" />
       </div>
       <ul
         tabIndex={0}

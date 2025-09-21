@@ -7,7 +7,7 @@ import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
 
 import type { TmdbMovie } from "@my/api";
-import MovieCardSkeleton from "@components/skeleton/MovieCardSkeleton";
+import MovieCardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const MovieNowPlayingCardList: React.FC<{
   className?: string;

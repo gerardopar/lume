@@ -5,9 +5,9 @@ import { inView } from "motion";
 import MovieCard from "./MovieCard";
 import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 import type { TmdbMovie } from "@my/api";
-import MovieCardSkeleton from "@components/skeleton/MovieCardSkeleton";
 
 export const MovieCategoryCardList: React.FC<{
   title?: string;
@@ -130,7 +130,7 @@ export const MovieCategoryCardList: React.FC<{
         )}
         <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
           {[...Array(10)].map((_, idx) => (
-            <MovieCardSkeleton key={idx} />
+            <CardSkeleton key={idx} />
           ))}
         </div>
       </div>
@@ -173,7 +173,7 @@ export const MovieCategoryCardList: React.FC<{
         {isFetchingNextPage && (
           <>
             {[...Array(3)].map((_, idx) => (
-              <MovieCardSkeleton key={`skeleton-${idx}`} />
+              <CardSkeleton key={`skeleton-${idx}`} />
             ))}
           </>
         )}

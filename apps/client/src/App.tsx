@@ -1,6 +1,8 @@
 import React from "react";
 import AppRouter from "./router/AppRouter";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import Toast from "@components/toast/Toast";
 import Modal from "@components/modal/Modal";
 import TrpcProvider from "./providers/TrpcProvider";
@@ -13,6 +15,7 @@ const App: React.FC = () => {
       <AppRouter />
       <Modal />
       <Toast />
+      <ReactQueryDevtools />
     </TrpcProvider>
   );
 };

@@ -5,20 +5,17 @@ import {
   TmdbMovie,
   TmdbPaginatedResponse,
   TmdbKeywordSearchResponse,
-  TmdbTvShow,
   MultiSearchResult,
   FilterOptionEnum,
 } from "../types/tmdb.types";
 import { TmdbMovieDetails } from "../validators/movies-details.validators";
 
-import {
-  MovieVideosResponse,
-  TVSeasonVideosResponse,
-} from "../types/tmdb.types";
+import { MovieVideosResponse } from "../types/tmdb.types";
+import { searchTvShows } from "./tmdb-tv-shows-service";
 
-const TMDB_API_URL = "https://api.themoviedb.org/3";
+export const TMDB_API_URL = "https://api.themoviedb.org/3";
 
-const tmdb = axios.create({
+export const tmdb = axios.create({
   baseURL: TMDB_API_URL,
   headers: {
     Authorization: env.TMDB_API_KEY,
@@ -99,13 +96,6 @@ export const searchMovies = async (query: string, page = 1) => {
   return res.data;
 };
 
-export const searchTvShows = async (query: string, page = 1) => {
-  const res = await tmdb.get<TmdbPaginatedResponse<TmdbTvShow>>("/search/tv", {
-    params: { query, page },
-  });
-  return res.data;
-};
-
 export const searchMulti = async (query: string, page = 1) => {
   const res = await tmdb.get<TmdbPaginatedResponse<MultiSearchResult>>(
     "/search/multi",
@@ -151,12 +141,14 @@ export const getMovieVideos = async (movieId: number) => {
   return res.data;
 };
 
-export const getTvSeasonVideos = async (
-  seriesId: number,
-  seasonNumber: number
-) => {
-  const res = await tmdb.get<TVSeasonVideosResponse>(
-    `/tv/${seriesId}/season/${seasonNumber}/videos`
+export const getMovieCast = async (movieId: number) => {
+  const res = await tmdb.get<TmdbMovieDetails>(`/movie/${movieId}/credits`);
+  return res.data;
+};
+
+export const getMovieWatchProviders = async (movieId: number) => {
+  const res = await tmdb.get<TmdbMovieDetails>(
+    `/movie/${movieId}/watch/providers`
   );
   return res.data;
 };
