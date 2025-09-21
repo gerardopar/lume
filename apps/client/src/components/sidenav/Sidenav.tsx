@@ -3,16 +3,17 @@ import { NavLink } from "react-router-dom";
 
 import UserProfilePicture from "@components/shared/UserProfilePicture";
 import LogoutButton from "@components/logout/LogoutButton";
-import AuthWrapper from "@components/auth/AuthWrapper";
 import UserProfile from "../user-profile/UserProfile";
 
 import { sidenavLinks } from "./sidenav-helpers";
 
 import { useModal } from "../../stores/modals";
+import { useAuth } from "../../hooks/useAuth";
 import { useCurrentUser } from "../../stores/user";
 
 export const Sidenav: React.FC = () => {
   const { isLoggedIn } = useCurrentUser();
+  const { showAuth } = useAuth();
   const { open } = useModal();
 
   const protectedPaths = ["/profile", "/favorites", "/watchlist"];
@@ -40,7 +41,7 @@ export const Sidenav: React.FC = () => {
                 onClick={(e) => {
                   if (isProtected && !isLoggedIn) {
                     e.preventDefault();
-                    open(<AuthWrapper />);
+                    showAuth();
                   } else if (path === "/profile" && isLoggedIn) {
                     e.preventDefault();
                     open(<UserProfile />, {
