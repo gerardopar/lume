@@ -17,7 +17,7 @@ export const FavoritesButton: React.FC<{
   snapshot: MediaItemSnapshot;
   isEnabled?: boolean;
 }> = ({ className, iconClassName, tmdbId, snapshot, isEnabled = false }) => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
   const { isLoggedIn } = useCurrentUser();
   const { showAuth } = useAuth();
 
@@ -30,33 +30,53 @@ export const FavoritesButton: React.FC<{
   const { mutate: toggleFavorite, isPending: isFavoritePending } =
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
-        await queryClient.cancelQueries([
-          "favorites.checkFavoriteItem",
-          { tmdbId },
-        ]);
-        const prev = queryClient.getQueryData<{ exists: boolean }>([
-          "favorites.checkFavoriteItem",
-          { tmdbId },
-        ]);
-        queryClient.setQueryData(["favorites.checkFavoriteItem", { tmdbId }], {
-          exists: !prev?.exists,
-        });
+        await utils.favorites.checkFavoriteItem.cancel({ tmdbId });
+        await utils.favorites.getFavoriteItemsByUser.cancel();
 
-        return { prev };
+        const prev = utils.favorites.checkFavoriteItem.getData({
+          tmdbId,
+        });
+        const prevFavoriteItems =
+          utils.favorites.getFavoriteItemsByUser.getData();
+
+        utils.favorites.checkFavoriteItem.setData(
+          { tmdbId: tmdbId },
+          { exists: !prev?.exists }
+        );
+
+        utils.favorites.getFavoriteItemsByUser.setData(
+          undefined,
+          (old = []) => {
+            if (prev?.exists) {
+              // removing - filter out the item
+              return old.filter((item) => item.tmdbId !== tmdbId);
+            } else {
+              // adding - add the item
+              return [...old, snapshot];
+            }
+          }
+        );
+
+        return { prev, prevFavoriteItems };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
-          queryClient.setQueryData(
-            ["favorites.checkFavoriteItem", { tmdbId }],
+          utils.favorites.checkFavoriteItem.setData(
+            { tmdbId: tmdbId },
             ctx.prev
+          );
+        }
+
+        if (ctx?.prevFavoriteItems) {
+          utils.favorites.getFavoriteItemsByUser.setData(
+            undefined,
+            ctx.prevFavoriteItems
           );
         }
       },
       onSettled: () => {
-        queryClient.invalidateQueries([
-          "favorites.checkFavoriteItem",
-          { tmdbId },
-        ]);
+        utils.favorites.checkFavoriteItem.invalidate({ tmdbId });
+        utils.favorites.getFavoriteItemsByUser.invalidate();
       },
     });
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { trpc } from "@utils/trpc";
-import { useQueryClient } from "@tanstack/react-query";
 
 import XIcon from "@components/svgs/XIcon";
 import PlusIcon from "@components/svgs/PlusIcon";
@@ -12,40 +11,39 @@ const WatchlistButton: React.FC<{
   tmdbId: number;
   snapshot: MediaItemSnapshot;
 }> = ({ tmdbId, snapshot }) => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
   const { data: isWatchlisted, isLoading: isWatchlistedLoading } =
     trpc.watchlist.checkWatchlistItem.useQuery({ tmdbId });
 
   const { mutate: toggleWatchlist, isPending: isWatchlistPending } =
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
-        await queryClient.cancelQueries([
-          "watchlist.checkWatchlistItem",
-          { tmdbId },
-        ]);
-        const prev = queryClient.getQueryData<{ exists: boolean }>([
-          "watchlist.checkWatchlistItem",
-          { tmdbId },
-        ]);
-        queryClient.setQueryData(["watchlist.checkWatchlistItem", { tmdbId }], {
-          exists: !prev?.exists,
+        // Cancel both queries
+        await utils.watchlist.checkWatchlistItem.cancel({ tmdbId });
+        await utils.watchlist.getWatchlistItemsByUser.cancel();
+
+        // Get previous states
+        const prev = utils.watchlist.checkWatchlistItem.getData({
+          tmdbId,
         });
+        const prevWatchlistItems =
+          utils.watchlist.getWatchlistItemsByUser.getData();
 
-        await queryClient.cancelQueries(["watchlist.getWatchlistItemsByUser"]);
+        // Update check query optimistically
+        utils.watchlist.checkWatchlistItem.setData(
+          { tmdbId: tmdbId },
+          { exists: !prev?.exists }
+        );
 
-        const prevWatchlistItems = queryClient.getQueryData<
-          MediaItemSnapshot[]
-        >(["watchlist.getWatchlistItemsByUser"]);
-
-        // Update the watchlist optimistically
-        queryClient.setQueryData(
-          ["watchlist.getWatchlistItemsByUser"],
-          (old: MediaItemSnapshot[] = []) => {
+        // Update watchlist optimistically
+        utils.watchlist.getWatchlistItemsByUser.setData(
+          undefined,
+          (old = []) => {
             if (prev?.exists) {
-              // removing
+              // removing - filter out the item
               return old.filter((item) => item.tmdbId !== tmdbId);
             } else {
-              // adding
+              // adding - add the item
               return [...old, snapshot];
             }
           }
@@ -55,26 +53,22 @@ const WatchlistButton: React.FC<{
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
-          queryClient.setQueryData(
-            ["watchlist.checkWatchlistItem", { tmdbId }],
+          utils.watchlist.checkWatchlistItem.setData(
+            { tmdbId: tmdbId },
             ctx.prev
           );
         }
 
         if (ctx?.prevWatchlistItems) {
-          queryClient.setQueryData(
-            ["watchlist.getWatchlistItemsByUser"],
+          utils.watchlist.getWatchlistItemsByUser.setData(
+            undefined,
             ctx.prevWatchlistItems
           );
         }
       },
       onSettled: () => {
-        queryClient.invalidateQueries([
-          "watchlist.checkWatchlistItem",
-          { tmdbId },
-        ]);
-
-        queryClient.invalidateQueries(["watchlist.getWatchlistItemsByUser"]);
+        utils.watchlist.checkWatchlistItem.invalidate({ tmdbId });
+        utils.watchlist.getWatchlistItemsByUser.invalidate();
       },
     });
 

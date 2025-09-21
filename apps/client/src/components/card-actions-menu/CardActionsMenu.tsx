@@ -1,5 +1,4 @@
 import React from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@utils/trpc";
 
 import { AnimatePresence, motion } from "motion/react";
@@ -21,7 +20,7 @@ export const CardActionsMenu: React.FC<{
   cardItemId: number;
   snapshot: MediaItemSnapshot;
 }> = ({ isInline, handleCloseInline, cardItemId, snapshot }) => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
 
   const { data: isFavorited, isLoading: isFavoritedLoading } =
     trpc.favorites.checkFavoriteItem.useQuery({ tmdbId: cardItemId });
@@ -32,68 +31,77 @@ export const CardActionsMenu: React.FC<{
   const { mutate: toggleFavorite, isPending: isFavoritePending } =
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
-        await queryClient.cancelQueries([
-          "favorites.checkFavoriteItem",
+        await utils.favorites.checkFavoriteItem.cancel({ tmdbId: cardItemId });
+        await utils.favorites.getFavoriteItemsByUser.cancel();
+
+        const prev = utils.favorites.checkFavoriteItem.getData({
+          tmdbId: cardItemId,
+        });
+        const prevFavoriteItems =
+          utils.favorites.getFavoriteItemsByUser.getData();
+
+        utils.favorites.checkFavoriteItem.setData(
           { tmdbId: cardItemId },
-        ]);
-        const prev = queryClient.getQueryData<{ exists: boolean }>([
-          "favorites.checkFavoriteItem",
-          { tmdbId: cardItemId },
-        ]);
-        queryClient.setQueryData(
-          ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
           { exists: !prev?.exists }
         );
 
-        return { prev };
+        utils.favorites.getFavoriteItemsByUser.setData(
+          undefined,
+          (old = []) => {
+            if (prev?.exists) {
+              // removing - filter out the item
+              return old.filter((item) => item.tmdbId !== cardItemId);
+            } else {
+              // adding - add the item
+              return [...old, snapshot];
+            }
+          }
+        );
+
+        return { prev, prevFavoriteItems };
       },
       onError: (_err, _vars, ctx) => {
         if (ctx?.prev) {
-          queryClient.setQueryData(
-            ["favorites.checkFavoriteItem", { tmdbId: cardItemId }],
+          utils.favorites.checkFavoriteItem.setData(
+            { tmdbId: cardItemId },
             ctx.prev
           );
         }
       },
       onSettled: () => {
-        queryClient.invalidateQueries([
-          "favorites.checkFavoriteItem",
-          { tmdbId: cardItemId },
-        ]);
+        utils.favorites.checkFavoriteItem.invalidate({ tmdbId: cardItemId });
       },
     });
 
   const { mutate: toggleWatchlist, isPending: isWatchlistPending } =
     trpc.watchlist.toggleWatchlistItem.useMutation({
       onMutate: async () => {
-        await queryClient.cancelQueries([
-          "watchlist.checkWatchlistItem",
+        // Cancel both queries
+        await utils.watchlist.checkWatchlistItem.cancel({ tmdbId: cardItemId });
+        await utils.watchlist.getWatchlistItemsByUser.cancel();
+
+        // Get previous states
+        const prev = utils.watchlist.checkWatchlistItem.getData({
+          tmdbId: cardItemId,
+        });
+        const prevWatchlistItems =
+          utils.watchlist.getWatchlistItemsByUser.getData();
+
+        // Update check query optimistically
+        utils.watchlist.checkWatchlistItem.setData(
           { tmdbId: cardItemId },
-        ]);
-        const prev = queryClient.getQueryData<{ exists: boolean }>([
-          "watchlist.checkWatchlistItem",
-          { tmdbId: cardItemId },
-        ]);
-        queryClient.setQueryData(
-          ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
           { exists: !prev?.exists }
         );
 
-        await queryClient.cancelQueries(["watchlist.getWatchlistItemsByUser"]);
-
-        const prevWatchlistItems = queryClient.getQueryData<
-          MediaItemSnapshot[]
-        >(["watchlist.getWatchlistItemsByUser"]);
-
-        // Update the watchlist optimistically
-        queryClient.setQueryData(
-          ["watchlist.getWatchlistItemsByUser"],
-          (old: MediaItemSnapshot[] = []) => {
+        // Update watchlist optimistically
+        utils.watchlist.getWatchlistItemsByUser.setData(
+          undefined,
+          (old = []) => {
             if (prev?.exists) {
-              // removing
+              // removing - filter out the item
               return old.filter((item) => item.tmdbId !== cardItemId);
             } else {
-              // adding
+              // adding - add the item
               return [...old, snapshot];
             }
           }
@@ -102,27 +110,24 @@ export const CardActionsMenu: React.FC<{
         return { prev, prevWatchlistItems };
       },
       onError: (_err, _vars, ctx) => {
+        // Revert on error
         if (ctx?.prev) {
-          queryClient.setQueryData(
-            ["watchlist.checkWatchlistItem", { tmdbId: cardItemId }],
+          utils.watchlist.checkWatchlistItem.setData(
+            { tmdbId: cardItemId },
             ctx.prev
           );
         }
-
-        if (ctx?.prevWatchlistItems) {
-          queryClient.setQueryData(
-            ["watchlist.getWatchlistItemsByUser"],
+        if (ctx?.prevWatchlistItems !== undefined) {
+          utils.watchlist.getWatchlistItemsByUser.setData(
+            undefined,
             ctx.prevWatchlistItems
           );
         }
       },
       onSettled: () => {
-        queryClient.invalidateQueries([
-          "watchlist.checkWatchlistItem",
-          { tmdbId: cardItemId },
-        ]);
-
-        queryClient.invalidateQueries(["watchlist.getWatchlistItemsByUser"]);
+        // Invalidate both queries
+        utils.watchlist.checkWatchlistItem.invalidate({ tmdbId: cardItemId });
+        utils.watchlist.getWatchlistItemsByUser.invalidate();
       },
     });
 
