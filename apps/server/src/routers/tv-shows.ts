@@ -13,6 +13,7 @@ import {
   getTrendingTvShows,
   getTvShowSeriesVideos,
   getTvShowCast,
+  getTvShowWatchProviders,
 } from "../services/tmdb-tv-shows-service";
 
 import {
@@ -160,12 +161,14 @@ export const tvShowsRouter = router({
 
   getTvShowDetails: publicProcedure
     .input(z.object({ seriesId: z.number() }))
-    .query(({ input }) => {
+    .query(async ({ input }) => {
       try {
-        const tvShowDetails = getTvShowDetails(input.seriesId);
-        const tvShowVideos = getTvShowSeriesVideos(input.seriesId);
-        const tvShowCast = getTvShowCast(input.seriesId);
-        const tvShowWatchProviders = getTvShowCast(input.seriesId);
+        const tvShowDetails = await getTvShowDetails(input.seriesId);
+        const tvShowVideos = await getTvShowSeriesVideos(input.seriesId);
+        const tvShowCast = await getTvShowCast(input.seriesId);
+        const tvShowWatchProviders = await getTvShowWatchProviders(
+          input.seriesId
+        );
 
         return {
           details: tvShowDetails,

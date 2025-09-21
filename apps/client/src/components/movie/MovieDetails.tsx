@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import _ from "lodash";
-
 import { trpc } from "@utils/trpc";
 
 import VideoPlayer from "../video/VideoPlayer";
@@ -34,7 +33,7 @@ export const MovieDetails: React.FC<{ movie: TmdbMovie }> = ({ movie }) => {
   const cast = data?.credits?.cast ?? [];
   const watchProviders = data?.watchProviders?.results?.US ?? {};
 
-  const trailer = videos.find(
+  const trailer = videos?.find(
     (v) => v.type === "Trailer" && v.site === "YouTube"
   );
 
