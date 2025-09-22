@@ -7,13 +7,7 @@ import { trpc } from "../utils/trpc";
 import { getAuth } from "firebase/auth";
 import type { PropsWithChildren } from "react";
 
-import { userStore } from "../stores/user";
-
 export const TrpcProvider = ({ children }: PropsWithChildren) => {
-  const user = userStore.useTracked("user");
-
-  console.log("user", user);
-
   const queryClient = new QueryClient();
   const auth = getAuth();
 
@@ -32,9 +26,7 @@ export const TrpcProvider = ({ children }: PropsWithChildren) => {
       trpc.createClient({
         links: [
           httpBatchLink({
-            url: import.meta.env.DEV
-              ? "http://localhost:8080/trpc"
-              : "https://api.yourapp.com/trpc",
+            url: import.meta.env.VITE_API_URL,
             async headers() {
               const user = auth.currentUser;
               if (!user) return {};
