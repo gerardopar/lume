@@ -3,6 +3,7 @@ import "dotenv/config";
 
 const envSchema = z.object({
   PORT: z.string().default("8080"),
+  CORS_ORIGIN: z.string().default("http://localhost:5173"),
   TMDB_API_KEY: z.string(),
   REDIS_URL: z.string(),
   REDIS_HOST: z.string(),
