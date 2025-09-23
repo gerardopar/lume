@@ -19,7 +19,7 @@ export const Sidenav: React.FC = () => {
   const protectedPaths = ["/profile", "/favorites", "/watchlist"];
 
   return (
-    <div className="max-w-[240px] w-full bg-lume-secondary-dark flex flex-col p-6">
+    <div className="max-w-[240px] w-full bg-lume-secondary-dark flex flex-col py-6">
       <nav className="flex flex-1 flex-col">
         {sidenavLinks.map((link, index) => {
           const { id, Icon, label, path } = link;
@@ -50,8 +50,10 @@ export const Sidenav: React.FC = () => {
                   }
                 }}
                 className={({ isActive }) =>
-                  `flex items-center font-poppins font-[200] text-lg py-2 ${
-                    isActive ? "text-lume-green" : "text-lume-primary-light"
+                  `flex items-center font-poppins font-[200] text-lg py-2 pl-6 ${
+                    isActive
+                      ? "text-lume-green border-l-2 border-lume-green bg-lume-primary-dark/30"
+                      : "text-lume-primary-light/70"
                   }`
                 }
               >
