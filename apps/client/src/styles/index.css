@@ -14,5 +14,6 @@
   --font-poppins: "Poppins", sans-serif;
   --font-inter: "Inter", sans-serif;
 
+  --breakpoint-mobile-768: 768px; /* everything ≤768px is considered mobile */
   --breakpoint-mobile-640: 640px; /* everything ≤640px is considered mobile */
 }
