@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import UserProfilePicture from "@components/shared/UserProfilePicture";
 import LogoutButton from "@components/logout/LogoutButton";
 import UserProfile from "../user-profile/UserProfile";
+import LogoText from "@components/shared/LogoText";
 
 import { sidenavLinks } from "./sidenav-helpers";
 
@@ -20,6 +21,14 @@ export const Sidenav: React.FC = () => {
 
   return (
     <div className="max-w-[240px] w-full bg-lume-secondary-dark flex flex-col py-6">
+      <div className="flex items-center justify-start w-full pl-6">
+        <LogoText />
+      </div>
+
+      <div className="w-full px-4 mt-2">
+        <div className="h-[1px] bg-lume-primary-light/10 my-2" />
+      </div>
+
       <nav className="flex flex-1 flex-col">
         {sidenavLinks.map((link, index) => {
           const { id, Icon, label, path } = link;
@@ -61,8 +70,10 @@ export const Sidenav: React.FC = () => {
                 {label}
               </NavLink>
 
-              {index === 2 && (
-                <div className="h-[1px] bg-lume-primary-light/10 my-2" />
+              {index === 1 && (
+                <div className="w-full px-4">
+                  <div className="h-[1px] bg-lume-primary-light/10 my-2" />
+                </div>
               )}
             </React.Fragment>
           );

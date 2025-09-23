@@ -1,6 +1,5 @@
 import React from "react";
 
-import BellIcon from "@components/svgs/BellIcon";
 import UserProfile from "@components/user-profile/UserProfile";
 import UserProfilePicture from "@components/shared/UserProfilePicture";
 import SuggestionsInput from "@components/SuggestionsInput/SuggestionsInput";
@@ -20,9 +19,6 @@ export const TopBar: React.FC = () => {
         <SuggestionsInput />
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center p-[10px] rounded-full bg-lume-secondary-dark">
-            <BellIcon className="w-5 h-5 text-lume-primary-light" />
-          </div>
           <div
             role="button"
             className="rounded-full overflow-hidden bg-lume-secondary-dark h-[40px] w-[40px] flex justify-center items-center cursor-pointer"
