@@ -18,7 +18,7 @@ export const LogoutButton: React.FC = () => {
   if (!isLoggedIn) return null;
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full px-6">
       <button
         onClick={handleLogout}
         className="btn btn-outline w-full rounded-[10px] border-none bg-lume-primary-dark/50"
