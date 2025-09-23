@@ -45,6 +45,13 @@ export const Sidenav: React.FC = () => {
 
           return (
             <React.Fragment key={id}>
+              {index === 0 && (
+                <div className="w-full pl-6 mb-2">
+                  <p className="text-lume-primary-light/50 text-sm font-inter font-[400]">
+                    Discover
+                  </p>
+                </div>
+              )}
               <NavLink
                 to={path}
                 onClick={(e) => {
@@ -71,9 +78,16 @@ export const Sidenav: React.FC = () => {
               </NavLink>
 
               {index === 1 && (
-                <div className="w-full px-4">
-                  <div className="h-[1px] bg-lume-primary-light/10 my-2" />
-                </div>
+                <>
+                  <div className="w-full px-4">
+                    <div className="h-[1px] bg-lume-primary-light/10 my-2" />
+                  </div>
+                  <div className="w-full pl-6 mb-2">
+                    <p className="text-lume-primary-light/50 text-sm font-inter font-[400]">
+                      User
+                    </p>
+                  </div>
+                </>
               )}
             </React.Fragment>
           );
