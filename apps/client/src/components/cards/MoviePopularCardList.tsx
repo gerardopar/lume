@@ -157,7 +157,7 @@ export const MoviePopularCardList: React.FC<{
 
       <div
         ref={scrollRef}
-        className="flex gap-4 max-mobile-540:gap-2 max-mobile-375:gap-1 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
+        className="flex gap-4 max-mobile-425:gap-2 max-mobile-375:gap-1 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
       >
         {movies.map((movie: TmdbMovie) => (
           <div key={movie.id} className="movie-card opacity-0">

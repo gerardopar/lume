@@ -48,7 +48,7 @@ export const TvShowCard: React.FC<{
       className={`
         cursor-pointer relative 
         min-h-[340px] max-h-[320px] max-w-[200px] w-[200px] 
-        max-mobile-540:w-[50%] max-mobile-540:max-w-[50%] max-mobile-540:min-w-[200px] 
+        max-mobile-425:w-[50%] max-mobile-425:max-w-[50%] max-mobile-425:min-w-[200px] 
         flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300
       `}
     >

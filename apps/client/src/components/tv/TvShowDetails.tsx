@@ -39,7 +39,7 @@ export const TvShowDetails: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
   return (
     <div className="relative w-full overflow-hidden bg-lume-primary-dark">
       {/* Right-side trailer or fallback backdrop */}
-      <div className="absolute right-0 top-0 w-1/2 h-full z-0 overflow-hidden">
+      <div className="absolute right-0 top-0 w-1/2 max-mobile-425:w-full max-mobile-375:w-full h-full z-0 overflow-hidden">
         {trailer && <VideoPlayer videoKey={trailer.key} />}
         {!trailer && backdropPath && (
           <img
