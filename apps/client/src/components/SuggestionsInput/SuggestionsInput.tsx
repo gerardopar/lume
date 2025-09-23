@@ -116,7 +116,7 @@ export const SuggestionsInput: React.FC = () => {
 
   return (
     <div className="w-full flex items-center">
-      <div className="flex items-center flex-1 max-w-[60%] relative">
+      <div className="flex items-center flex-1 w-full max-w-[60%] max-mobile-640:w-full max-mobile-640:max-w-full relative">
         <input
           value={search}
           onChange={(e) => {

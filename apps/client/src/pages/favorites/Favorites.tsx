@@ -22,8 +22,8 @@ export const Favorites: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="w-full mt-6">
-        <h1 className="font-inter font-bold text-4xl text-lume-primary-light">
+      <div className="w-full mt-6 max-mobile-640:px-4">
+        <h1 className="font-inter font-bold text-4xl text-lume-primary-light max-mobile-640:text-2xl">
           My Favorites
         </h1>
         <div className="mt-4 divider" />

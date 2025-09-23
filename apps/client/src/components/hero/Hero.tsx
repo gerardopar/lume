@@ -132,14 +132,14 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
   };
 
   return (
-    <div className="relative h-[50%] min-h-[400px] w-full flex flex-col rounded-2xl overflow-hidden p-6">
+    <div className="relative h-[50%] min-h-[400px] w-full flex flex-col rounded-2xl max-mobile-640:rounded-t-none overflow-hidden p-6">
       <HeroBg poster={backdrop!} />
 
       {/* Overlay content */}
       <div className="relative z-10 flex flex-col h-full">
         {/* Top right badge */}
         <div className="w-full flex items-center justify-end">
-          <div className="shadow-lg text-base inline px-6 py-2 rounded-full backdrop-blur-lg bg-white/10">
+          <div className="shadow-lg text-base max-mobile-640:text-sm inline px-6 py-2 rounded-full backdrop-blur-lg bg-white/10">
             {chipText}
           </div>
         </div>
@@ -152,15 +152,17 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
             ))}
           </div>
 
-          <h1 className="text-4xl font-bold font-inter text-white">{name}</h1>
-          <p className="text-base font-poppins text-white font-[200] max-w-[40%] line-clamp-3">
+          <h1 className="text-4xl max-mobile-640:text-xl font-bold font-inter text-white">
+            {name}
+          </h1>
+          <p className="text-base max-mobile-640:text-sm font-poppins text-white font-[200] max-w-[40%] max-mobile-640:max-w-full line-clamp-3">
             {overview}
           </p>
 
           <div className="flex items-center gap-2 mt-2">
             <button
               onClick={viewModeDetails}
-              className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50"
+              className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50 max-mobile-640:text-sm"
             >
               View Details
             </button>

@@ -4,6 +4,7 @@
 /* Tailwind v4: define design tokens via @theme */
 @theme {
   /* Colors */
+  --color-lume-primary-darker: #1b1f25;
   --color-lume-primary-dark: #222831;
   --color-lume-secondary-dark: #393e46;
   --color-lume-primary-light: #eeeeee;
@@ -13,4 +14,9 @@
   /* Fonts (optional — enables `font-poppins` / `font-inter`) */
   --font-poppins: "Poppins", sans-serif;
   --font-inter: "Inter", sans-serif;
+
+  --breakpoint-mobile-768: 768px; /* everything ≤768px is considered mobile */
+  --breakpoint-mobile-640: 640px; /* everything ≤640px is considered mobile */
+  --breakpoint-mobile-425: 425px; /* everything ≤425px is considered mobile */
+  --breakpoint-mobile-375: 375px; /* everything ≤375px is considered mobile */
 }

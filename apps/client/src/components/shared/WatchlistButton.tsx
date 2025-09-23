@@ -5,6 +5,9 @@ import XIcon from "@components/svgs/XIcon";
 import PlusIcon from "@components/svgs/PlusIcon";
 import CardActionItemLoader from "@components/loaders/CardActionItemLoader";
 
+import { useAuth } from "../../hooks/useAuth";
+import { useCurrentUser } from "../../stores/user";
+
 import type { MediaItemSnapshot } from "@my/api";
 
 const WatchlistButton: React.FC<{
@@ -12,6 +15,9 @@ const WatchlistButton: React.FC<{
   snapshot: MediaItemSnapshot;
   refetch?: () => void;
 }> = ({ tmdbId, snapshot, refetch }) => {
+  const { isLoggedIn } = useCurrentUser();
+  const { showAuth } = useAuth();
+
   const utils = trpc.useUtils();
   const { data: isWatchlisted, isLoading: isWatchlistedLoading } =
     trpc.watchlist.checkWatchlistItem.useQuery({ tmdbId });
@@ -52,6 +58,10 @@ const WatchlistButton: React.FC<{
   if (isWatchlistPending) Icon = CardActionItemLoader;
 
   const handleClick = () => {
+    if (!isLoggedIn) {
+      showAuth();
+      return;
+    }
     toggleWatchlist({ tmdbId, watchlistItem: snapshot });
   };
 
@@ -60,7 +70,7 @@ const WatchlistButton: React.FC<{
       onClick={handleClick}
       disabled={isWatchlistPending}
       className={`
-        rounded-full flex items-center gap-2 px-4 py-2 
+        rounded-full flex items-center gap-2 px-4 py-2 max-mobile-640:text-sm
         bg-lume-secondary-dark/60 hover:bg-lume-secondary-dark 
         transition-all duration-300 cursor-pointer max-h-[40px] max-w-[122px]`}
     >

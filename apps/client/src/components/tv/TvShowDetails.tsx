@@ -37,9 +37,9 @@ export const TvShowDetails: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
   );
 
   return (
-    <div className="relative w-full h-[500px] overflow-hidden bg-lume-primary-dark">
+    <div className="relative w-full overflow-hidden bg-lume-primary-dark">
       {/* Right-side trailer or fallback backdrop */}
-      <div className="absolute right-0 top-0 w-1/2 h-full z-0 overflow-hidden">
+      <div className="absolute right-0 top-0 w-1/2 max-mobile-425:w-full max-mobile-375:w-full h-full z-0 overflow-hidden">
         {trailer && <VideoPlayer videoKey={trailer.key} />}
         {!trailer && backdropPath && (
           <img
@@ -55,7 +55,7 @@ export const TvShowDetails: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
 
       {/* Content on left */}
       <div className="w-full relative z-20 flex items-center p-6 h-full">
-        <div className="w-[200px] h-[300px] min-h-[300px] min-w-[200px] rounded-2xl overflow-hidden shadow-lg">
+        <div className="w-[200px] h-[300px] min-h-[300px] min-w-[200px] rounded-2xl overflow-hidden shadow-lg max-mobile-768:hidden">
           <img
             src={posterPath!}
             alt={name}
@@ -71,8 +71,10 @@ export const TvShowDetails: React.FC<{ tvShow: TmdbTvShow }> = ({ tvShow }) => {
               tvGenres.map((genre) => <GenreChip genre={genre!} />)
             )}
           </div>
-          <h1 className="text-4xl font-bold font-inter text-white">{name}</h1>
-          <p className="text-base font-poppins text-white/80 font-[200] max-w-[50%]">
+          <h1 className="text-4xl font-bold font-inter text-white max-mobile-768:text-2xl">
+            {name}
+          </h1>
+          <p className="text-base font-poppins text-white/80 font-[200] max-w-[50%] max-mobile-768:max-w-full max-mobile-768:text-sm">
             {overview}
           </p>
           <div className="flex space-x-8">

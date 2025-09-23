@@ -88,11 +88,13 @@ export const SuggestionsResultsList: React.FC<{
               <img
                 src={image!}
                 alt={itemByMediaType.name}
-                className="w-[40px] h-[60px] min-w-[40px] min-h-[60px] max-w-[40px] max-h-[60px] mr-2 object-contain"
+                className="w-[40px] h-[60px] min-w-[40px] min-h-[60px] max-w-[40px] max-h-[60px] mr-2 object-contain max-mobile-768:w-[30px] max-mobile-768:h-[45px] max-mobile-768:min-w-[30px] max-mobile-768:min-h-[45px] max-mobile-768:max-w-[30px] max-mobile-768:max-h-[45px]"
               />
 
               <div className="flex items-start flex-col justify-start flex-1">
-                <p className="text-base line-clamp-2">{itemByMediaType.name}</p>
+                <p className="text-base line-clamp-2 max-mobile-768:text-sm">
+                  {itemByMediaType.name}
+                </p>
                 <p className="text-xs text-lume-primary-light/70 font-medium">
                   {releaseYear}
                 </p>

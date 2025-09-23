@@ -122,6 +122,15 @@ export const UserProfilePicture: React.FC<{
           onChange={onFileChange}
           style={{ display: "none" }}
         />
+
+        {showEditButton &&
+        (isUploadingPicture ||
+          isGettingPresignedProfileUploadUrl ||
+          isUpdatingUser) ? (
+          <div className="absolute top-0 left-0 w-full h-full bg-lume-primary-darker/50 flex items-center justify-center">
+            <span className="loading loading-spinner loading-xl" />
+          </div>
+        ) : null}
       </div>
 
       {showEditButton && (
@@ -132,12 +141,6 @@ export const UserProfilePicture: React.FC<{
           <CameraIcon className="w-4 h-4" />
         </div>
       )}
-
-      {isUploadingPicture ||
-      isGettingPresignedProfileUploadUrl ||
-      isUpdatingUser ? (
-        <span className="ml-2 text-xs text-gray-400">Uploading...</span>
-      ) : null}
     </div>
   );
 };
