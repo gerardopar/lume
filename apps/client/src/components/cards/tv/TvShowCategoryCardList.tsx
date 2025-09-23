@@ -163,7 +163,7 @@ export const TvShowCategoryCardList: React.FC<{
 
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
+        className="flex gap-4 max-mobile-540:gap-2 max-mobile-375:gap-1 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
       >
         {tvShows.map((tvShow: TmdbTvShow) => (
           <div key={tvShow.id} className="tv-show-card opacity-0">
