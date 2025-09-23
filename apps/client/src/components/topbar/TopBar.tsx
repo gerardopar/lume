@@ -14,7 +14,7 @@ export const TopBar: React.FC = () => {
   const { open } = useModal();
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-lume-primary-dark pb-4 pt-4 mb-2">
+    <header className="w-full sticky top-0 z-50 bg-lume-primary-dark pb-4 pt-4 mb-2 max-mobile-640:px-4">
       <div className="flex items-center justify-between gap-4">
         <SuggestionsInput />
 
