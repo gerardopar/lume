@@ -1,4 +1,4 @@
-# Lume - Modern Media Discovery Platform
+# [Lume - Modern Media Discovery Platform](https://lume-client.onrender.com/)
 
 Lume is a modern media discovery platform that helps users explore and discover movies and TV shows. Built with a modern tech stack, Lume provides an intuitive interface for browsing trending and popular content across different media types.
 
