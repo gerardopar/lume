@@ -20,7 +20,7 @@ export const Sidenav: React.FC = () => {
   const protectedPaths = ["/profile", "/favorites", "/watchlist"];
 
   return (
-    <div className="max-w-[240px] w-full bg-lume-secondary-dark flex flex-col py-6">
+    <div className="max-w-[240px] w-full bg-lume-secondary-dark flex-col py-6 md:flex hidden">
       <div className="flex items-center justify-start w-full pl-6">
         <LogoText />
       </div>
