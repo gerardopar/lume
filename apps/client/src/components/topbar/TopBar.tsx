@@ -18,7 +18,7 @@ export const TopBar: React.FC = () => {
       <div className="flex items-center justify-between gap-4">
         <SuggestionsInput />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-mobile-640:hidden">
           <div
             role="button"
             className="rounded-full overflow-hidden bg-lume-secondary-dark h-[40px] w-[40px] flex justify-center items-center cursor-pointer"

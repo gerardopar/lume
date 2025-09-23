@@ -23,7 +23,7 @@ export const navbarLinks: NavbarLink[] = [
   },
   {
     id: nanoid(),
-    label: "TV Shows",
+    label: "TV-Shows",
     path: "/tv-shows",
     Icon: TvIcon,
   },
@@ -41,7 +41,7 @@ export const navbarLinks: NavbarLink[] = [
   },
   {
     id: nanoid(),
-    label: "My Watchlist",
+    label: "Watchlist",
     path: "/watchlist",
     Icon: PlayIcon,
   },
