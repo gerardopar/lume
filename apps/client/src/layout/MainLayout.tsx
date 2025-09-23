@@ -1,5 +1,6 @@
 import React from "react";
 
+import Navbar from "@components/navbar/Navbar";
 import Sidenav from "@components/sidenav/Sidenav";
 
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
@@ -14,6 +15,8 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
       <div className="h-full w-full flex flex-col px-6 overflow-y-scroll relative max-mobile-640:px-0">
         {children}
       </div>
+
+      <Navbar />
     </div>
   );
 };
