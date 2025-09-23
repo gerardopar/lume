@@ -139,7 +139,7 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
       <div className="relative z-10 flex flex-col h-full">
         {/* Top right badge */}
         <div className="w-full flex items-center justify-end">
-          <div className="shadow-lg text-base inline px-6 py-2 rounded-full backdrop-blur-lg bg-white/10">
+          <div className="shadow-lg text-base max-mobile-640:text-sm inline px-6 py-2 rounded-full backdrop-blur-lg bg-white/10">
             {chipText}
           </div>
         </div>
@@ -162,7 +162,7 @@ export const Hero: React.FC<{ mediaType: "movie" | "tv" }> = ({
           <div className="flex items-center gap-2 mt-2">
             <button
               onClick={viewModeDetails}
-              className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50"
+              className="shadow-lg btn font-[400] bg-lume-primary-dark text-lume-primary-light rounded-full hover:bg-lume-primary-dark/50 hover:border-lume-primary-dark/50 max-mobile-640:text-sm"
             >
               View Details
             </button>

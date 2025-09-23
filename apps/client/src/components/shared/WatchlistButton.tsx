@@ -70,7 +70,7 @@ const WatchlistButton: React.FC<{
       onClick={handleClick}
       disabled={isWatchlistPending}
       className={`
-        rounded-full flex items-center gap-2 px-4 py-2 
+        rounded-full flex items-center gap-2 px-4 py-2 max-mobile-640:text-sm
         bg-lume-secondary-dark/60 hover:bg-lume-secondary-dark 
         transition-all duration-300 cursor-pointer max-h-[40px] max-w-[122px]`}
     >
