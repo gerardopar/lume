@@ -84,6 +84,7 @@ export const MovieCard: React.FC<{
             cardItemId={movie.id}
             snapshot={snapshot}
             refetch={refetch}
+            mediaType="movie"
           />
         )}
       </div>

@@ -14,14 +14,25 @@ import {
 } from "./card-actions-menu.helpers";
 import type { MediaItemSnapshot } from "@my/api";
 
+import { useClipboard } from "../../hooks/useClipboard";
+
 export const CardActionsMenu: React.FC<{
   isInline?: boolean;
   handleCloseInline?: () => void;
   cardItemId: number;
   snapshot: MediaItemSnapshot;
   refetch?: () => void;
-}> = ({ isInline, handleCloseInline, cardItemId, snapshot, refetch }) => {
+  mediaType?: "movie" | "tv";
+}> = ({
+  isInline,
+  handleCloseInline,
+  cardItemId,
+  snapshot,
+  refetch,
+  mediaType,
+}) => {
   const utils = trpc.useUtils();
+  const { copyToClipboard } = useClipboard();
 
   const { data: isFavorited, isLoading: isFavoritedLoading } =
     trpc.favorites.checkFavoriteItem.useQuery({ tmdbId: cardItemId });
@@ -168,9 +179,8 @@ export const CardActionsMenu: React.FC<{
                       watchlistItem: snapshot,
                     });
                   } else if (item.type === CardActionMenuEnum.Share) {
-                    // TODO: share
-                    // generates a link to the app with the media ID
-                    // opens a share sheet
+                    const shareUrl = `${window.location.origin}/?tmdbId=${cardItemId}&media=${mediaType}`;
+                    copyToClipboard(shareUrl);
                   }
                 };
 

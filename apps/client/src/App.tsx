@@ -15,7 +15,7 @@ const App: React.FC = () => {
       <AppRouter />
       <Modal />
       <Toast />
-      <ReactQueryDevtools />
+      {/* <ReactQueryDevtools /> */}
     </TrpcProvider>
   );
 };

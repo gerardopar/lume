@@ -84,6 +84,7 @@ export const TvShowCard: React.FC<{
             cardItemId={tvShow.id}
             snapshot={snapshot}
             refetch={refetch}
+            mediaType="tv"
           />
         )}
       </div>
