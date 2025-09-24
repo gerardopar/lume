@@ -1,11 +1,13 @@
 import PlusIcon from "@components/svgs/PlusIcon";
 import HeartIcon from "@components/svgs/HeartIcon";
 import ShareIcon from "@components/svgs/ShareIcon";
+import EyeIcon from "@components/svgs/EyeIcon";
 
 export enum CardActionMenuEnum {
   Watchlist = "watchlist",
   Favorites = "favorites",
   Share = "share",
+  Watched = "watched",
 }
 
 export interface CardActionsMenuItem {
@@ -37,5 +39,12 @@ export const cardActionsMenu: CardActionsMenuItem[] = [
     path: "share",
     Icon: ShareIcon,
     type: CardActionMenuEnum.Share,
+  },
+  {
+    id: 4,
+    label: "Watched",
+    path: "watched",
+    Icon: EyeIcon,
+    type: CardActionMenuEnum.Watched,
   },
 ];

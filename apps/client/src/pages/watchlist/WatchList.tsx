@@ -58,6 +58,7 @@ export const WatchList: React.FC = () => {
                       key={`watchlist-movie-${favorite.tmdbId}`}
                       movie={normalizedFavorite as TmdbMovie}
                       refetch={() => refetch()}
+                      showWatchedOption
                     />
                   );
                 }
@@ -67,6 +68,7 @@ export const WatchList: React.FC = () => {
                       key={`watchlist-tv-${favorite.tmdbId}`}
                       tvShow={normalizedFavorite as TmdbTvShow}
                       refetch={() => refetch()}
+                      showWatchedOption
                     />
                   );
                 }

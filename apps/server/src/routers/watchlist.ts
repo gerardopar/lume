@@ -9,6 +9,7 @@ import {
   deleteWatchlistItem,
   getWatchlistItemsByUser,
   getWatchlistItemById,
+  getWatchlistItemByTmdbId,
 } from "../accessLayer/watchlist";
 import {
   CreateWatchlistItemSchema,
@@ -37,16 +38,35 @@ export const watchlistRouter = router({
     }),
 
   updateWatchlistItem: protectedProcedure
-    .input(z.object({ id: z.string(), input: UpdateWatchlistItemSchema }))
+    .input(z.object({ tmdbId: z.number(), input: UpdateWatchlistItemSchema }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const watchlistItem = await updateWatchlistItem(input.id, input.input);
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+        const watchlistItem = await getWatchlistItemByTmdbId(
+          user?._id?.toString()!,
+          input.tmdbId
+        );
+
+        if (!watchlistItem) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Watchlist item not found",
+          });
+        }
 
         if (watchlistItem) {
           await assertOwnership(ctx, watchlistItem.userId.toString());
         }
 
-        return watchlistItem;
+        const updatedWatchlistItem = await updateWatchlistItem(
+          watchlistItem?._id?.toString()!,
+          input.input
+        );
+
+        return {
+          success: true,
+          item: updatedWatchlistItem,
+        };
       } catch (error) {
         console.error(error);
         throw new TRPCError({
@@ -149,7 +169,6 @@ export const watchlistRouter = router({
         }
 
         const watchlist = await getWatchlistItemsByUser(user._id.toString());
-
         const existing = watchlist.find((item) => item.tmdbId === input.tmdbId);
 
         if (existing) {

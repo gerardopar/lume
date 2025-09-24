@@ -13,7 +13,8 @@ import type { TmdbMovie, MediaItemSnapshot } from "@my/api";
 export const MovieCard: React.FC<{
   movie: TmdbMovie;
   refetch?: () => void;
-}> = ({ movie, refetch }) => {
+  showWatchedOption?: boolean;
+}> = ({ movie, refetch, showWatchedOption = false }) => {
   const { open } = useModal();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -85,6 +86,7 @@ export const MovieCard: React.FC<{
             snapshot={snapshot}
             refetch={refetch}
             mediaType="movie"
+            showWatchedOption={showWatchedOption}
           />
         )}
       </div>

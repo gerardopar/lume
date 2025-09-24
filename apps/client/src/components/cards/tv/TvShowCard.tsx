@@ -13,7 +13,8 @@ import type { TmdbTvShow, MediaItemSnapshot } from "@my/api";
 export const TvShowCard: React.FC<{
   tvShow: TmdbTvShow;
   refetch?: () => void;
-}> = ({ tvShow, refetch }) => {
+  showWatchedOption?: boolean;
+}> = ({ tvShow, refetch, showWatchedOption = false }) => {
   const { open } = useModal();
 
   const [showMenu, setShowMenu] = useState(false);
@@ -85,6 +86,7 @@ export const TvShowCard: React.FC<{
             snapshot={snapshot}
             refetch={refetch}
             mediaType="tv"
+            showWatchedOption={showWatchedOption}
           />
         )}
       </div>

@@ -124,3 +124,31 @@ export const deleteWatchlistItem = async (id: string) => {
     });
   }
 };
+
+export const getWatchlistItemByTmdbId = async (
+  userId: string,
+  tmdbId: number
+) => {
+  try {
+    const watchlistItem = await WatchlistItem.findOne({
+      userId: new Types.ObjectId(userId),
+      tmdbId,
+    }).exec();
+
+    if (!watchlistItem) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Watchlist item not found",
+      });
+    }
+
+    return watchlistItem;
+  } catch (error) {
+    console.error(error);
+    if (error instanceof TRPCError) throw error;
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Unable to get watchlist item by tmdbId",
+    });
+  }
+};

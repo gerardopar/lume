@@ -23,6 +23,7 @@ export const CardActionsMenu: React.FC<{
   snapshot: MediaItemSnapshot;
   refetch?: () => void;
   mediaType?: "movie" | "tv";
+  showWatchedOption?: boolean;
 }> = ({
   isInline,
   handleCloseInline,
@@ -30,6 +31,7 @@ export const CardActionsMenu: React.FC<{
   snapshot,
   refetch,
   mediaType,
+  showWatchedOption = false,
 }) => {
   const utils = trpc.useUtils();
   const { copyToClipboard } = useClipboard();
@@ -104,8 +106,11 @@ export const CardActionsMenu: React.FC<{
       },
     });
 
-  const isLoading = isFavoritedLoading || isWatchlistedLoading;
+  const { mutate: updateWatchlistItem, isPending: isUpdatePending } =
+    trpc.watchlist.updateWatchlistItem.useMutation();
 
+  const isLoading =
+    isFavoritedLoading || isWatchlistedLoading || isUpdatePending;
   if (isInline) {
     return (
       <AnimatePresence>
@@ -138,6 +143,13 @@ export const CardActionsMenu: React.FC<{
 
             {!isLoading &&
               cardActionsMenu.map((item) => {
+                if (
+                  !showWatchedOption &&
+                  item.type === CardActionMenuEnum.Watched
+                ) {
+                  return <></>;
+                }
+
                 const _isFavorited =
                   item.type === CardActionMenuEnum.Favorites &&
                   isFavorited?.exists;
@@ -181,6 +193,14 @@ export const CardActionsMenu: React.FC<{
                   } else if (item.type === CardActionMenuEnum.Share) {
                     const shareUrl = `${window.location.origin}/?tmdbId=${cardItemId}&media=${mediaType}`;
                     copyToClipboard(shareUrl);
+                  } else if (item.type === CardActionMenuEnum.Watched) {
+                    updateWatchlistItem({
+                      tmdbId: cardItemId,
+                      input: {
+                        watched: true,
+                        watchedAt: new Date(),
+                      },
+                    });
                   }
                 };
 
