@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { trpc } from "@utils/trpc";
 
 import MainLayout from "../../layout/MainLayout";
 import MovieCard from "@components/cards/MovieCard";
 import TvShowCard from "@components/cards/tv/TvShowCard";
 import CardSkeleton from "@components/skeleton/CardSkeleton";
+import WatchListTabs from "@components/watchlist-tabs/WatchListTabs";
 import WatchListPlaceholder from "../../components/empty-states/WatchListPlaceholder";
 
 import { normalizeSnapshot } from "../../helpers/snapshot.helpers";
 
+import { WatchlistTabEnum } from "../../components/watchlist-tabs/watchlist.helpers";
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
 
 export const WatchList: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(WatchlistTabEnum.Watched);
+
   const {
     data,
     isLoading: watchlistLoading,
@@ -27,6 +31,8 @@ export const WatchList: React.FC = () => {
           My Watchlist
         </h1>
         <div className="mt-4 divider" />
+
+        <WatchListTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {!watchlistLoading && watchlist?.length === 0 && (
           <WatchListPlaceholder />
