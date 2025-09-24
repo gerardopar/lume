@@ -29,7 +29,7 @@ const WatchlistItemSchema = new Schema(
     // User-specific metadata
     addedAt: { type: Date, default: Date.now },
     watched: { type: Boolean, default: false },
-    watchedAt: { type: Date },
+    watchedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

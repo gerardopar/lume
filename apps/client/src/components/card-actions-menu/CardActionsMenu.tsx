@@ -42,6 +42,16 @@ export const CardActionsMenu: React.FC<{
   const { data: isWatchlisted, isLoading: isWatchlistedLoading } =
     trpc.watchlist.checkWatchlistItem.useQuery({ tmdbId: cardItemId });
 
+  const { data: hasBeenWatched, isLoading: hasBeenWatchedLoading } =
+    trpc.watchlist.checkWatchlistItemHasWatched.useQuery(
+      {
+        tmdbId: cardItemId,
+      },
+      {
+        enabled: showWatchedOption,
+      }
+    );
+
   const { mutate: toggleFavorite, isPending: isFavoritePending } =
     trpc.favorites.toggleFavoriteItem.useMutation({
       onMutate: async () => {
@@ -107,10 +117,48 @@ export const CardActionsMenu: React.FC<{
     });
 
   const { mutate: updateWatchlistItem, isPending: isUpdatePending } =
-    trpc.watchlist.updateWatchlistItem.useMutation();
+    trpc.watchlist.updateWatchlistItem.useMutation({
+      onMutate: async (vars) => {
+        await utils.watchlist.checkWatchlistItemHasWatched.cancel({
+          tmdbId: cardItemId,
+        });
+
+        const prev = utils.watchlist.checkWatchlistItemHasWatched.getData({
+          tmdbId: cardItemId,
+        });
+
+        utils.watchlist.checkWatchlistItemHasWatched.setData(
+          { tmdbId: cardItemId },
+          {
+            watched: vars.input.watched ?? !prev?.watched,
+          }
+        );
+
+        return { prev };
+      },
+      onError: (_err, _vars, ctx) => {
+        if (ctx?.prev) {
+          utils.watchlist.checkWatchlistItemHasWatched.setData(
+            { tmdbId: cardItemId },
+            ctx.prev
+          );
+        }
+      },
+      onSuccess: () => {
+        refetch?.();
+      },
+      onSettled: () => {
+        utils.watchlist.checkWatchlistItemHasWatched.invalidate({
+          tmdbId: cardItemId,
+        });
+      },
+    });
 
   const isLoading =
-    isFavoritedLoading || isWatchlistedLoading || isUpdatePending;
+    isFavoritedLoading ||
+    isWatchlistedLoading ||
+    hasBeenWatchedLoading ||
+    isUpdatePending;
   if (isInline) {
     return (
       <AnimatePresence>
@@ -156,17 +204,24 @@ export const CardActionsMenu: React.FC<{
                 const _isWatchlisted =
                   item.type === CardActionMenuEnum.Watchlist &&
                   isWatchlisted?.exists;
+                const _isWatched =
+                  item.type === CardActionMenuEnum.Watched &&
+                  hasBeenWatched?.watched;
 
                 const iconColor =
                   item.type === CardActionMenuEnum.Favorites
                     ? `text-red-500 ${_isFavorited ? "fill-red-500" : ""}`
                     : "text-white";
 
+                let label = item.label;
                 let iconClassName = "w-4 h-4";
-
                 let Icon: React.FC<{ className?: string }> | React.ReactNode =
                   item.Icon;
                 if (_isWatchlisted) Icon = XIcon;
+                if (_isWatched) {
+                  Icon = XIcon;
+                  label = "Unwatch";
+                }
                 if (
                   (item.type === CardActionMenuEnum.Favorites &&
                     isFavoritePending) ||
@@ -197,8 +252,8 @@ export const CardActionsMenu: React.FC<{
                     updateWatchlistItem({
                       tmdbId: cardItemId,
                       input: {
-                        watched: true,
-                        watchedAt: new Date(),
+                        watched: !_isWatched,
+                        watchedAt: !_isWatched ? new Date() : null, // explicitly clear on unwatch
                       },
                     });
                   }
@@ -213,7 +268,7 @@ export const CardActionsMenu: React.FC<{
                   >
                     <Icon className={`${iconColor} ${iconClassName}`} />
                     <span className="text-white font-poppins font-[200] text-sm text-center">
-                      {item.label}
+                      {label}
                     </span>
                   </button>
                 );

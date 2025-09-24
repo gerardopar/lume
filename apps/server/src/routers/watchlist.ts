@@ -150,6 +150,27 @@ export const watchlistRouter = router({
         });
       }
     }),
+
+  checkWatchlistItemHasWatched: protectedProcedure
+    .input(z.object({ tmdbId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        const user = await getUserByFirebaseUid(ctx.user?.uid!);
+        const watchlistItem = await getWatchlistItemByTmdbId(
+          user?._id?.toString()!,
+          input.tmdbId
+        );
+
+        return { watched: watchlistItem?.watched ?? false };
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to check if watchlist item is watched",
+        });
+      }
+    }),
+
   toggleWatchlistItem: protectedProcedure
     .input(
       z.object({

@@ -1,7 +1,7 @@
-import PlusIcon from "@components/svgs/PlusIcon";
+import CheckmarkIcon from "@components/svgs/CheckmarkIcon";
 import HeartIcon from "@components/svgs/HeartIcon";
 import ShareIcon from "@components/svgs/ShareIcon";
-import EyeIcon from "@components/svgs/EyeIcon";
+import PlusIcon from "@components/svgs/PlusIcon";
 
 export enum CardActionMenuEnum {
   Watchlist = "watchlist",
@@ -44,7 +44,7 @@ export const cardActionsMenu: CardActionsMenuItem[] = [
     id: 4,
     label: "Watched",
     path: "watched",
-    Icon: EyeIcon,
+    Icon: CheckmarkIcon,
     type: CardActionMenuEnum.Watched,
   },
 ];

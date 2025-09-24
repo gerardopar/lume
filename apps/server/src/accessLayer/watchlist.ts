@@ -78,12 +78,23 @@ export const getWatchlistItemById = async (id: string) => {
 
 export const updateWatchlistItem = async (
   id: string,
-  input: Partial<CreateWatchlistInput>
+  input: Partial<
+    CreateWatchlistInput & { watched?: boolean; watchedAt?: Date | null }
+  >
 ) => {
   try {
-    const watchlistItem = await WatchlistItem.findByIdAndUpdate(id, input, {
-      new: true,
-    }).exec();
+    const updatePayload = { ...input };
+
+    // If watched is explicitly false, clear watchedAt
+    if (input.watched === false) {
+      updatePayload.watchedAt = null;
+    }
+
+    const watchlistItem = await WatchlistItem.findByIdAndUpdate(
+      id,
+      updatePayload,
+      { new: true }
+    ).exec();
 
     if (!watchlistItem) {
       throw new TRPCError({

@@ -14,24 +14,30 @@ export const WatchlistItemZodSchema = z.object({
   voteAverage: z.number().min(0).max(10).optional(),
   genreIds: z.array(z.number().int()).optional(),
 
-  // Metadata
-  addedAt: z.date().optional(),
   watched: z.boolean().optional(),
-  watchedAt: z.date().optional(),
+  watchedAt: z.date().optional().nullable(),
 });
 
 // For creating a new item (exclude DB-managed fields)
 export const CreateWatchlistItemSchema = WatchlistItemZodSchema.omit({
   userId: true,
-  addedAt: true,
   watchedAt: true,
 });
 
 // For updating (all optional)
-export const UpdateWatchlistItemSchema = WatchlistItemZodSchema.partial();
+export const UpdateWatchlistItemSchema = WatchlistItemZodSchema.partial()
+  .omit({
+    userId: true,
+    tmdbId: true,
+    mediaType: true,
+  })
+  .extend({
+    watchedAt: z
+      .union([z.string().transform((val) => new Date(val)), z.date(), z.null()])
+      .optional(),
+  });
 
 // Type inference
-export type WatchlistItemInput = z.infer<typeof WatchlistItemZodSchema>;
 export type CreateWatchlistItemInput = z.infer<
   typeof CreateWatchlistItemSchema
 >;
