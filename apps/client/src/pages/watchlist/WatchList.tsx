@@ -24,6 +24,8 @@ export const WatchList: React.FC = () => {
 
   const watchlist = data ?? [];
 
+  // TODO: move this logic to the server
+  // ... to support larger lists + pagination
   const watchedList = watchlist.filter((item) => item.watchedAt);
   const unwatchedList = watchlist.filter((item) => !item.watchedAt);
 
@@ -40,7 +42,9 @@ export const WatchList: React.FC = () => {
 
         <WatchListTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {!watchlistLoading && list?.length === 0 && <WatchListPlaceholder />}
+        {!watchlistLoading && list?.length === 0 && (
+          <WatchListPlaceholder activeTab={activeTab} />
+        )}
 
         <div className="w-full flex items-center justify-center">
           {watchlistLoading && (

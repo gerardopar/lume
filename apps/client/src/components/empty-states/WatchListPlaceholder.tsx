@@ -5,8 +5,21 @@ import Lottie from "lottie-react";
 
 import emptyWatchlistAnimation from "../../components/lotties/panda-popcorn.json";
 
-export const WatchListPlaceholder: React.FC = () => {
+import { WatchlistTabEnum } from "@components/watchlist-tabs/watchlist.helpers";
+
+export const WatchListPlaceholder: React.FC<{
+  activeTab: WatchlistTabEnum;
+}> = ({ activeTab }) => {
   const navigate = useNavigate();
+
+  const title =
+    activeTab === WatchlistTabEnum.NotWatched
+      ? "Your watchlist is empty"
+      : "Your watched list is empty";
+  const text =
+    activeTab === WatchlistTabEnum.NotWatched
+      ? "Save movies and TV shows you want to watch later."
+      : "Keep track of what you’ve finished — mark items as watched to see them here.";
 
   return (
     <div className="flex items-center justify-start mt-[100px] flex-1 flex-col">
@@ -17,10 +30,10 @@ export const WatchListPlaceholder: React.FC = () => {
         className="w-64 h-64"
       />
       <h2 className="text-xl font-inter font-semibold mb-2 text-white">
-        Your watchlist is empty
+        {title}
       </h2>
       <p className="mb-6 text-gray-400 font-poppins font-[200] text-base">
-        Save movies and TV shows you want to watch later.
+        {text}
       </p>
       <div className="flex items-center gap-2">
         <button
