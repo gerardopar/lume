@@ -24,6 +24,12 @@ export const WatchList: React.FC = () => {
 
   const watchlist = data ?? [];
 
+  const watchedList = watchlist.filter((item) => item.watchedAt);
+  const unwatchedList = watchlist.filter((item) => !item.watchedAt);
+
+  const list =
+    activeTab === WatchlistTabEnum.Watched ? watchedList : unwatchedList;
+
   return (
     <MainLayout>
       <div className="w-full mt-6 max-mobile-640:px-4">
@@ -34,9 +40,7 @@ export const WatchList: React.FC = () => {
 
         <WatchListTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {!watchlistLoading && watchlist?.length === 0 && (
-          <WatchListPlaceholder />
-        )}
+        {!watchlistLoading && list?.length === 0 && <WatchListPlaceholder />}
 
         <div className="w-full flex items-center justify-center">
           {watchlistLoading && (
@@ -47,9 +51,9 @@ export const WatchList: React.FC = () => {
             </div>
           )}
 
-          {!watchlistLoading && watchlist.length > 0 && (
+          {!watchlistLoading && list.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-6">
-              {watchlist.map((favorite: MediaItemSnapshot) => {
+              {list.map((favorite: MediaItemSnapshot) => {
                 const normalizedFavorite = normalizeSnapshot(favorite);
 
                 if (favorite.mediaType === "movie") {
