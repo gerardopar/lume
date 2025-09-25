@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { Home } from "../pages/Home/Home";
+import { NotFound } from "../pages/404/404";
 import { PrivateRoute } from "./PrivateRoute";
 import { TVShows } from "../pages/TV/TVShows";
 import { WatchList } from "../pages/watchlist/WatchList";
@@ -21,6 +22,7 @@ export const AppRouter = () => {
           path="/favorites"
           element={<PrivateRoute children={<Favorites />} />}
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
