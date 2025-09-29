@@ -48,7 +48,7 @@ export const WatchList: React.FC = () => {
 
         <div className="w-full flex items-center justify-center">
           {watchlistLoading && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-6">
+            <div className="w-full flex flex-wrap gap-6 mt-6">
               {[...Array(12)].map((_, idx) => (
                 <CardSkeleton key={idx} />
               ))}
