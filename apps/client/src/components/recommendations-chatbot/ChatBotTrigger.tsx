@@ -34,7 +34,7 @@ export const ChatBotTrigger: React.FC = () => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className={`absolute bottom-[80px] right-4  max-mobile-768:bottom-[140px]
               w-full max-w-[400px] max-mobile-768:max-w-[400px] max-mobile-425:max-w-[90%] max-mobile-375:max-w-[90%]
-              bg-lume-secondary-dark p-4 rounded-xl shadow-2xl`}
+              bg-lume-secondary-dark rounded-xl shadow-2xl`}
           >
             <ChatBot onClose={() => setIsOpen(false)} />
           </motion.div>
