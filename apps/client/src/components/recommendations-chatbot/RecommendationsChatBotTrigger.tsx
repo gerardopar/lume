@@ -23,7 +23,7 @@ export const RecommendationsChatBotButton: React.FC = () => {
   }, [isOpen]);
 
   return (
-    <div className="relative z-50" ref={wrapperRef}>
+    <div className="z-50" ref={wrapperRef}>
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -32,7 +32,9 @@ export const RecommendationsChatBotButton: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute bottom-[80px] right-4 w-[400px] bg-lume-secondary-dark p-4 rounded-xl shadow-2xl"
+            className={`absolute bottom-[80px] right-4  max-mobile-768:bottom-[140px]
+              w-full max-w-[400px] max-mobile-768:max-w-[400px] max-mobile-425:max-w-[90%] max-mobile-375:max-w-[90%]
+              bg-lume-secondary-dark p-4 rounded-xl shadow-2xl`}
           >
             <RecommendationsChatBot onClose={() => setIsOpen(false)} />
           </motion.div>
