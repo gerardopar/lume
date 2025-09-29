@@ -2,7 +2,7 @@ import React from "react";
 
 import Navbar from "@components/navbar/Navbar";
 import Sidenav from "@components/sidenav/Sidenav";
-import RecommendationsChatBotButton from "@components/recommendations-chatbot/RecommendationsChatBotButton";
+import RecommendationsChatBotTrigger from "@components/recommendations-chatbot/RecommendationsChatBotTrigger";
 
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -17,7 +17,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
         {children}
       </div>
 
-      <RecommendationsChatBotButton />
+      <RecommendationsChatBotTrigger />
 
       <Navbar />
     </div>
