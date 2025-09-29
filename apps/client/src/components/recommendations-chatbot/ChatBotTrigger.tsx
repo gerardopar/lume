@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import MessageBubbleIcon from "../svgs/MessageBubbleIcon";
-import RecommendationsChatBot from "./RecommendationsChatBot";
+import ChatBot from "./ChatBot";
 
-export const RecommendationsChatBotButton: React.FC = () => {
+export const ChatBotTrigger: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +36,7 @@ export const RecommendationsChatBotButton: React.FC = () => {
               w-full max-w-[400px] max-mobile-768:max-w-[400px] max-mobile-425:max-w-[90%] max-mobile-375:max-w-[90%]
               bg-lume-secondary-dark p-4 rounded-xl shadow-2xl`}
           >
-            <RecommendationsChatBot onClose={() => setIsOpen(false)} />
+            <ChatBot onClose={() => setIsOpen(false)} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -53,4 +53,4 @@ export const RecommendationsChatBotButton: React.FC = () => {
   );
 };
 
-export default RecommendationsChatBotButton;
+export default ChatBotTrigger;
