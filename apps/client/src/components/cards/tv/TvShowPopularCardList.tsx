@@ -1,13 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import { trpc } from "@utils/trpc";
-import { inView } from "motion";
 
 import TvShowCard from "./TvShowCard";
 import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
+import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 import type { TmdbTvShow } from "@my/api";
-import CardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const TvShowPopularCardList: React.FC<{
   className?: string;
@@ -79,27 +78,6 @@ export const TvShowPopularCardList: React.FC<{
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    const cards = document.querySelectorAll(".tv-show-card:not(.animated)");
-    cards.forEach((card, idx) => {
-      inView(card, () => {
-        card.animate(
-          [
-            { opacity: 0, transform: "translateY(20px)" },
-            { opacity: 1, transform: "translateY(0)" },
-          ],
-          {
-            duration: 300,
-            delay: idx * 30,
-            easing: "ease-out",
-            fill: "forwards",
-          }
-        );
-        card.classList.add("animated");
-      });
-    });
-  }, [tvShows]);
-
-  useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
@@ -161,9 +139,7 @@ export const TvShowPopularCardList: React.FC<{
         className="flex gap-4 max-mobile-425:gap-2 max-mobile-375:gap-1 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
       >
         {tvShows.map((tvShow: TmdbTvShow) => (
-          <div key={tvShow.id} className="tv-show-card opacity-0">
-            <TvShowCard tvShow={tvShow} />
-          </div>
+          <TvShowCard tvShow={tvShow} />
         ))}
         {isFetchingNextPage && (
           <>

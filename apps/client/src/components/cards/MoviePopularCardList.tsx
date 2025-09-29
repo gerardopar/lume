@@ -1,13 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import { trpc } from "@utils/trpc";
-import { inView } from "motion";
 
 import MovieCard from "./MovieCard";
 import ChevronLeft from "@components/svgs/ChevronLeft";
 import ChevronRight from "@components/svgs/ChevronRight";
+import MovieCardSkeleton from "@components/skeleton/CardSkeleton";
 
 import type { TmdbMovie } from "@my/api";
-import MovieCardSkeleton from "@components/skeleton/CardSkeleton";
 
 export const MoviePopularCardList: React.FC<{
   className?: string;
@@ -79,27 +78,6 @@ export const MoviePopularCardList: React.FC<{
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    const cards = document.querySelectorAll(".movie-card:not(.animated)");
-    cards.forEach((card, idx) => {
-      inView(card, () => {
-        card.animate(
-          [
-            { opacity: 0, transform: "translateY(20px)" },
-            { opacity: 1, transform: "translateY(0)" },
-          ],
-          {
-            duration: 300,
-            delay: idx * 30,
-            easing: "ease-out",
-            fill: "forwards",
-          }
-        );
-        card.classList.add("animated");
-      });
-    });
-  }, [movies]);
-
-  useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
@@ -160,9 +138,7 @@ export const MoviePopularCardList: React.FC<{
         className="flex gap-4 max-mobile-425:gap-2 max-mobile-375:gap-1 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
       >
         {movies.map((movie: TmdbMovie) => (
-          <div key={movie.id} className="movie-card opacity-0">
-            <MovieCard movie={movie} />
-          </div>
+          <MovieCard movie={movie} />
         ))}
         {isFetchingNextPage && (
           <>
