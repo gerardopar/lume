@@ -11,10 +11,10 @@ export const ChatBotQA: React.FC<{
   qa: QA[];
   setQA: React.Dispatch<React.SetStateAction<QA[]>>;
 }> = ({ qa, setQA }) => {
-  const [isTyping, setIsTyping] = useState(false);
   const [lastAnsweredIndex, setLastAnsweredIndex] = useState<number | null>(
     null
   );
+  const [isTyping, setIsTyping] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom

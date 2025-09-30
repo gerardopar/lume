@@ -3,10 +3,18 @@ import { z } from "zod";
 
 import SendIcon from "../svgs/SendIcon";
 
-const ChatBotInput: React.FC<{ onSubmit: (e: React.FormEvent) => void }> = ({
-  onSubmit,
-}) => {
+import { type QA, QAEnum } from "./chatbot.helpers";
+
+const ChatBotInput: React.FC<{
+  qa: QA[];
+  setQA: React.Dispatch<React.SetStateAction<QA[]>>;
+}> = ({ qa, setQA }) => {
   const [message, setMessage] = useState<string>("");
+
+  const genresIndex = qa.findIndex((qa) => qa.type === QAEnum.genres);
+  const moodDescriptionIndex = qa.findIndex(
+    (qa) => qa.type === QAEnum.moodDescription
+  );
 
   const validate = () => {
     const result = z.string().min(1).safeParse(message);
@@ -21,9 +29,18 @@ const ChatBotInput: React.FC<{ onSubmit: (e: React.FormEvent) => void }> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    onSubmit(e);
+
+    setQA((prevQA) => {
+      const newQA = [...prevQA];
+      newQA[moodDescriptionIndex].answer = message;
+      return newQA;
+    });
     setMessage("");
   };
+
+  // If genres are not selected, do not show the input
+  if (qa[genresIndex].answer === null)
+    return <div className="gap-2 rounded-b-xl bg-lume-primary-darker py-6" />;
 
   return (
     <form

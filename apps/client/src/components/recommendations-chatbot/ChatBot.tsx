@@ -11,18 +11,13 @@ const RecommendationsChatBot: React.FC<{ onClose: () => void }> = ({
 }) => {
   const [qa, setQA] = useState<QA[]>(qaState);
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitted");
-  };
-
   return (
     <div className="flex flex-col h-full w-full">
       <ChatBotHeader onClose={onClose} />
 
       <ChatBotQA qa={qa} setQA={setQA} />
 
-      <ChatBotInput onSubmit={onSubmit} />
+      <ChatBotInput qa={qa} setQA={setQA} />
     </div>
   );
 };

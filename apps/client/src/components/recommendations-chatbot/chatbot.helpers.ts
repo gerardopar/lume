@@ -10,12 +10,13 @@ export enum QAEnum {
   moodFor = "moodFor",
   genres = "genres",
   moodDescription = "moodDescription",
+  recommendations = "recommendations",
 }
 
 export const qaState: QA[] = [
   {
     id: 1,
-    question: "What are you in the mood for?",
+    question: "What are you in the mood for? 🍿",
     predefinedAnswers: ["Movie", "TV Show"],
     answer: null,
     type: QAEnum.moodFor,
@@ -33,5 +34,12 @@ export const qaState: QA[] = [
     predefinedAnswers: null,
     answer: null,
     type: QAEnum.moodDescription,
+  },
+  {
+    id: 4,
+    question: "Based on your answers, here are some recommendations 🤗",
+    predefinedAnswers: null,
+    answer: null,
+    type: QAEnum.recommendations,
   },
 ];
