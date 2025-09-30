@@ -92,13 +92,14 @@ export const ChatBotQuestion: React.FC<{
             <div className="flex items-center justify-center w-full mt-2 gap-2">
               <button
                 onClick={() => handleAnswer([], index, qaItem.type)}
-                className="text-sm font-poppins p-2 px-4 py-1 rounded-[10px] bg-gray-500"
+                className="cursor-pointer text-sm font-poppins p-2 px-6 py-2 rounded-full bg-gray-500 rounded-bl-none"
               >
                 Skip
               </button>
               <button
+                disabled={!genresSelected.length}
                 onClick={() => handleAnswer(genresSelected, index, qaItem.type)}
-                className="text-sm bg-lume-primary-darker font-poppins p-2 px-4 py-1 rounded-[10px]"
+                className="cursor-pointer text-sm bg-lume-primary-darker font-poppins p-2 px-6 py-2 rounded-full rounded-br-none"
               >
                 Confirm
               </button>
