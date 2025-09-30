@@ -56,7 +56,10 @@ export const ChatBotQuestion: React.FC<{
               const active =
                 qaItem.answer === answer || genresSelected.includes(answer);
               const disabled =
-                !!qaItem.answer && qaItem.type === QAEnum.moodFor;
+                !!qaItem.answer &&
+                (qaItem.type === QAEnum.moodFor ||
+                  (qaItem.type === QAEnum.genres &&
+                    !genresSelected.includes(answer)));
 
               const onClick = () => {
                 if (qaItem.type === QAEnum.genres) {

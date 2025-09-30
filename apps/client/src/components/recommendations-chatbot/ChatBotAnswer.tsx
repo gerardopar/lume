@@ -18,7 +18,7 @@ export const ChatBotAnswer: React.FC<{ qaItem: QA }> = ({ qaItem }) => {
       transition={{ duration: 0.3 }}
       className="w-full flex items-center justify-end"
     >
-      <p className="text-sm font-poppins font-[200] bg-lume-primary-darker py-2 px-4 rounded-2xl inline text-left rounded-br-none">
+      <p className="text-sm font-poppins bg-lume-green text-white py-2 px-4 rounded-2xl inline text-left rounded-br-none">
         {answer}
       </p>
     </motion.div>
