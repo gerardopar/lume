@@ -149,6 +149,8 @@ export const Answer: React.FC<{
     ? qaItem.answer.join(", ")
     : qaItem.answer;
 
+  if (!answer) return <></>;
+
   return (
     <div className="w-full flex items-center justify-end">
       <p className="text-sm font-poppins font-[200] bg-lume-primary-darker py-2 px-4  rounded-2xl inline text-left rounded-br-none">
