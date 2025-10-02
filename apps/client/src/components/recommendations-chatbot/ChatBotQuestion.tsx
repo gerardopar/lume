@@ -79,7 +79,7 @@ export const ChatBotQuestion: React.FC<{
                   whileTap={{ scale: 0.95 }}
                   disabled={disabled}
                   onClick={onClick}
-                  className={`text-sm font-poppins border border-lume-green p-2 px-4 py-1 rounded-full transition-all ${
+                  className={`text-sm font-poppins border border-lume-green p-2 px-4 py-1 rounded-full transition-all capitalize ${
                     active ? "bg-lume-green text-white" : ""
                   } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 >

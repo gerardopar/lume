@@ -6,6 +6,7 @@ import { moviesRouter } from "./routers/movies";
 import { tvShowsRouter } from "./routers/tv-shows";
 import { watchlistRouter } from "./routers/watchlist";
 import { favoritesRouter } from "./routers/favorites";
+import { aiRouter } from "./routers/ai";
 
 export const appRouter = router({
   health: publicProcedure
@@ -19,6 +20,7 @@ export const appRouter = router({
   tvShows: tvShowsRouter,
   watchlist: watchlistRouter,
   favorites: favoritesRouter,
+  ai: aiRouter,
 });
 
 // Export type for client usage

@@ -15,6 +15,13 @@ export enum QAEnum {
   recommendations = "recommendations",
 }
 
+export const qaIndex = {
+  moodFor: 0,
+  genres: 1,
+  moodDescription: 2,
+  recommendations: 3,
+};
+
 export const qaState: QA[] = [
   {
     id: 1,

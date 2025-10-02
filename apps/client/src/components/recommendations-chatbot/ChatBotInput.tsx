@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { trpc } from "@utils/trpc";
 import { z } from "zod";
 
 import SendIcon from "../svgs/SendIcon";
 
-import { type QA, QAEnum } from "./chatbot.helpers";
+import { type QA, qaIndex } from "./chatbot.helpers";
+import type { FilterOptionEnum } from "@components/SuggestionsInput/suggestions-input.helpers";
 
 const ChatBotInput: React.FC<{
   qa: QA[];
@@ -11,10 +13,8 @@ const ChatBotInput: React.FC<{
 }> = ({ qa, setQA }) => {
   const [message, setMessage] = useState<string>("");
 
-  const genresIndex = qa.findIndex((qa) => qa.type === QAEnum.genres);
-  const moodDescriptionIndex = qa.findIndex(
-    (qa) => qa.type === QAEnum.moodDescription
-  );
+  const { mutateAsync: getAiRecommendations } =
+    trpc.ai.getAiRecommendations.useMutation();
 
   const validate = () => {
     const result = z.string().min(1).safeParse(message);
@@ -26,20 +26,39 @@ const ChatBotInput: React.FC<{
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setQA((prevQA) => {
       const newQA = [...prevQA];
-      newQA[moodDescriptionIndex].answer = message;
+      newQA[qaIndex.moodDescription].answer = message;
       return newQA;
     });
+    setMessage("");
+
+    const recommendations = await getAiRecommendations({
+      type: qa[qaIndex.moodFor].answer as FilterOptionEnum,
+      genres: qa[qaIndex.genres].answer as string[],
+      vibe: message,
+    });
+
+    console.log("popcorn", recommendations);
+
+    if (recommendations.titles.length > 0) {
+      setQA((prevQA) => {
+        const newQA = [...prevQA];
+        newQA[qaIndex.recommendations].predefinedAnswers =
+          recommendations.titles;
+        return newQA;
+      });
+    }
+
     setMessage("");
   };
 
   // If genres are not selected, do not show the input
-  if (qa[genresIndex].answer === null)
+  if (qa[qaIndex.genres].answer === null)
     return <div className="gap-2 rounded-b-xl bg-lume-primary-darker py-6" />;
 
   return (
