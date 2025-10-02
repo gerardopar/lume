@@ -1,3 +1,5 @@
+import { FilterOptionEnum } from "@components/SuggestionsInput/suggestions-input.helpers";
+
 export type QA = {
   id: number;
   question: string;
@@ -17,7 +19,7 @@ export const qaState: QA[] = [
   {
     id: 1,
     question: "What are you in the mood for? 🍿",
-    predefinedAnswers: ["Movie", "TV Show"],
+    predefinedAnswers: [FilterOptionEnum.Movies, FilterOptionEnum.TV],
     answer: null,
     type: QAEnum.moodFor,
   },
