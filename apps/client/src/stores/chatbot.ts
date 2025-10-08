@@ -11,6 +11,7 @@ import {
 
 type ChatbotState = {
   qa: QA[];
+  genresSelected: string[];
   lastAnsweredIndex: number | null;
   isTyping: boolean;
 };
@@ -18,6 +19,7 @@ type ChatbotState = {
 export const chatbotStore = createStore<ChatbotState>(
   {
     qa: qaState,
+    genresSelected: [],
     lastAnsweredIndex: null,
     isTyping: false,
   },
@@ -62,6 +64,19 @@ export const chatbotStore = createStore<ChatbotState>(
   setIsTyping: (isTyping: boolean) => {
     set("state", (draft) => {
       draft.isTyping = isTyping;
+      return draft;
+    });
+  },
+  setGenresSelected: (genre: string) => {
+    set("state", (draft) => {
+      const existingGenres = draft.genresSelected || [];
+
+      if (existingGenres?.includes(genre)) {
+        draft.genresSelected = existingGenres.filter((g) => g !== genre);
+      } else {
+        draft.genresSelected = [...existingGenres, genre];
+      }
+
       return draft;
     });
   },

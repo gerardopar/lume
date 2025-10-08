@@ -1,9 +1,16 @@
 import { FilterOptionEnum } from "@components/SuggestionsInput/suggestions-input.helpers";
 
+import type { TmdbMovie, TmdbTvShow } from "@my/api";
+
 export type QA = {
   id: number;
   question: string;
-  predefinedAnswers: null | string | string[];
+  predefinedAnswers:
+    | null
+    | string
+    | string[]
+    | Partial<TmdbMovie>[] // recommendations
+    | Partial<TmdbTvShow>[]; // recommendations
   answer: null | string | string[];
   type: QAEnum;
 };

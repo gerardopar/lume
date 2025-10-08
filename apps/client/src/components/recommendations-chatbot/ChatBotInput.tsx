@@ -42,11 +42,9 @@ const ChatBotInput: React.FC<{
       vibe: message,
     });
 
-    console.log("popcorn", recommendations);
-
-    if (recommendations.titles.length > 0) {
+    if (recommendations.results.length > 0) {
       setQA(
-        recommendations.titles,
+        recommendations.results,
         qaIndex.recommendations,
         QAEnum.recommendations
       );

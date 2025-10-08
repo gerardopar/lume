@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
 
 import { chatbotStore } from "../../stores/chatbot";
@@ -13,7 +13,8 @@ export const ChatBotQuestion: React.FC<{
   const setQA = chatbotStore.actions.setQA;
   const setLastAnsweredIndex = chatbotStore.actions.setLastAnsweredIndex;
 
-  const [genresSelected, setGenresSelected] = useState<string[]>([]);
+  const genresSelected = chatbotStore.useTracked("genresSelected");
+  const setGenresSelected = chatbotStore.actions.setGenresSelected;
 
   const handleAnswer = (
     answer: string | string[],
@@ -41,10 +42,10 @@ export const ChatBotQuestion: React.FC<{
       </p>
 
       {/* Predefined chips */}
-      {qaItem.predefinedAnswers && (
+      {qaItem.predefinedAnswers && qaItem.type !== QAEnum.recommendations && (
         <div className="flex flex-wrap gap-1 rounded-2xl mt-2">
           {Array.isArray(qaItem.predefinedAnswers) &&
-            qaItem.predefinedAnswers.map((answer) => {
+            qaItem.predefinedAnswers.map((answer, idx) => {
               const active =
                 qaItem.answer === answer || genresSelected.includes(answer);
               const disabled =
@@ -55,11 +56,7 @@ export const ChatBotQuestion: React.FC<{
 
               const onClick = () => {
                 if (qaItem.type === QAEnum.genres) {
-                  setGenresSelected((prev) =>
-                    prev.includes(answer)
-                      ? prev.filter((g) => g !== answer)
-                      : [...prev, answer]
-                  );
+                  setGenresSelected(answer);
                   return;
                 }
                 handleAnswer(answer, index, qaItem.type);
@@ -67,7 +64,7 @@ export const ChatBotQuestion: React.FC<{
 
               return (
                 <motion.button
-                  key={answer}
+                  key={idx}
                   whileTap={{ scale: 0.95 }}
                   disabled={disabled}
                   onClick={onClick}
@@ -97,6 +94,12 @@ export const ChatBotQuestion: React.FC<{
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {qaItem.type === QAEnum.recommendations && qaItem.predefinedAnswers && (
+        <div>
+          <p>Recommendations</p>
         </div>
       )}
     </motion.div>
