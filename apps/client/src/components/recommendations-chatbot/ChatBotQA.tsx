@@ -10,7 +10,8 @@ import { type QA } from "./chatbot.helpers";
 export const ChatBotQA: React.FC<{
   qa: QA[];
   setQA: React.Dispatch<React.SetStateAction<QA[]>>;
-}> = ({ qa, setQA }) => {
+  isPending: boolean;
+}> = ({ qa, setQA, isPending }) => {
   const [lastAnsweredIndex, setLastAnsweredIndex] = useState<number | null>(
     null
   );
@@ -66,7 +67,7 @@ export const ChatBotQA: React.FC<{
           </React.Fragment>
         ))}
 
-        {isTyping && <TypingIndicator />}
+        {(isTyping || isPending) && <TypingIndicator />}
       </AnimatePresence>
       <div ref={endRef} />
     </div>

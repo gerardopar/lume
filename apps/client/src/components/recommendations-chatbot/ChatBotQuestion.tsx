@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { motion } from "motion/react";
 
 import { GENRES, TV_GENRES } from "../../const/genres";
-import { type QA, QAEnum } from "./chatbot.helpers";
+import { type QA, QAEnum, qaIndex } from "./chatbot.helpers";
 
 export const ChatBotQuestion: React.FC<{
   qaItem: QA;
   index: number;
   setQA: React.Dispatch<React.SetStateAction<QA[]>>;
   setLastAnsweredIndex: React.Dispatch<React.SetStateAction<number | null>>;
-}> = ({ qaItem, index, setQA, setLastAnsweredIndex }) => {
+  isPending: boolean;
+}> = ({ qaItem, index, setQA, setLastAnsweredIndex, isPending }) => {
   const [genresSelected, setGenresSelected] = useState<string[]>([]);
 
   const handleAnswer = (
@@ -35,6 +36,8 @@ export const ChatBotQuestion: React.FC<{
     // ✅ Mark this question as just answered
     setLastAnsweredIndex(index);
   };
+
+  if (index === qaIndex.recommendations && isPending) return null;
 
   return (
     <motion.div

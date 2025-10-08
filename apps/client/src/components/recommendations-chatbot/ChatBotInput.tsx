@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { trpc } from "@utils/trpc";
 import { z } from "zod";
 
 import SendIcon from "../svgs/SendIcon";
@@ -10,11 +9,13 @@ import type { FilterOptionEnum } from "@components/SuggestionsInput/suggestions-
 const ChatBotInput: React.FC<{
   qa: QA[];
   setQA: React.Dispatch<React.SetStateAction<QA[]>>;
-}> = ({ qa, setQA }) => {
+  getAiRecommendations: (params: {
+    type: FilterOptionEnum;
+    genres: string[];
+    vibe: string;
+  }) => Promise<{ titles: string[]; results: any[] }>;
+}> = ({ qa, setQA, getAiRecommendations }) => {
   const [message, setMessage] = useState<string>("");
-
-  const { mutateAsync: getAiRecommendations } =
-    trpc.ai.getAiRecommendations.useMutation();
 
   const validate = () => {
     const result = z.string().min(1).safeParse(message);
