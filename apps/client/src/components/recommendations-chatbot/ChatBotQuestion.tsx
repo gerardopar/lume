@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 
-import { GENRES, TV_GENRES } from "../../const/genres";
+import { chatbotStore } from "../../stores/chatbot";
+
 import { type QA, QAEnum, qaIndex } from "./chatbot.helpers";
 
 export const ChatBotQuestion: React.FC<{
   qaItem: QA;
   index: number;
-  setQA: React.Dispatch<React.SetStateAction<QA[]>>;
-  setLastAnsweredIndex: React.Dispatch<React.SetStateAction<number | null>>;
   isPending: boolean;
-}> = ({ qaItem, index, setQA, setLastAnsweredIndex, isPending }) => {
+}> = ({ qaItem, index, isPending }) => {
+  const setQA = chatbotStore.actions.setQA;
+  const setLastAnsweredIndex = chatbotStore.actions.setLastAnsweredIndex;
+
   const [genresSelected, setGenresSelected] = useState<string[]>([]);
 
   const handleAnswer = (
@@ -18,20 +20,7 @@ export const ChatBotQuestion: React.FC<{
     index: number,
     type?: QAEnum
   ) => {
-    setQA((prevQA) => {
-      const newQA = [...prevQA];
-      newQA[index].answer = answer;
-
-      if (type === QAEnum.moodFor) {
-        const qaGenresIndex = newQA.findIndex(
-          (qa) => qa.type === QAEnum.genres
-        );
-        const genres = answer === "Movie" ? GENRES : TV_GENRES;
-        newQA[qaGenresIndex].predefinedAnswers = genres.map((g) => g.name);
-      }
-
-      return newQA;
-    });
+    setQA(answer, index, type);
 
     // ✅ Mark this question as just answered
     setLastAnsweredIndex(index);

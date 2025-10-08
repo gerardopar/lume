@@ -3,18 +3,20 @@ import { z } from "zod";
 
 import SendIcon from "../svgs/SendIcon";
 
-import { type QA, qaIndex } from "./chatbot.helpers";
+import { type QA, qaIndex, QAEnum } from "./chatbot.helpers";
 import type { FilterOptionEnum } from "@components/SuggestionsInput/suggestions-input.helpers";
+
+import { chatbotStore } from "../../stores/chatbot";
 
 const ChatBotInput: React.FC<{
   qa: QA[];
-  setQA: React.Dispatch<React.SetStateAction<QA[]>>;
   getAiRecommendations: (params: {
     type: FilterOptionEnum;
     genres: string[];
     vibe: string;
   }) => Promise<{ titles: string[]; results: any[] }>;
-}> = ({ qa, setQA, getAiRecommendations }) => {
+}> = ({ qa, getAiRecommendations }) => {
+  const setQA = chatbotStore.actions.setQA;
   const [message, setMessage] = useState<string>("");
 
   const validate = () => {
@@ -31,11 +33,7 @@ const ChatBotInput: React.FC<{
     e.preventDefault();
     if (!validate()) return;
 
-    setQA((prevQA) => {
-      const newQA = [...prevQA];
-      newQA[qaIndex.moodDescription].answer = message;
-      return newQA;
-    });
+    setQA(message, qaIndex.moodDescription);
     setMessage("");
 
     const recommendations = await getAiRecommendations({
@@ -47,12 +45,11 @@ const ChatBotInput: React.FC<{
     console.log("popcorn", recommendations);
 
     if (recommendations.titles.length > 0) {
-      setQA((prevQA) => {
-        const newQA = [...prevQA];
-        newQA[qaIndex.recommendations].predefinedAnswers =
-          recommendations.titles;
-        return newQA;
-      });
+      setQA(
+        recommendations.titles,
+        qaIndex.recommendations,
+        QAEnum.recommendations
+      );
     }
 
     setMessage("");

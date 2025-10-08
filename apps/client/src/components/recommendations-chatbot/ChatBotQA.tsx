@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { AnimatePresence } from "motion/react";
 
 import ChatBotAnswer from "./ChatBotAnswer";
@@ -7,15 +7,18 @@ import TypingIndicator from "../shared/TypingIndicator";
 
 import { type QA } from "./chatbot.helpers";
 
+import { chatbotStore } from "../../stores/chatbot";
+
 export const ChatBotQA: React.FC<{
   qa: QA[];
-  setQA: React.Dispatch<React.SetStateAction<QA[]>>;
   isPending: boolean;
-}> = ({ qa, setQA, isPending }) => {
-  const [lastAnsweredIndex, setLastAnsweredIndex] = useState<number | null>(
-    null
-  );
-  const [isTyping, setIsTyping] = useState(false);
+}> = ({ qa, isPending }) => {
+  const setLastAnsweredIndex = chatbotStore.actions.setLastAnsweredIndex;
+  const setIsTyping = chatbotStore.actions.setIsTyping;
+
+  const lastAnsweredIndex = chatbotStore.useTracked("lastAnsweredIndex");
+  const isTyping = chatbotStore.useTracked("isTyping");
+
   const endRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom
@@ -60,8 +63,7 @@ export const ChatBotQA: React.FC<{
             <ChatBotQuestion
               qaItem={item}
               index={index}
-              setQA={setQA}
-              setLastAnsweredIndex={setLastAnsweredIndex}
+              isPending={isPending}
             />
             {item.answer && <ChatBotAnswer qaItem={item} />}
           </React.Fragment>

@@ -1,14 +1,14 @@
 import React from "react";
 import { motion } from "motion/react";
 
-import { type QA } from "./chatbot.helpers";
+import { type QA, QAEnum } from "./chatbot.helpers";
 
 export const ChatBotAnswer: React.FC<{ qaItem: QA }> = ({ qaItem }) => {
   const answer = Array.isArray(qaItem.answer)
     ? qaItem.answer.join(", ")
     : qaItem.answer;
 
-  if (!answer) return null;
+  if (!answer || qaItem.type === QAEnum.recommendations) return null;
 
   return (
     <motion.div
