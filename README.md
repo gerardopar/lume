@@ -10,7 +10,7 @@ Lume is a modern media discovery platform that helps users explore and discover 
 - **Modern UI/UX**: Clean and intuitive user interface built with modern design principles
 - **Real-time Data**: Up-to-date media information from TMDB API
 
-<img width="4383" height="1986" alt="download" src="https://github.com/user-attachments/assets/82e75484-2c19-4821-9145-e04d3094226c" />
+<img width="4395" height="1990" alt="screenshot" src="https://github.com/user-attachments/assets/09bbb43b-fc98-46f6-81c9-4a005899b77d" />
 
 ## 🛠 Tech Stack
 
