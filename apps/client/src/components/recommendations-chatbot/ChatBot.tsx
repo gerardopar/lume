@@ -12,8 +12,6 @@ const RecommendationsChatBot: React.FC<{ onClose: () => void }> = ({
 }) => {
   const qa = chatbotStore.useTracked("qa");
 
-  console.log("qa", qa);
-
   const { mutateAsync: getAiRecommendations, isPending } =
     trpc.ai.getAiRecommendations.useMutation();
 

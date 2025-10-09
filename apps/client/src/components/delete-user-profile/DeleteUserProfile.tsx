@@ -26,7 +26,7 @@ const DeleteUserProfile: React.FC = () => {
         },
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       open(<ErrorToast message="Error deleting user" />, {
         duration: DEFAULT_TOAST_DURATION,
       });
