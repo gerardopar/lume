@@ -1,0 +1,10 @@
+.grid-cols-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .grid-cols-auto-fill {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns at ≤768px */
+  }
+}

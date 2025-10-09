@@ -6,6 +6,7 @@ import UserProfileUpdateForm from "./UserProfileUpdateForm";
 import CloseButton from "@components/shared/CloseButton";
 
 import { useModal } from "../../stores/modals";
+import LogoutButton from "@components/logout/LogoutButton";
 
 export const UserProfile: React.FC = () => {
   const { close } = useModal();
@@ -22,6 +23,10 @@ export const UserProfile: React.FC = () => {
 
       <div className="mt-4 flex items-center justify-center">
         <UserProfilePicture showEditButton containerClassName="w-24 h-24" />
+      </div>
+
+      <div className="w-full my-4 hidden max-mobile-768:flex">
+        <LogoutButton />
       </div>
 
       <UserProfileUpdateForm />

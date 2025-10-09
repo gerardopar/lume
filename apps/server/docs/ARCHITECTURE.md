@@ -10,6 +10,7 @@ The Lume server follows a modular architecture with clear separation of concerns
 
 Located in `src/routers/`, these handle incoming API requests:
 
+- `ai.ts` - AI-powered recommendations
 - `movies.ts` - Movie-related endpoints
 - `tv-shows.ts` - TV show endpoints
 - `user.ts` - User management
@@ -38,6 +39,7 @@ External service integrations in `src/services/`:
 
 - `tmdb-service.ts` - TMDB API integration
 - `tmdb-tv-shows-service.ts` - TV show specific TMDB endpoints
+- `openAi.ts` - OpenAI API integration for AI-powered recommendations
 
 ### 5. Authentication
 

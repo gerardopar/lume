@@ -14,7 +14,8 @@ export const MovieCard: React.FC<{
   movie: TmdbMovie;
   refetch?: () => void;
   showWatchedOption?: boolean;
-}> = ({ movie, refetch, showWatchedOption = false }) => {
+  className?: string;
+}> = ({ movie, refetch, showWatchedOption = false, className }) => {
   const { open } = useModal();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -46,18 +47,19 @@ export const MovieCard: React.FC<{
       onMouseEnter={() => setIsCardActive(true)}
       onMouseLeave={() => setIsCardActive(false)}
       role="button"
+      // max-mobile-425:w-[50%] max-mobile-425:max-w-[50%] max-mobile-425:min-w-[200px]
       className={`
         cursor-pointer relative 
-        min-h-[340px] max-h-[320px] max-w-[200px] w-[200px] 
-        max-mobile-425:w-[50%] max-mobile-425:max-w-[50%] max-mobile-425:min-w-[200px] 
+        w-full max-w-[200px] min-h-[320px]
         flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300
+        ${className}
       `}
     >
       <div
         className={`
-        relative min-h-[275px] w-[180px] rounded-2xl overflow-hidden shadow-lg group
-        bg-cover bg-center
-      `}
+    relative aspect-[2/3] w-full rounded-2xl overflow-hidden shadow-lg group
+    bg-cover bg-center
+  `}
         style={{ backgroundImage: `url(${poster})` }}
       >
         <FavoritesButton

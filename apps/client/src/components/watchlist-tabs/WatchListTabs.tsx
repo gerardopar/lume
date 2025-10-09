@@ -9,16 +9,6 @@ export const WatchListTabs: React.FC<{
   return (
     <div className="w-full flex items-center justify-start">
       <button
-        onClick={() => setActiveTab(WatchlistTabEnum.Watched)}
-        className={`cursor-pointer px-2 pb-1 font-[200] ${
-          activeTab === WatchlistTabEnum.Watched
-            ? "font-semibold text-lume-green border-lume-green border-b-[1px]"
-            : "font-[200] text-white"
-        }`}
-      >
-        Watched
-      </button>
-      <button
         onClick={() => setActiveTab(WatchlistTabEnum.NotWatched)}
         className={`cursor-pointer px-2 pb-1 font-[200] ${
           activeTab === WatchlistTabEnum.NotWatched
@@ -27,6 +17,16 @@ export const WatchListTabs: React.FC<{
         }`}
       >
         Not Yet
+      </button>
+      <button
+        onClick={() => setActiveTab(WatchlistTabEnum.Watched)}
+        className={`cursor-pointer px-2 pb-1 font-[200] ${
+          activeTab === WatchlistTabEnum.Watched
+            ? "font-semibold text-lume-green border-lume-green border-b-[1px]"
+            : "font-[200] text-white"
+        }`}
+      >
+        Watched
       </button>
     </div>
   );

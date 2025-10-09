@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import debounce from "lodash/debounce";
 import { trpc } from "@utils/trpc";
 
@@ -15,15 +16,19 @@ import {
 import type { MultiSearchResult } from "@my/api";
 
 export const SuggestionsInput: React.FC = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  const initialActiveFilter = path.includes("/tv")
+    ? FilterOptionEnum.TV
+    : FilterOptionEnum.Movies;
+
+  const [activeFilter, setActiveFilter] =
+    useState<FilterOptionEnum>(initialActiveFilter);
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
 
   const [open, setOpen] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
-
-  const [activeFilter, setActiveFilter] = useState<FilterOptionEnum>(
-    FilterOptionEnum.All
-  );
 
   const debouncedUpdate = useMemo(
     () =>
