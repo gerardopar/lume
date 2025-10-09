@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import useEmblaCarousel from "embla-carousel-react";
 
 import WatchlistButton from "@components/shared/WatchlistButton";
+import RecommendationCardSkeleton from "@components/skeleton/RecommendationCardSkeleton";
 
 import { chatbotStore } from "../../stores/chatbot";
 
@@ -66,7 +67,8 @@ export const ChatBotRecommendations: React.FC<{
     <div className="w-full mt-4">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex touch-pan-y">
-          {Array.isArray(qaItem.predefinedAnswers) &&
+          {!reRollRecommendationsPending &&
+            Array.isArray(qaItem.predefinedAnswers) &&
             qaItem.predefinedAnswers.map(
               (
                 answer: Partial<TmdbMovie> | Partial<TmdbTvShow>,
@@ -128,7 +130,7 @@ export const ChatBotRecommendations: React.FC<{
                       style={{ backgroundImage: `url(${posterUrl})` }}
                     >
                       <div className="rounded-2xl absolute inset-0 bg-gradient-to-b from-black/5 to-black/100" />
-                      <div className="absolute top-2 right-4 shadow-lg text-xs inline px-4 py-2 rounded-full backdrop-blur-sm bg-white/10">
+                      <div className="absolute top-4 right-4 shadow-lg text-xs inline px-4 py-2 rounded-full backdrop-blur-sm bg-white/10 font-poppins font-[200]">
                         {currentRecommendationIndex}/{recommendationsLength}
                       </div>
                       <h1 className="w-full text-xl font-bold font-inter text-white z-10">
@@ -146,6 +148,8 @@ export const ChatBotRecommendations: React.FC<{
                 );
               }
             )}
+
+          {reRollRecommendationsPending && <RecommendationCardSkeleton />}
         </div>
       </div>
 
@@ -161,7 +165,7 @@ export const ChatBotRecommendations: React.FC<{
           disabled={reRollRecommendationsPending}
           className="cursor-pointer text-sm bg-lume-primary-darker font-poppins p-2 px-6 py-2 rounded-full rounded-br-none"
         >
-          {reRollRecommendationsPending ? "Re-rolling..." : "Re-roll"}
+          {reRollRecommendationsPending ? "Fetching..." : "Surprise Me"}
         </button>
       </div>
     </div>
