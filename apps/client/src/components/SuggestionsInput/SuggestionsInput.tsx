@@ -112,12 +112,25 @@ export const SuggestionsInput: React.FC = () => {
 
   const inputDecoration = getInputDecoration();
 
-  const movieResults = results.filter(
-    (result) => (result as MultiSearchResult).media_type === "movie"
-  );
-  const tvShowResults = results.filter(
-    (result) => (result as MultiSearchResult).media_type === "tv"
-  );
+  let movieResults = [];
+  let tvShowResults = [];
+
+  switch (activeFilter) {
+    case FilterOptionEnum.Movies:
+      movieResults = results;
+      break;
+    case FilterOptionEnum.TV:
+      tvShowResults = results;
+      break;
+    default:
+      movieResults = results.filter(
+        (result) => (result as MultiSearchResult).media_type === "movie"
+      );
+      tvShowResults = results.filter(
+        (result) => (result as MultiSearchResult).media_type === "tv"
+      );
+      break;
+  }
 
   return (
     <div className="w-full flex items-center">
