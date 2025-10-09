@@ -7,6 +7,7 @@ Lume is a modern web application for discovering and managing movies and TV show
 - Movie and TV show discovery
 - User authentication and profiles
 - Watchlist and favorites management
+- AI-powered recommendations chatbot
 - Responsive design for all devices
 - Real-time updates and notifications
 

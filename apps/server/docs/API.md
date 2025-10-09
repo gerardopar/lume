@@ -1,5 +1,64 @@
 # API Reference
 
+## AI Recommendations
+
+### Get AI Recommendations
+
+Get personalized movie/TV show recommendations based on user preferences.
+
+```typescript
+type GetAiRecommendationsInput = {
+  type: 'Movie' | 'TV';
+  genres?: string[];
+  vibe: string;  // Description of the desired mood or theme
+};
+
+type GetAiRecommendationsResponse = {
+  titles: string[];
+  results: Array<{
+    id: number;
+    title: string;
+    overview: string;
+    poster_path: string | null;
+    // ... other TMDB fields
+  }>;
+};
+
+// tRPC Mutation
+const getRecommendations = trpc.ai.getAiRecommendations.useMutation();
+
+// Usage
+const { data } = await getRecommendations.mutateAsync({
+  type: 'Movie',  // or 'TV'
+  genres: ['Action', 'Adventure'],
+  vibe: 'sci-fi with mind-bending plot twists',
+});
+```
+
+### Re-roll Recommendations
+
+Get a new set of recommendations while excluding previously shown titles.
+
+```typescript
+type ReRollRecommendationsInput = {
+  type: 'Movie' | 'TV';
+  genres?: string[];
+  vibe: string;
+  previousTitles: string[];  // Titles to exclude from new recommendations
+};
+
+// tRPC Mutation
+const reRoll = trpc.ai.reRollRecommendations.useMutation();
+
+// Usage
+const { data } = await reRoll.mutateAsync({
+  type: 'Movie',
+  genres: ['Action', 'Adventure'],
+  vibe: 'sci-fi with mind-bending plot twists',
+  previousTitles: ['Inception', 'The Matrix'],
+});
+```
+
 ## Authentication
 
 ### Get Current User
