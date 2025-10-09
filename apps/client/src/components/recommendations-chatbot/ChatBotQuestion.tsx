@@ -1,4 +1,5 @@
 import React from "react";
+import { trpc } from "@utils/trpc";
 import { motion } from "motion/react";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -24,6 +25,11 @@ export const ChatBotQuestion: React.FC<{
   const genresSelected = chatbotStore.useTracked("genresSelected");
   const setGenresSelected = chatbotStore.actions.setGenresSelected;
 
+  const {
+    mutateAsync: reRollRecommendations,
+    isPending: reRollRecommendationsPending,
+  } = trpc.ai.reRollRecommendations.useMutation();
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "start",
@@ -37,6 +43,37 @@ export const ChatBotQuestion: React.FC<{
     setQA(answer, index, type);
 
     setLastAnsweredIndex(index);
+  };
+
+  const handleReRollRecommendations = () => {
+    reRollRecommendations(
+      {
+        type: qa[qaIndex.moodFor].answer === "movies" ? "movies" : "tv",
+        genres: genresSelected,
+        vibe: qa[qaIndex.moodDescription].answer!,
+        previousTitles:
+          qa[qaIndex.recommendations].predefinedAnswers?.map?.(
+            (item: Partial<TmdbMovie> | Partial<TmdbTvShow>) =>
+              item?.original_title || item?.original_name
+          ) ?? [],
+      },
+      {
+        onSuccess: (data) => {
+          const existingRecommendations =
+            qa[qaIndex.recommendations].predefinedAnswers;
+          const newRecommendations = data?.results;
+          const updatedRecommendations = [
+            ...newRecommendations,
+            ...existingRecommendations,
+          ];
+          setQA(
+            updatedRecommendations,
+            qaIndex.recommendations,
+            QAEnum.recommendations
+          );
+        },
+      }
+    );
   };
 
   if (index === qaIndex.recommendations && isPending) return null;
@@ -137,7 +174,7 @@ export const ChatBotQuestion: React.FC<{
                     );
 
                     const mediaType =
-                      qa[qaIndex.moodFor].answer === "movie" ? "movie" : "tv";
+                      qa[qaIndex.moodFor].answer === "movies" ? "movie" : "tv";
 
                     const snapShot: MediaItemSnapshot =
                       mediaType === "movie"
@@ -203,8 +240,12 @@ export const ChatBotQuestion: React.FC<{
             >
               Start Over
             </button>
-            <button className="cursor-pointer text-sm bg-lume-primary-darker font-poppins p-2 px-6 py-2 rounded-full rounded-br-none">
-              Confirm
+            <button
+              onClick={() => handleReRollRecommendations()}
+              disabled={reRollRecommendationsPending}
+              className="cursor-pointer text-sm bg-lume-primary-darker font-poppins p-2 px-6 py-2 rounded-full rounded-br-none"
+            >
+              {reRollRecommendationsPending ? "Re-rolling..." : "Re-roll"}
             </button>
           </div>
         </div>
