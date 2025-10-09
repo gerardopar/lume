@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import { trpc } from "@utils/trpc";
 
 import TvShowCard from "./TvShowCard";
@@ -13,7 +14,11 @@ export const TvShowCategoryCardList: React.FC<{
   genreId: number;
   className?: string;
 }> = ({ title, genreId, className }) => {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    containScroll: "trimSnaps",
+    dragFree: true,
+  });
 
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
@@ -30,75 +35,28 @@ export const TvShowCategoryCardList: React.FC<{
       }
     );
 
-  const tvShows = data?.pages.flatMap((p) => p.results) ?? [];
-
-  const scrollByAmount = (amount: number) => {
-    if (scrollRef.current) {
-      const el = scrollRef.current;
-      el.scrollBy({ left: amount, behavior: "smooth" });
-      updateScrollState();
-
-      const isNearEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 300;
-      if (isNearEnd && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    }
-  };
-
-  const updateScrollState = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setIsAtStart(scrollLeft < 10);
-      setIsAtEnd(scrollLeft + clientWidth >= scrollWidth - 10);
-    }
-  };
+  const movies = data?.pages.flatMap((p) => p.results) ?? [];
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
+    if (!emblaApi) return;
 
-    const handleScroll = () => {
-      if (timeoutId) clearTimeout(timeoutId);
+    const updateState = () => {
+      setIsAtStart(emblaApi.canScrollPrev() === false);
+      setIsAtEnd(emblaApi.canScrollNext() === false);
 
-      timeoutId = setTimeout(() => {
-        if (!hasNextPage || isFetchingNextPage) return;
-
-        const scrollPosition =
-          window.innerHeight + document.documentElement.scrollTop;
-        const bottomPosition = document.documentElement.offsetHeight - 200;
-
-        if (scrollPosition >= bottomPosition) {
-          fetchNextPage().catch(console.error);
-        }
-      }, 100);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const handleScroll = () => {
-      updateScrollState();
-
-      const { scrollLeft, clientWidth, scrollWidth } = el;
-      const isAtEnd = scrollLeft + clientWidth >= scrollWidth - 50;
-      if (isAtEnd && hasNextPage && !isFetchingNextPage) {
+      if (
+        emblaApi.canScrollNext() === false &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
         fetchNextPage();
       }
     };
 
-    el.addEventListener("scroll", handleScroll);
-    // Initial check
-    updateScrollState();
-
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    updateState();
+    emblaApi.on("select", updateState);
+    emblaApi.on("scroll", updateState);
+  }, [emblaApi, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   if (isLoading) {
     return (
@@ -115,6 +73,9 @@ export const TvShowCategoryCardList: React.FC<{
     );
   }
 
+  const scrollPrev = () => emblaApi?.scrollPrev();
+  const scrollNext = () => emblaApi?.scrollNext();
+
   return (
     <div className={`w-full relative ${className}`}>
       {title && (
@@ -123,8 +84,8 @@ export const TvShowCategoryCardList: React.FC<{
 
       {!isAtStart && (
         <button
-          onClick={() => scrollByAmount(-300)}
-          className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px] transition-opacity duration-300"
+          onClick={scrollPrev}
+          className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px]"
         >
           <ChevronLeft />
         </button>
@@ -132,27 +93,39 @@ export const TvShowCategoryCardList: React.FC<{
 
       {!isAtEnd && (
         <button
-          onClick={() => scrollByAmount(300)}
-          className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px] transition-opacity duration-300"
+          onClick={scrollNext}
+          className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/90 rounded-full flex items-center justify-center w-[40px] h-[40px]"
         >
           <ChevronRight />
         </button>
       )}
 
-      <div
-        ref={scrollRef}
-        className="flex gap-4 max-mobile-425:gap-2 max-mobile-375:gap-1 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
-      >
-        {tvShows.map((tvShow: TmdbTvShow) => (
-          <TvShowCard tvShow={tvShow} />
-        ))}
-        {isFetchingNextPage && (
-          <>
-            {[...Array(3)].map((_, idx) => (
-              <CardSkeleton key={`skeleton-${idx}`} />
+      <div ref={emblaRef} className="overflow-hidden w-full">
+        <div className="flex" style={{ gap: "1rem" }}>
+          {movies.map((tvShow: TmdbTvShow, idx) => (
+            <div
+              key={tvShow.id ?? idx}
+              className="flex-shrink-0"
+              style={{
+                width: "100%",
+                maxWidth: "200px",
+              }}
+            >
+              <TvShowCard tvShow={tvShow} />
+            </div>
+          ))}
+
+          {isFetchingNextPage &&
+            [...Array(3)].map((_, idx) => (
+              <div
+                key={`skeleton-${idx}`}
+                className="flex-shrink-0"
+                style={{ maxWidth: "200px" }}
+              >
+                <CardSkeleton />
+              </div>
             ))}
-          </>
-        )}
+        </div>
       </div>
     </div>
   );
