@@ -14,7 +14,7 @@ import { WatchlistTabEnum } from "../../components/watchlist-tabs/watchlist.help
 import type { TmdbMovie, TmdbTvShow, MediaItemSnapshot } from "@my/api";
 
 export const WatchList: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(WatchlistTabEnum.Watched);
+  const [activeTab, setActiveTab] = useState(WatchlistTabEnum.NotWatched);
 
   const {
     data,
