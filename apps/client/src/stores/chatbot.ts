@@ -52,6 +52,9 @@ export const chatbotStore = createStore<ChatbotState>(
   clearQA: () => {
     set("state", (draft) => {
       draft.qa = qaState;
+      draft.genresSelected = [];
+      draft.lastAnsweredIndex = null;
+      draft.isTyping = false;
       return draft;
     });
   },

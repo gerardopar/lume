@@ -19,6 +19,8 @@ export const ChatBotQuestion: React.FC<{
   const setQA = chatbotStore.actions.setQA;
   const setLastAnsweredIndex = chatbotStore.actions.setLastAnsweredIndex;
 
+  const clearQA = chatbotStore.actions.clearQA;
+
   const genresSelected = chatbotStore.useTracked("genresSelected");
   const setGenresSelected = chatbotStore.actions.setGenresSelected;
 
@@ -117,6 +119,10 @@ export const ChatBotQuestion: React.FC<{
                     answer: Partial<TmdbMovie> | Partial<TmdbTvShow>,
                     idx: number
                   ) => {
+                    const recommendationsLength =
+                      qaItem.predefinedAnswers.length ?? 0;
+                    const currentRecommendationIndex = idx + 1;
+
                     const title =
                       answer?.original_title || answer?.original_name || "";
 
@@ -169,6 +175,9 @@ export const ChatBotQuestion: React.FC<{
                           style={{ backgroundImage: `url(${posterUrl})` }}
                         >
                           <div className="rounded-2xl absolute inset-0 bg-gradient-to-b from-black/5 to-black/100" />
+                          <div className="absolute top-2 right-4 shadow-lg text-xs inline px-4 py-2 rounded-full backdrop-blur-sm bg-white/10">
+                            {currentRecommendationIndex}/{recommendationsLength}
+                          </div>
                           <h1 className="w-full text-xl font-bold font-inter text-white z-10">
                             {title}
                           </h1>
@@ -185,6 +194,18 @@ export const ChatBotQuestion: React.FC<{
                   }
                 )}
             </div>
+          </div>
+
+          <div className="flex items-center justify-center w-full mt-2 gap-2">
+            <button
+              onClick={() => clearQA()}
+              className="cursor-pointer text-sm font-poppins p-2 px-6 py-2 rounded-full bg-gray-500 rounded-bl-none"
+            >
+              Start Over
+            </button>
+            <button className="cursor-pointer text-sm bg-lume-primary-darker font-poppins p-2 px-6 py-2 rounded-full rounded-br-none">
+              Confirm
+            </button>
           </div>
         </div>
       )}
