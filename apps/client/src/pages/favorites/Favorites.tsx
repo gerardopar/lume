@@ -34,7 +34,7 @@ export const Favorites: React.FC = () => {
 
         <div className="w-full flex items-center justify-center">
           {favoritesLoading && (
-            <div className="w-full flex flex-wrap gap-6 mt-6">
+            <div className="w-full grid gap-6 mt-6 grid-cols-auto-fill">
               {[...Array(12)].map((_, idx) => (
                 <CardSkeleton key={idx} />
               ))}
@@ -42,7 +42,7 @@ export const Favorites: React.FC = () => {
           )}
 
           {!favoritesLoading && favoritesList.length > 0 && (
-            <div className="w-full flex flex-wrap gap-6 mt-6">
+            <div className="w-full grid gap-6 mt-6 grid-cols-auto-fill">
               {favoritesList.map((favorite: MediaItemSnapshot) => {
                 const normalizedFavorite = normalizeSnapshot(favorite);
 
@@ -52,6 +52,7 @@ export const Favorites: React.FC = () => {
                       key={`fav-movie-${favorite.tmdbId}`}
                       movie={normalizedFavorite as TmdbMovie}
                       refetch={() => refetch()}
+                      className="responsive-card"
                     />
                   );
                 }
@@ -61,6 +62,7 @@ export const Favorites: React.FC = () => {
                       key={`fav-tv-${favorite.tmdbId}`}
                       tvShow={normalizedFavorite as TmdbTvShow}
                       refetch={() => refetch()}
+                      className="responsive-card"
                     />
                   );
                 }

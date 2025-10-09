@@ -14,7 +14,8 @@ export const TvShowCard: React.FC<{
   tvShow: TmdbTvShow;
   refetch?: () => void;
   showWatchedOption?: boolean;
-}> = ({ tvShow, refetch, showWatchedOption = false }) => {
+  className?: string;
+}> = ({ tvShow, refetch, showWatchedOption = false, className }) => {
   const { open } = useModal();
 
   const [showMenu, setShowMenu] = useState(false);
@@ -50,6 +51,7 @@ export const TvShowCard: React.FC<{
       className={`
         cursor-pointer relative 
         flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300
+        ${className}
       `}
     >
       <div

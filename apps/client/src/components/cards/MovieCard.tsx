@@ -14,7 +14,8 @@ export const MovieCard: React.FC<{
   movie: TmdbMovie;
   refetch?: () => void;
   showWatchedOption?: boolean;
-}> = ({ movie, refetch, showWatchedOption = false }) => {
+  className?: string;
+}> = ({ movie, refetch, showWatchedOption = false, className }) => {
   const { open } = useModal();
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -51,6 +52,7 @@ export const MovieCard: React.FC<{
         cursor-pointer relative 
         min-h-[340px] max-h-[320px] max-w-[200px] w-[200px] 
         flex flex-col px-2 pt-2 pb-4 hover:bg-lume-secondary-dark rounded-2xl group transition-all duration-300
+        ${className}
       `}
     >
       <div
