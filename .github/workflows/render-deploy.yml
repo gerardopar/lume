@@ -1,0 +1,37 @@
+name: Render Deploy
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  workflow_dispatch:
+
+jobs:
+  deploy-server:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Server to Render
+        run: |
+          echo "🚀 Triggering server deploy..."
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVER_SERVICE_ID }}/deploys" \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -d ''
+
+  deploy-client:
+    needs: deploy-server
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Client to Render
+        run: |
+          echo "🎨 Triggering client deploy..."
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_CLIENT_SERVICE_ID }}/deploys" \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -d ''
