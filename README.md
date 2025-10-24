@@ -1,5 +1,7 @@
 # [Lume - Modern Media Discovery Platform](https://lume-client.onrender.com/)
 
+[![Render Deploy](https://github.com/gerardopar/lume/actions/workflows/render-deploy.yml/badge.svg)](https://github.com/gerardopar/lume/actions/workflows/render-deploy.yml)
+
 Lume is a modern media discovery platform that helps users explore and discover movies and TV shows. Built with a modern tech stack, Lume provides an intuitive interface for browsing trending and popular content across different media types.
 
 ## 🚀 Features
